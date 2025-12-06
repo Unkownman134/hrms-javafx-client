@@ -1,0 +1,68 @@
+/* hrms-styles.css */
+
+/* --- 基础设置 --- */
+.root {
+    -fx-font-family: "Microsoft YaHei", "Segoe UI", sans-serif;
+    -fx-base: #FFFFFF;
+}
+
+/* --- 主容器 - 背景色 --- */
+.background-pane {
+    -fx-background-color: #F7F7F7; /* 浅灰色背景 */
+}
+
+/* --- 侧边导航栏 (Left Menu) --- */
+.side-bar {
+    -fx-background-color: #34495E; /* 深沉的蓝色/灰色 */
+}
+
+/* --- 导航按钮 (侧边栏内的 Button/Label) --- */
+.nav-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #ECF0F1; /* 浅色字体 */
+    -fx-font-size: 14px;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 10px 15px;
+}
+
+/* 导航按钮 - 鼠标悬停效果 */
+.nav-button:hover {
+    -fx-background-color: #4CAF50; /* 鼠标悬停变浅绿色 (辅色) */
+    -fx-text-fill: #FFFFFF;
+}
+
+/* 导航按钮 - 选中状态 */
+.nav-button:selected {
+    -fx-background-color: #007ACC; /* 选中状态用主色 */
+    -fx-font-weight: bold;
+    -fx-text-fill: #FFFFFF;
+}
+
+/* --- 主内容区标题 --- */
+.content-header {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #34495E;
+    -fx-padding: 10px 0 10px 0;
+}
+
+/* --- 业务按钮 (主要操作) --- */
+.action-button {
+    -fx-background-color: #007ACC; /* 主色调 */
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-background-radius: 5px; /* 圆角 */
+    -fx-padding: 8px 15px;
+}
+.action-button:hover {
+    -fx-background-color: #005A99; /* 悬停颜色加深 */
+}
+
+/* --- 输入框/文本区 --- */
+.text-field, .text-area {
+    -fx-background-radius: 5px;
+    -fx-border-color: #CCCCCC;
+    -fx-border-radius: 5px;
+    -fx-border-width: 1px;
+}
