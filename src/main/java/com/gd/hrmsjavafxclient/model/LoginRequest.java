@@ -1,18 +1,18 @@
-package com.gd.hrmsjavafxclient.dto;
+package com.gd.hrmsjavafxclient.model;
 
-// JavaFX 客户端需要自己的 DTO 来将对象转为 JSON
+// 因为是客户端发送数据，不需要 JsonIgnoreProperties
 public class LoginRequest {
     private String username;
     private String password;
-
-    public LoginRequest() {} // 必须有无参构造函数
 
     public LoginRequest(String username, String password) {
         this.username = username;
         this.password = password;
     }
 
-    // Jackson 依赖 Getter 将对象转为 JSON
+    // Getter and Setter
     public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
     public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
 }
