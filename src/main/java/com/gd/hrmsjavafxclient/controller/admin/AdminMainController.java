@@ -1,6 +1,7 @@
-package com.gd.hrmsjavafxclient.controller;
+package com.gd.hrmsjavafxclient.controller.admin;
 
 import com.gd.hrmsjavafxclient.App;
+import com.gd.hrmsjavafxclient.controller.MainController;
 import com.gd.hrmsjavafxclient.model.CurrentUserInfo;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -44,7 +45,7 @@ public class AdminMainController implements MainController {
                 Button initialButton = (Button) node;
                 setActiveButton(initialButton);
                 // 确保内容区域加载了初始视图
-                loadView("AdminDashboardView");
+                loadView("fxml/admin/AdminDashboardView");
                 break;
             }
         }
@@ -119,36 +120,36 @@ public class AdminMainController implements MainController {
     @FXML
     public void showDashboardView(ActionEvent event) {
         setActiveButton((Button) event.getSource());
-        loadView("AdminDashboardView");
+        loadView("fxml/admin/AdminDashboardView");
     }
 
     @FXML
     public void showUserView(ActionEvent event) {
         setActiveButton((Button) event.getSource());
-        loadView("UserManagementView");
+        loadView("fxml/admin/UserManagementView");
     }
 
     @FXML
     public void showEmployeeView(ActionEvent event) {
         setActiveButton((Button) event.getSource());
-        loadView("EmployeeManagementView");
+        loadView("fxml/admin/EmployeeManagementView");
     }
 
     @FXML
     public void showPositionView(ActionEvent event) {
         setActiveButton((Button) event.getSource());
-        loadView("PositionManagementView");
+        loadView("fxml/admin/PositionManagementView");
     }
 
     @FXML
     public void showDepartmentView(ActionEvent event) {
         setActiveButton((Button) event.getSource());
-        loadView("DepartmentManagementView");
+        loadView("fxml/admin/DepartmentManagementView");
     }
 
     @FXML
     public void showSalaryView(ActionEvent event) {
         setActiveButton((Button) event.getSource());
-        loadView("SalaryStandardManagementView");
+        loadView("fxml/admin/SalaryStandardManagementView");
     }
 }

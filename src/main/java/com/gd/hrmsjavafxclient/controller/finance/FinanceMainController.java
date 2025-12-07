@@ -1,14 +1,15 @@
-package com.gd.hrmsjavafxclient.controller;
+package com.gd.hrmsjavafxclient.controller.finance;
 
+import com.gd.hrmsjavafxclient.controller.MainController;
 import com.gd.hrmsjavafxclient.model.CurrentUserInfo;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.text.Text;
 
 /**
- * 默认角色/普通员工主界面控制器
+ * 角色ID=3：财务管理员主界面控制器
  */
-public class EmployeeMainController implements MainController {
+public class FinanceMainController implements MainController {
 
     @FXML
     private Text userInfoText;

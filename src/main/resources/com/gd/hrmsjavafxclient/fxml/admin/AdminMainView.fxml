@@ -6,8 +6,8 @@
 <?import javafx.scene.text.Text?>
 
 <BorderPane prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.gd.hrmsjavafxclient.controller.AdminMainController"
-            stylesheets="@hrms-styles.css" styleClass="root">
+            fx:controller="com.gd.hrmsjavafxclient.controller.admin.AdminMainController"
+            stylesheets="@../../style/hrms-styles.css" styleClass="root">
     <top>
         <VBox styleClass="top-toolbar">
             <HBox alignment="CENTER_LEFT" spacing="20">

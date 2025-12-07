@@ -1,5 +1,6 @@
-package com.gd.hrmsjavafxclient.controller;
+package com.gd.hrmsjavafxclient.controller.hr;
 
+import com.gd.hrmsjavafxclient.controller.MainController;
 import com.gd.hrmsjavafxclient.model.CurrentUserInfo;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;

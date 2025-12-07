@@ -6,13 +6,13 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<VBox alignment="CENTER" prefHeight="600.0" prefWidth="800.0" spacing="20.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gd.hrmsjavafxclient.controller.EmployeeMainController">
+<VBox alignment="CENTER" prefHeight="600.0" prefWidth="800.0" spacing="20.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gd.hrmsjavafxclient.controller.hr.HRMainController">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
     <children>
-        <Label fx:id="roleTitle" text="普通员工主界面" style="-fx-font-size: 24px; -fx-text-fill: #34495E; -fx-font-weight: bold;" />
-        <Text text="欢迎来到个人自助服务模块，您拥有请假申请、打卡等操作权限。" style="-fx-font-size: 14px;" />
+        <Label fx:id="roleTitle" text="人事管理员主界面" style="-fx-font-size: 24px; -fx-text-fill: #0077B6; -fx-font-weight: bold;" />
+        <Text text="欢迎来到人事管理模块，您拥有员工档案、招聘等操作权限。" style="-fx-font-size: 14px;" />
         <Separator />
         <VBox spacing="10.0" alignment="CENTER_LEFT">
             <Label text="当前用户信息：" style="-fx-font-weight: bold;" />

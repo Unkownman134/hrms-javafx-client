@@ -149,7 +149,7 @@ public class LoginController {
 
         switch (userInfo.getRoleId()) {
             case 1:
-                fxmlFile = "AdminMainView.fxml"; // 超级管理员
+                fxmlFile = "fxml/admin/AdminMainView.fxml"; // 超级管理员
                 title += "超级管理员";
                 break;
             case 2:

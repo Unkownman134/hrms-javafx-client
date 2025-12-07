@@ -10,7 +10,7 @@
             xmlns="http://javafx.com/javafx/17"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.gd.hrmsjavafxclient.controller.LoginController"
-            stylesheets="@hrms-styles.css"
+            stylesheets="@../style/hrms-styles.css"
             styleClass="root"> <children>
     <VBox fx:id="loginCard" alignment="CENTER" spacing="24"
           AnchorPane.topAnchor="0"
@@ -21,7 +21,7 @@
 
         <ImageView fitWidth="64" fitHeight="64" pickOnBounds="true">
             <image>
-                <Image url="@icon.jpg" />
+                <Image url="@../images/icon.jpg" />
             </image>
         </ImageView>
 

@@ -1,4 +1,4 @@
-package com.gd.hrmsjavafxclient.controller;
+package com.gd.hrmsjavafxclient.controller.admin;
 
 import com.gd.hrmsjavafxclient.model.Department;
 import com.gd.hrmsjavafxclient.service.DepartmentAdminService;
