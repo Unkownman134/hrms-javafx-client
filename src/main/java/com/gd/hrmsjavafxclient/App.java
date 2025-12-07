@@ -9,7 +9,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 /**
- * JavaFX App 启动类 (P1)
+ * JavaFX App 启动类
  */
 public class App extends Application {
 
@@ -21,9 +21,16 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
+        // -------------------------------------------------------------------
+        // 注意：已移除 MaterialFX 初始化代码。
+        // 自定义样式 hrms-styles.css 仍然通过 FXML 文件的 stylesheets 属性加载。
+        // -------------------------------------------------------------------
+
         // 应用程序启动时，首先加载登录界面
         Parent root = loadFXML("LoginView");
-        Scene scene = new Scene(root, 400, 300); // 登录界面大小示例
+
+        // LoginView.fxml 已经通过 stylesheets="@hrms-styles.css" 加载了样式表
+        Scene scene = new Scene(root, 500, 500);
 
         stage.setTitle("人事管理系统 - 登录");
         stage.setScene(scene);

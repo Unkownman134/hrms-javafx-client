@@ -7,30 +7,26 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TableView?>
 
 <SplitPane dividerPositions="0.6" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="650.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gd.hrmsjavafxclient.controller.UserManagementController" stylesheets="@hrms-styles.css">
 
     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
         <VBox alignment="TOP_LEFT" layoutX="10.0" layoutY="10.0" spacing="10.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
-            <Label text="用户账号列表" styleClass="content-header" />
-
-            <HBox spacing="10.0" alignment="CENTER_LEFT">
-                <Button mnemonicParsing="false" onAction="#handleRefresh" text="刷新列表" styleClass="action-button" />
-                <Button mnemonicParsing="false" onAction="#handleNewUser" text="新增用户" styleClass="action-button" />
-            </HBox>
-
-            <TableView fx:id="userTable" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+            <Label text="用户账号列表 (R2)" styleClass="content-header" />
+            <TableView fx:id="userTable" VBox.vgrow="ALWAYS">
                 <columns>
-                    <TableColumn fx:id="userIdCol" prefWidth="75.0" text="ID" />
-                    <TableColumn fx:id="usernameCol" prefWidth="120.0" text="用户名" />
-                    <TableColumn fx:id="roleIdCol" prefWidth="100.0" text="角色ID" />
-                    <TableColumn fx:id="empIdCol" prefWidth="100.0" text="员工ID" />
-                    <TableColumn fx:id="actionCol" prefWidth="120.0" text="操作" />
+                    <TableColumn fx:id="userIdCol" text="ID" prefWidth="50.0" />
+                    <TableColumn fx:id="usernameCol" text="登录名" prefWidth="100.0" />
+                    <TableColumn fx:id="roleIdCol" text="角色ID" prefWidth="60.0" />
+                    <TableColumn fx:id="empIdCol" text="员工ID" prefWidth="60.0" />
+                    <TableColumn fx:id="actionCol" text="操作" prefWidth="120.0" />
                 </columns>
                 <columnResizePolicy>
                     <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -39,14 +35,14 @@
         </VBox>
     </AnchorPane>
 
-    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
-        <VBox layoutX="10.0" layoutY="10.0" spacing="15.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
-            <Label fx:id="formTitle" text="用户详情" styleClass="content-header" />
+    <AnchorPane minHeight="0.0" minWidth="0.0">
+        <VBox alignment="TOP_LEFT" layoutX="10.0" layoutY="10.0" spacing="10.0" styleClass="form-container-card" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+            <Label fx:id="formTitle" text="用户账号详情" styleClass="content-header" />
 
             <GridPane hgap="10.0" vgap="10.0">
                 <columnConstraints>
-                    <javafx.scene.layout.ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                    <javafx.scene.layout.ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="200.0" />
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="120.0" />
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="200.0" />
                 </columnConstraints>
 
                 <Label text="用户ID (UserID):" GridPane.rowIndex="0" />
@@ -66,11 +62,10 @@
 
             </GridPane>
 
-            <HBox spacing="10.0" alignment="CENTER_LEFT">
-                <Button fx:id="saveButton" mnemonicParsing="false" onAction="#handleSave" text="保存" styleClass="action-button" />
-                <Button mnemonicParsing="false" onAction="#handleCancel" text="取消/清除" />
+            <HBox spacing="10.0" alignment="CENTER_LEFT" VBox.vgrow="ALWAYS">
+                <Button fx:id="saveButton" mnemonicParsing="false" onAction="#handleSave" prefWidth="100.0" text="保存" styleClass="action-button" />
+                <Button mnemonicParsing="false" onAction="#handleCancel" prefWidth="100.0" text="取消/新增" styleClass="action-button-secondary" />
             </HBox>
-
         </VBox>
     </AnchorPane>
 </SplitPane>

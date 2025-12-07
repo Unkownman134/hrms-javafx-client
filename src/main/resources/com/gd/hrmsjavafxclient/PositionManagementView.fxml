@@ -7,28 +7,24 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.TableView?>
 
 <SplitPane dividerPositions="0.6" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gd.hrmsjavafxclient.controller.PositionManagementController" stylesheets="@hrms-styles.css">
 
     <AnchorPane minHeight="0.0" minWidth="0.0">
         <VBox alignment="TOP_LEFT" spacing="10.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
             <Label text="职位信息列表 (R9)" styleClass="content-header" />
-
-            <HBox spacing="10.0" alignment="CENTER_LEFT">
-                <Button mnemonicParsing="false" onAction="#handleRefresh" text="刷新列表" styleClass="action-button" />
-                <Button mnemonicParsing="false" onAction="#handleNewPosition" text="新增职位" styleClass="action-button" />
-            </HBox>
-
-            <TableView fx:id="positionTable" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+            <TableView fx:id="positionTable" VBox.vgrow="ALWAYS">
                 <columns>
-                    <TableColumn fx:id="posIdCol" prefWidth="80.0" text="职位ID" />
-                    <TableColumn fx:id="posNameCol" prefWidth="150.0" text="职位名称" />
-                    <TableColumn fx:id="posLevelCol" prefWidth="100.0" text="职位等级" />
-                    <TableColumn fx:id="baseSalaryLevelCol" prefWidth="120.0" text="薪酬标准ID" />
-                    <TableColumn fx:id="actionCol" prefWidth="100.0" text="操作" />
+                    <TableColumn fx:id="posIdCol" text="ID" prefWidth="50.0" />
+                    <TableColumn fx:id="posNameCol" text="职位名称" prefWidth="120.0" />
+                    <TableColumn fx:id="posLevelCol" text="职位等级" prefWidth="100.0" />
+                    <TableColumn fx:id="baseSalaryLevelCol" text="薪酬标准ID" prefWidth="100.0" />
+                    <TableColumn fx:id="actionCol" text="操作" prefWidth="120.0" />
                 </columns>
                 <columnResizePolicy>
                     <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -38,13 +34,13 @@
     </AnchorPane>
 
     <AnchorPane minHeight="0.0" minWidth="0.0">
-        <VBox spacing="15.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+        <VBox spacing="15.0" styleClass="form-container-card" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
             <Label fx:id="formTitle" text="职位信息详情" styleClass="content-header" />
 
             <GridPane hgap="10.0" vgap="10.0">
                 <columnConstraints>
-                    <javafx.scene.layout.ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="120.0" />
-                    <javafx.scene.layout.ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="200.0" />
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="120.0" />
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="200.0" />
                 </columnConstraints>
 
                 <Label text="职位ID (PosID):" GridPane.rowIndex="0" />
@@ -61,11 +57,10 @@
 
             </GridPane>
 
-            <HBox spacing="10.0" alignment="CENTER_LEFT">
-                <Button fx:id="saveButton" mnemonicParsing="false" onAction="#handleSave" text="保存" styleClass="action-button" />
-                <Button mnemonicParsing="false" onAction="#handleCancel" text="取消/清除" />
+            <HBox spacing="10.0" alignment="CENTER_LEFT" VBox.vgrow="ALWAYS">
+                <Button fx:id="saveButton" mnemonicParsing="false" onAction="#handleSave" prefWidth="100.0" text="保存" styleClass="action-button" />
+                <Button mnemonicParsing="false" onAction="#handleCancel" prefWidth="100.0" text="取消/新增" styleClass="action-button-secondary" />
             </HBox>
-
         </VBox>
     </AnchorPane>
 </SplitPane>

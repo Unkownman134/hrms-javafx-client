@@ -1,206 +1,295 @@
-/* 全局样式 */
+/* 颜色变量 (方便统一修改主题颜色) */
 .root {
-    /* 使用线性渐变作为背景，从深灰到更深灰，增强纵深感 */
-    -fx-background-color: linear-gradient(to bottom, #1a1a1a, #121212);
+    /* 主色调 (Primary Color): 亮蓝色，用于按钮和高亮 */
+    -fx-primary-color: #4CAF50; /* 绿色系，更稳定 */
+    -fx-primary-color-dark: #388E3C;
+    /* 背景色 (Background Color): 极深灰 */
+    -fx-background-dark: #121212;
+    /* 卡片色 (Surface Color): 略浅的深灰 */
+    -fx-surface-dark: #1E1E1E;
+    /* 文本色 (Text Color) */
+    -fx-text-color: #FFFFFF;
+    -fx-text-secondary: #BBBBBB;
+    /* 边框/分隔线 */
+    -fx-border-color-light: #333333;
+
+    /* 全局字体和大小 */
     -fx-font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
     -fx-font-size: 14px;
 }
 
-/* 登录卡片容器 */
-.login-card {
-    -fx-background-color: #1e1e1e; /* 卡片背景色 */
-    -fx-background-radius: 16px;    /* 背景圆角 */
-    -fx-border-radius: 16px;        /* 边框圆角 */
-    -fx-padding: 32px;              /* 内边距 */
-
-    /* 使用 -fx-effect 添加阴影效果 */
-    /* dropshadow(type, color, radius, spread, offsetX, offsetY) */
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 15, 0, 0, 3);
-
-    -fx-max-width: 400px;
-    -fx-min-width: 300px;
-    /* 可选：添加轻微的边框以增强边界感 */
-    -fx-border-color: #333333;
-    -fx-border-width: 1px;
+/* 全局根容器样式 */
+.root {
+    -fx-background-color: linear-gradient(to bottom, -fx-background-dark, #0a0a0a); /* 深色渐变背景 */
 }
 
-/* 顶部工具栏 */
+/* --- 顶部工具栏样式 --- */
 .top-toolbar {
-    -fx-background-color: #1e1e1e; /* 与侧边栏同色或稍浅 */
-    -fx-padding: 10px 20px;
-    -fx-border-color: #333333;
-    -fx-border-width: 0 0 1 0; /* 底部细线 */
+    -fx-background-color: -fx-surface-dark;
+    -fx-padding: 10px 20px 10px 20px;
+    -fx-border-color: -fx-border-color-light;
+    -fx-border-width: 0 0 1px 0;
 }
 
-/* 顶部标题 */
 .top-title {
-    -fx-font-size: 22px;
+    -fx-font-size: 20px;
     -fx-font-weight: bold;
-    -fx-text-fill: #64b5f6; /* 使用一种亮眼的蓝色 */
+    -fx-text-fill: -fx-primary-color; /* 标题使用主色调 */
 }
 
-/* 侧边栏 */
-.side-bar {
-    -fx-background-color: #1e1e1e; /* 深灰色背景 */
-    -fx-padding: 15px 0 15px 0;
-    -fx-spacing: 5px;
-    -fx-border-color: #333333;
-    -fx-border-width: 0 1 0 0; /* 右侧细线 */
+/* --- 标签和文本框样式 --- */
+.label {
+    -fx-text-fill: -fx-text-color;
 }
 
-/* 导航按钮 - 默认状态 */
-.nav-button {
-    -fx-background-color: transparent;
-    -fx-text-fill: #e0e0e0; /* 浅灰色文字 */
-    -fx-font-size: 14px;
-    -fx-padding: 10px 15px;
-    -fx-alignment: CENTER_LEFT;
-    -fx-background-radius: 0 6px 6px 0; /* 只右边圆角 */
-    -fx-border-radius: 0 6px 6px 0;
-    -fx-border-width: 0;
-    -fx-cursor: hand;
-    -fx-min-height: 38px; /* 确保按钮高度一致 */
-}
-
-/* 导航按钮 - 悬停状态 */
-.nav-button:hover {
-    -fx-background-color: #2d2d2d; /* 悬停时稍亮 */
-    -fx-text-fill: #ffffff;
-}
-
-/* 导航按钮 - 选中/激活状态 (你需要在控制器中手动添加 selected 样式类) */
-.nav-button:selected {
-    -fx-background-color: linear-gradient(to right, #3b82f6, #2563eb); /* 左侧渐变条 */
-    -fx-text-fill: white;
-    -fx-font-weight: bold;
-}
-
-/* 分组标签 (如 数据管理, 系统配置) */
-.nav-group-label {
-    -fx-text-fill: #90a4ae; /* 灰蓝色，比普通文字暗一些 */
-    -fx-padding: 15px 15px 5px 15px;
-    -fx-font-size: 12px;
-    -fx-font-weight: bold;
-}
-
-/* 分隔线 (可以用 Separator 控件替代 Label + Separator 的组合) */
-.nav-separator {
-    -fx-background-color: #37474f; /* 暗灰色分隔线 */
-    -fx-pref-height: 1px;
-    -fx-min-height: 1px;
-    -fx-max-height: 1px;
-    -fx-padding: 0 15px 0 15px; /* 左右留白 */
-}
-
-/* 主内容区域背景 */
-.background-pane {
-    -fx-background-color: transparent; /* 通常是透明的，由父容器决定 */
-}
-
-/* 底部状态栏 */
-.bottom-status-bar {
-    -fx-background-color: #1e1e1e; /* 与顶部同色 */
-    -fx-padding: 5px 15px;
-    -fx-border-color: #333333;
-    -fx-border-width: 1 0 0 0; /* 顶部细线 */
-}
-
-/* 底部信息文字 */
-.status-text {
-    -fx-font-size: 12px;
-    -fx-fill: #b0bec5; /* 浅灰色文字 */
-}
-
-/* 通用卡片样式 (供 Dashboard 或其他 View 使用) */
-.dashboard-card {
-    -fx-background-color: #2d2d2d; /* 卡片背景 */
-    -fx-background-radius: 10px;
-    -fx-border-radius: 10px;
-    -fx-padding: 20px;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0, 0, 2);
-    -fx-spacing: 10px;
-}
-
-.card-title {
-    -fx-font-size: 18px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #ffffff;
-}
-
-.card-content {
-    -fx-text-fill: #e0e0e0;
-    -fx-font-size: 14px;
-}
-
-/* 标题 */
-.content-header {
-    -fx-font-size: 24px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #ffffff; /* 白色文字 */
-    -fx-alignment: CENTER; /* 居中对齐 */
-    -fx-spacing: 8px;
-}
-
-/* 输入框和密码框通用样式 */
-.text-field, .password-field {
-    -fx-background-color: #2d2d2d; /* 输入框背景 */
-    -fx-background-radius: 8px;     /* 背景圆角 */
-    -fx-border-color: #4a4a4a;      /* 默认边框 */
-    -fx-border-width: 1px;          /* 边框宽度 */
-    -fx-border-radius: 8px;         /* 边框圆角 */
-    -fx-padding: 10px 14px;         /* 内边距 */
-    -fx-text-fill: #ffffff;         /* 输入文字颜色 */
-    -fx-prompt-text-fill: #999999;  /* 提示文字颜色 */
-    -fx-font-size: 14px;
-}
-
-/* 聚焦状态下的输入框 */
-.text-field:focused, .password-field:focused {
-    -fx-border-color: #52a6ff;      /* 聚焦时蓝色边框 */
-    -fx-background-color: #2a2a2a;  /* 聚焦时稍暗的背景 */
-    /* 可选：添加聚焦时的发光效果 */
-    -fx-effect: dropshadow(gaussian, rgba(82, 166, 255, 0.3), 8, 0, 0, 0);
-}
-
-/* 按钮 */
-.action-button {
-    /* 使用线性渐变背景 */
-    -fx-background-color: linear-gradient(to bottom, #3b82f6, #2563eb);
-    -fx-text-fill: white;           /* 白色文字 */
-    -fx-font-size: 16px;
-    -fx-font-weight: bold;
-    -fx-padding: 12px 24px;         /* 按钮内边距 */
-    -fx-background-radius: 8px;     /* 背景圆角 */
-    -fx-border-radius: 8px;         /* 边框圆角 */
-    -fx-cursor: hand;               /* 鼠标悬停时变为手型 */
-}
-
-/* 按钮悬停状态 */
-.action-button:hover {
-    /* 悬停时稍微加深的渐变 */
-    -fx-background-color: linear-gradient(to bottom, #2563eb, #1d4ed8);
-}
-
-/* 按钮按下状态 */
-.action-button:pressed {
-    /* 按下时纯色背景 */
-    -fx-background-color: #1d4ed8;
-}
-
-/* 图标标签（如用户名、密码前的小图标占位符） */
 .icon-label {
-    -fx-font-size: 18px;
-    -fx-text-fill: #a7a7a7; /* 灰色图标颜色 */
-    /* 如果你真的想用图标，这里可以留空或者用特定的图标字体 */
-}
-
-/* 可选：超链接样式 */
-.hyperlink {
-    -fx-text-fill: #52a6ff;
-    -fx-underline: false; /* 默认无下划线 */
+    -fx-text-fill: -fx-text-secondary;
     -fx-font-size: 13px;
 }
 
-.hyperlink:hover {
-    -fx-underline: true; /* 悬停时显示下划线 */
+.text-field, .password-field, .date-picker {
+    -fx-background-color: -fx-background-dark;
+    -fx-text-fill: -fx-text-color;
+    -fx-border-color: -fx-border-color-light;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-prompt-text-fill: -fx-text-secondary;
+    -fx-padding: 8px;
+}
+
+.text-field:focused, .password-field:focused, .date-picker:focused {
+    -fx-border-color: -fx-primary-color;
+    -fx-effect: dropshadow(gaussian, rgba(76, 175, 80, 0.4), 8, 0, 0, 0);
+}
+
+/* --- 按钮样式 --- */
+/* 主行动按钮 (绿色) */
+.action-button {
+    -fx-background-color: -fx-primary-color;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: bold;
+    -fx-padding: 8px 15px;
+    -fx-background-radius: 4;
+    -fx-cursor: hand;
+}
+
+.action-button:hover {
+    -fx-background-color: -fx-primary-color-dark;
+}
+
+.action-button:pressed {
+    -fx-scale-y: 0.98;
+}
+
+/* 次要行动按钮 (蓝色) */
+.action-button-secondary {
+    -fx-background-color: #2196F3; /* 蓝色 */
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: bold;
+    -fx-padding: 8px 15px;
+    -fx-background-radius: 4;
+    -fx-cursor: hand;
+}
+
+.action-button-secondary:hover {
+    -fx-background-color: #1976D2;
+}
+
+.action-button-secondary:pressed {
+    -fx-scale-y: 0.98;
+}
+
+/* 红色警告/删除按钮 */
+.action-button-danger {
+    -fx-background-color: #F44336; /* 红色 */
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: bold;
+    -fx-padding: 8px 15px;
+    -fx-background-radius: 4;
+    -fx-cursor: hand;
+}
+
+.action-button-danger:hover {
+    -fx-background-color: #D32F2F;
+}
+
+/* --- 登录卡片样式 --- */
+.login-card {
+    -fx-background-color: -fx-surface-dark;
+    -fx-padding: 40px;
+    -fx-background-radius: 12;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 12, 0, 0, 4); /* 阴影增强 */
+}
+
+/* --- 左侧导航栏样式 (VBox) --- */
+.side-bar {
+    -fx-background-color: -fx-background-dark;
+    -fx-padding: 10px 0 0 0;
+    -fx-border-color: -fx-border-color-light;
+    -fx-border-width: 0 1px 0 0; /* 仅右侧有细边框 */
+}
+
+.nav-group-label {
+    -fx-text-fill: #a0aec0;
+    -fx-padding: 10px 20px 5px 20px;
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+}
+
+.nav-separator {
+    -fx-background-color: -fx-border-color-light;
+    -fx-max-width: 80%;
+    -fx-padding: 0 10px 0 10px;
+    -fx-opacity: 0.5;
+}
+
+/* --- 导航按钮样式 (Button) --- */
+.nav-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: -fx-text-secondary;
+    -fx-alignment: center-left;
+    -fx-padding: 10px 20px;
+    -fx-font-size: 15px;
+    -fx-max-width: 10000px;
+    -fx-cursor: hand;
+}
+
+.nav-button:hover {
+    -fx-background-color: -fx-surface-dark;
+    -fx-text-fill: -fx-text-color;
+}
+
+/* 激活状态的导航按钮 */
+.nav-button.active {
+    -fx-background-color: -fx-primary-color-dark; /* 激活背景色 */
+    -fx-text-fill: #FFFFFF;
+    -fx-border-width: 0 0 0 4px; /* 左侧加一条主色边框 */
+    -fx-border-color: -fx-primary-color;
+}
+
+/* --- 内容区域头部 (Label) --- */
+.content-header {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -fx-text-color;
+}
+
+/* ---------------------------------------------------------------------------------- */
+/* 🌟 新增样式：SplitPane 管理视图、TableView 和 Form Card 统一美化 🌟 */
+/* ---------------------------------------------------------------------------------- */
+
+/* --- SplitPane 视图美化 --- */
+
+/* SplitPane 本身和分隔符美化 */
+.split-pane {
+    -fx-background-color: transparent; /* 让背景透明，显示 root 的渐变背景 */
+}
+
+/* SplitPane 分隔条 (Divider) 美化，让它更细更融入 */
+.split-pane-divider {
+    -fx-background-color: -fx-border-color-light;
+    -fx-padding: 0 0.5px 0 0.5px; /* 使分隔条更细 */
+}
+
+/* --- 表格 (TableView) 样式优化 --- */
+
+.table-view {
+    /* 整个表格背景色使用浅一些的深色 */
+    -fx-background-color: -fx-surface-dark;
+    -fx-border-color: -fx-border-color-light;
+    -fx-border-width: 1px;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+}
+
+/* 表头 (Header) 样式 */
+.table-view .column-header-background {
+    -fx-background-color: -fx-surface-dark;
+    -fx-border-color: -fx-border-color-light;
+    -fx-border-width: 0 0 1px 0;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: -fx-text-color;
+    -fx-font-weight: bold;
+}
+
+/* 表格行 (Row) 样式 */
+.table-row-cell {
+    -fx-background-color: transparent; /* 行背景使用表格背景 */
+    -fx-cell-size: 30px; /* 行高调整 */
+}
+
+/* 隔行变色效果 */
+.table-row-cell:odd {
+    -fx-background-color: rgba(255, 255, 255, 0.03); /* 略微浅一点的背景 */
+}
+
+/* 选中行样式 */
+.table-row-cell:selected {
+    -fx-background-color: -fx-primary-color; /* 绿色系主色调 */
+    -fx-text-fill: -fx-text-color;
+}
+
+/* 悬停行样式 */
+.table-row-cell:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.08);
+}
+
+/* 表格单元格 (Cell) 样式 */
+.table-cell {
+    -fx-border-color: -fx-border-color-light;
+    -fx-border-width: 0 1px 0 0; /* 仅右侧分隔线 */
+    -fx-text-fill: -fx-text-secondary;
+    -fx-padding: 5px 10px 5px 10px;
+}
+
+/* --- SplitPane右侧表单区域样式 (新增) --- */
+
+.form-container-card {
+    -fx-background-color: -fx-surface-dark; /* 深色卡片背景 */
+    -fx-padding: 20px;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 10, 0, 0, 2); /* 柔和阴影 */
+    -fx-border-color: -fx-primary-color-dark; /* 左侧加一道细主色边框突出显示 */
+    -fx-border-width: 0 0 0 3px;
+}
+
+/* * TableView 样式修正：最终版强制深色表头 *
+ * 目标：强制所有状态（包括默认未聚焦/未排序状态）下的表头背景为深色。
+ */
+
+/* 1. 整个表头背景：使用深色，并设置分隔线 */
+.table-view .column-header-background {
+    -fx-background-color: -fx-surface-dark; /* 深灰 #1E1E1E */
+    -fx-border-color: -fx-border-color-light;
+    -fx-border-width: 0 0 1px 0;
+}
+
+/* 2. 【核心修复！】强制每个独立的表头单元格背景为深色 */
+.table-view .column-header {
+    /* 强制每个表头单元格的背景颜色，覆盖默认的浅色 */
+    -fx-background-color: -fx-surface-dark;
+    /* 移除 JavaFX 默认的边框和间距，确保平整 */
+    -fx-border-width: 0;
+    -fx-padding: 0 5px 0 5px;
+}
+
+/* 3. 所有表头单元格的文字：无论状态如何，都强制使用白色 */
+.table-view .column-header .label {
+    -fx-text-fill: -fx-text-color; /* 强制白色 #FFFFFF */
+    -fx-font-weight: bold;
+}
+
+/* 4. 已排序/被选中状态：用稍微亮一点的深色来区分，但仍保持深色系 */
+.table-view .column-header.sorted,
+.table-view .column-header:hover {
+    -fx-background-color: -fx-border-color-light; /* #333333 */
+}
+
+/* 5. 排序小箭头：保持主题色高亮 */
+.table-view .sort-arrow {
+    -fx-background-color: -fx-primary-color;
 }

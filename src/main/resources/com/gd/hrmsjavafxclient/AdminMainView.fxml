@@ -5,59 +5,40 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.text.Text?>
 
-<!-- 应用全局 root 样式 -->
 <BorderPane prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.gd.hrmsjavafxclient.controller.AdminMainController"
-            stylesheets="@hrms-styles.css" styleClass="root"> <!-- 添加 styleClass -->
-
-    <!-- 顶部工具栏 -->
+            stylesheets="@hrms-styles.css" styleClass="root">
     <top>
-        <VBox styleClass="top-toolbar"> <!-- 使用新样式类 -->
-            <Label text="HRMS | 超级管理员控制台" styleClass="top-title"/> <!-- 使用新样式类 -->
+        <VBox styleClass="top-toolbar">
+            <HBox alignment="CENTER_LEFT" spacing="20">
+                <Label text="HRMS | 超级管理员控制台" styleClass="top-title"/>
+                <Label fx:id="userInfoLabel" styleClass="label"/>
+            </HBox>
         </VBox>
     </top>
 
-    <!-- 左侧导航栏 -->
     <left>
-        <VBox fx:id="sideBar" prefWidth="220.0" styleClass="side-bar"> <!-- 使用新样式类 -->
-            <Button text="仪表盘" styleClass="nav-button" onAction="#showDashboardView"/> <!-- 使用新样式类 -->
+        <VBox fx:id="sideBar" prefWidth="220.0" styleClass="side-bar">
+            <Button text="仪表盘" styleClass="nav-button" onAction="#showDashboardView"/>
+            <Separator styleClass="nav-separator"/>
 
-            <!-- 分隔线和标签组合 -->
-            <Separator styleClass="nav-separator"/> <!-- 使用新样式类 -->
-            <Label text="数据管理" styleClass="nav-group-label"/> <!-- 使用新样式类 -->
-
+            <Label text="数据管理" styleClass="nav-group-label"/>
             <Button text="用户账号管理" styleClass="nav-button" onAction="#showUserView"/>
             <Button text="员工档案管理" styleClass="nav-button" onAction="#showEmployeeView"/>
             <Button text="职位信息管理" styleClass="nav-button" onAction="#showPositionView"/>
             <Button text="部门信息管理" styleClass="nav-button" onAction="#showDepartmentView"/>
 
-            <!-- 分隔线和标签组合 -->
-            <Separator styleClass="nav-separator"/> <!-- 使用新样式类 -->
-            <Label text="系统配置" styleClass="nav-group-label"/> <!-- 使用新样式类 -->
+            <Separator styleClass="nav-separator"/>
 
+            <Label text="系统配置" styleClass="nav-group-label"/>
             <Button text="薪酬标准配置" styleClass="nav-button" onAction="#showSalaryView"/>
 
-            <!-- 可选：底部弹性空间 -->
             <Region VBox.vgrow="ALWAYS" />
         </VBox>
     </left>
 
-    <!-- 中央内容区 -->
     <center>
-        <!-- StackPane 本身不需要特殊样式，内容物自己加样式 -->
-        <StackPane fx:id="contentPane" styleClass="background-pane">
-            <!-- 初始欢迎内容 -->
-            <VBox alignment="TOP_CENTER" spacing="10.0" styleClass="dashboard-card" maxWidth="500"> <!-- 使用卡片样式 -->
-                <Label text="欢迎回来，超级管理员！" styleClass="card-title" />
-                <Label text="系统总览：请从左侧导航栏选择一项管理功能。" styleClass="card-content"/>
-            </VBox>
+        <StackPane fx:id="contentPane">
         </StackPane>
     </center>
-
-    <!-- 底部状态栏 -->
-    <bottom>
-        <VBox styleClass="bottom-status-bar"> <!-- 使用新样式类 -->
-            <Text fx:id="userInfoText" styleClass="status-text" text="就绪..."/> <!-- 使用新样式类 -->
-        </VBox>
-    </bottom>
 </BorderPane>

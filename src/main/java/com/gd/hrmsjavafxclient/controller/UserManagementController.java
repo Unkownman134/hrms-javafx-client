@@ -74,7 +74,7 @@ public class UserManagementController {
                 // UI 线程更新表格数据
                 userList.clear();
                 userList.addAll(getValue());
-                showAlert(Alert.AlertType.INFORMATION, "数据刷新成功", "已加载 " + userList.size() + " 条用户记录。");
+//                showAlert(Alert.AlertType.INFORMATION, "数据刷新成功", "已加载 " + userList.size() + " 条用户记录。");
             }
 
             @Override

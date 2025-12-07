@@ -1,6 +1,7 @@
 package com.gd.hrmsjavafxclient.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.gd.hrmsjavafxclient.model.Employee;
 import com.gd.hrmsjavafxclient.model.Position;
 import java.net.URI;
@@ -14,6 +15,10 @@ public class DataFetchService {
     private final HttpClient httpClient = HttpClient.newHttpClient();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    public DataFetchService() {
+        // 注册 Java 8 日期时间模块，解决 LocalDate/LocalDateTime 无法反序列化的问题
+        objectMapper.registerModule(new JavaTimeModule());
+    }
     // 复用 UserService, EmployeeService, PositionController 暴露的 API
 
     public Employee getEmployeeById(Integer empId) throws Exception {

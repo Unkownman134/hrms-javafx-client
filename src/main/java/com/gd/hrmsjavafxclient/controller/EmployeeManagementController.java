@@ -110,13 +110,13 @@ public class EmployeeManagementController {
             protected void succeeded() {
                 employeeList.clear();
                 employeeList.addAll(getValue());
-                showAlert(Alert.AlertType.INFORMATION, "数据刷新成功", "已加载 " + employeeList.size() + " 条员工档案记录。");
+//                showAlert(Alert.AlertType.INFORMATION, "数据刷新成功", "已加载 " + employeeList.size() + " 条员工档案记录。");
             }
 
             @Override
             protected void failed() {
                 getException().printStackTrace();
-                showAlert(Alert.AlertType.ERROR, "加载失败 🚨", "无法从服务器获取数据：" + getException().getMessage());
+//                showAlert(Alert.AlertType.ERROR, "加载失败 🚨", "无法从服务器获取数据：" + getException().getMessage());
             }
         };
 
