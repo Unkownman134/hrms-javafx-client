@@ -2,8 +2,9 @@ module com.gd.hrmsjavafxclient {
     requires javafx.controls;
     requires javafx.fxml;
     requires java.net.http;
-    requires com.fasterxml.jackson.databind;
     requires javafx.base;
+    requires com.fasterxml.jackson.datatype.jsr310;
+    requires com.fasterxml.jackson.databind;
 
     opens com.gd.hrmsjavafxclient to javafx.fxml;
     exports com.gd.hrmsjavafxclient;

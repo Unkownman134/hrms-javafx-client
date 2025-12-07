@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.control.Label?>
 
-<VBox alignment="TOP_CENTER" spacing="10.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" styleClass="background-pane">
-    <Label text="欢迎回来，超级管理员！" styleClass="content-header" />
-    <Label text="系统总览：请从左侧导航栏选择一项管理功能。" />
+<VBox alignment="TOP_CENTER" spacing="10.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" styleClass="dashboard-card">
+    <Label text="仪表盘" styleClass="card-title" />
+    <Label text="欢迎回来，超级管理员！" styleClass="card-content"/>
+    <Label text="系统总览：请从左侧导航栏选择一项管理功能。" styleClass="card-content"/>
+    <!-- 你可以在这里添加更多图表、统计信息等 -->
 </VBox>
