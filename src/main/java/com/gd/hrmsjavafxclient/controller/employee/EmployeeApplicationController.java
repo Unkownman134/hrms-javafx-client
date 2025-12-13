@@ -3,8 +3,8 @@ package com.gd.hrmsjavafxclient.controller.employee;
 import com.gd.hrmsjavafxclient.controller.employee.EmployeeMainController.EmployeeSubController;
 import com.gd.hrmsjavafxclient.model.ApprovalRequest;
 import com.gd.hrmsjavafxclient.model.CurrentUserInfo;
-import com.gd.hrmsjavafxclient.service.EmployeeService;
-import com.gd.hrmsjavafxclient.service.EmployeeServiceImpl;
+// ✅ 导入新的 ApplicationEmpService，专门负责提交申请！
+import com.gd.hrmsjavafxclient.service.ApplicationEmpService;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
@@ -13,10 +13,12 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * 我的申请视图控制器 (对应 EmployeeApplicationView.fxml)
- * 🌟 修正：实例化 EmployeeServiceImpl，并在提交申请时使用 EmpID。
+ * 🌟 修正：实例化 ApplicationEmpService，并在提交申请时使用 EmpID。
  */
 public class EmployeeApplicationController implements EmployeeSubController {
 
@@ -26,118 +28,120 @@ public class EmployeeApplicationController implements EmployeeSubController {
     @FXML private TextField relatedDetailField;
     @FXML private TextArea descriptionTextArea;
     @FXML private Button submitButton;
-    // 假设还有一个 TableView 来展示历史申请
 
     // --- 数据和状态 ---
-    // 🌟 修正：直接实例化实现类
-    private final EmployeeService employeeService = new EmployeeServiceImpl();
+    // 实例化专门的申请服务
+    private final ApplicationEmpService applicationEmpService = new ApplicationEmpService();
     private CurrentUserInfo currentUser;
     private String authToken;
 
-    // --- 初始化和数据设置 ---
+    // 申请类型列表
+    private final List<String> APPLICATION_TYPES = Arrays.asList("请假申请", "加班申请", "报销申请", "调岗申请", "其他");
+
+    // --- 接口实现 ---
+
     @Override
     public void setUserInfo(CurrentUserInfo userInfo, String authToken) {
         this.currentUser = userInfo;
         this.authToken = authToken;
     }
 
+    @FXML
+    public void initialize() {
+        // 初始化 ComboBox
+        applicationTypeComboBox.setItems(FXCollections.observableArrayList(APPLICATION_TYPES));
+
+        // 绑定 ComboBox 监听器，用于更新提示文本（UX 优化！）
+        applicationTypeComboBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            updatePlaceholders(newVal);
+        });
+
+        // 确保在 JavaFX 线程中初始化控制器数据
+        Platform.runLater(this::initializeController);
+    }
+
     @Override
     public void initializeController() {
         if (currentUser != null) {
             Platform.runLater(() -> {
-                // 1. 设置申请人姓名（只读）
+                // 设置申请人姓名（只读）
                 applicantNameField.setText(currentUser.getEmployeeName());
-                applicantNameField.setEditable(false);
-
-                // 2. 初始化申请类型 ComboBox
-                if (applicationTypeComboBox.getItems().isEmpty()) {
-                    applicationTypeComboBox.setItems(FXCollections.observableArrayList(
-                            "请假申请", "加班申请", "报销申请", "其他"
-                    ));
-                    applicationTypeComboBox.valueProperty().addListener((obs, oldVal, newVal) -> {
-                        updatePlaceholders(newVal);
-                    });
-                }
-                updatePlaceholders(applicationTypeComboBox.getValue()); // 初始化提示
-
-                // 3. 重置表单
-                // clearForm(); // 不应该在每次 initialize 都清空，但这里保证表单状态
+                // 设置默认的提示文本
+                updatePlaceholders(null);
+                // 默认日期设置为今天
+                relatedDateField.setValue(LocalDate.now());
             });
         }
     }
 
-    // --- 关键修正：添加缺失的 FXML 事件方法 ---
-    /**
-     * 处理“查看历史申请”按钮的点击事件 (修复 LoadException)
-     */
-    @FXML
-    public void handleViewHistoryButtonAction(ActionEvent event) {
-        showAlert("提示 ⏳", "查看历史申请功能正在努力实现中哦！", Alert.AlertType.INFORMATION);
-        // 这里将来可以添加加载历史申请列表的逻辑
-    }
-    // --- 关键修正结束 ---
+    // --- 事件处理：提交申请 (R7) ---
 
     @FXML
-    private void handleSubmitButtonAction() {
+    private void handleSubmitButtonAction(ActionEvent event) {
+        // 1. 输入验证
         if (!validateInput()) {
             return;
         }
 
-        submitButton.setDisable(true);
+        // 禁用按钮并显示加载中
         submitButton.setText("提交中...");
+        submitButton.setDisable(true);
 
-        // 构建请求模型
+        // 2. 构造请求对象
         ApprovalRequest request = new ApprovalRequest();
-
-        // 🌟 关键修正 1: setEmpId -> setApplicantId
-        request.setApplicantId(currentUser.getEmpId()); // 使用员工 ID
-
-        // 🌟 关键修正 2: setRequestType -> setApplicationType
         request.setApplicationType(applicationTypeComboBox.getValue());
-
-        // 🌟 关键修正 3: setRequestDate -> setSubmissionDate
-        request.setSubmissionDate(LocalDate.now()); // 提交日期为今天
-
         request.setRelatedDate(relatedDateField.getValue());
         request.setRelatedDetail(relatedDetailField.getText().trim());
         request.setDescription(descriptionTextArea.getText().trim());
-        request.setStatus("待审批"); // 初始状态
+        // 🌟 关键：设置申请人的 EmpID
+        request.setApplicantId(currentUser.getEmpId());
 
+        // 3. 使用 Task 进行异步提交
         Task<Boolean> submitTask = new Task<>() {
             @Override
             protected Boolean call() throws Exception {
                 // 调用服务层 API
-                return employeeService.submitApplication(request, authToken);
+                return applicationEmpService.submitApplication(request, authToken);
             }
 
             @Override
             protected void succeeded() {
                 Platform.runLater(() -> {
                     boolean success = getValue();
-                    submitButton.setDisable(false);
-                    submitButton.setText("提 交");
-
                     if (success) {
-                        showAlert("成功 🎉", "申请已成功提交，等待上级审批哦！", Alert.AlertType.INFORMATION);
+                        showAlert("提交成功 🎉", "您的申请已提交，等待审批。请关注后续状态。", Alert.AlertType.INFORMATION);
                         clearForm();
                     } else {
-                        showAlert("失败 😢", "申请提交失败，请稍后再试或联系管理员。", Alert.AlertType.ERROR);
+                        // 理论上 ServiceUtil 应该抛异常，这里是处理服务器返回的失败情况
+                        showAlert("提交失败 💔", "服务器返回处理失败，请稍后再试。", Alert.AlertType.ERROR);
                     }
+                    submitButton.setText("提 交 申 请");
+                    submitButton.setDisable(false);
                 });
             }
 
             @Override
             protected void failed() {
                 Platform.runLater(() -> {
+                    showAlert("提交失败 ❌", "申请提交过程中发生错误：" + getException().getMessage(), Alert.AlertType.ERROR);
+                    submitButton.setText("提 交 申 请");
                     submitButton.setDisable(false);
-                    submitButton.setText("提 交");
-                    showAlert("错误 ❌", "申请提交过程中发生错误：" + getException().getMessage(), Alert.AlertType.ERROR);
                     getException().printStackTrace();
                 });
             }
         };
         new Thread(submitTask).start();
     }
+
+    /**
+     * R7 员工申请历史记录查询功能 (占位符)
+     */
+    @FXML
+    private void handleViewHistoryButtonAction(ActionEvent event) {
+        showAlert("提示", "查看历史申请记录功能正在开发中哦！🏗️", Alert.AlertType.INFORMATION);
+    }
+
+    // --- 辅助方法 ---
 
     private boolean validateInput() {
         if (applicationTypeComboBox.getValue() == null) {
@@ -162,7 +166,7 @@ public class EmployeeApplicationController implements EmployeeSubController {
     private void clearForm() {
         Platform.runLater(() -> {
             applicationTypeComboBox.getSelectionModel().clearSelection();
-            relatedDateField.setValue(null);
+            relatedDateField.setValue(LocalDate.now()); // 重置为今天
             relatedDetailField.clear();
             descriptionTextArea.clear();
             updatePlaceholders(null); // 重置提示

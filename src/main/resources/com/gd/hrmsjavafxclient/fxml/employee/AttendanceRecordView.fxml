@@ -5,7 +5,7 @@
 <?import java.time.LocalDate?>
 <?import java.time.LocalTime?>
 <AnchorPane prefHeight="550.0" prefWidth="750.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.gd.hrmsjavafxclient.controller.employee.AttendanceRecordController"
+            fx:controller="com.gd.hrmsjavafxclient.controller.employee.EmployeeAttendanceRecordController"
             stylesheets="@../../style/hrms-styles.css">
     <VBox spacing="20.0" styleClass="content-card" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
         <Label text="考勤记录" styleClass="content-header" />
