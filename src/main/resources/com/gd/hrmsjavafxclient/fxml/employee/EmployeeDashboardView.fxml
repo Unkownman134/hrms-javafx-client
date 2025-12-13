@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.geometry.Insets?>
+
+<VBox fx:controller="com.gd.hrmsjavafxclient.controller.employee.EmployeeDashboardController"
+      alignment="TOP_CENTER" spacing="10.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      styleClass="dashboard-card" stylesheets="@../../style/hrms-styles.css">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <Label text="我的仪表盘" styleClass="card-title" fx:id="dashboardTitle" />
+    <Label fx:id="welcomeLabel" styleClass="card-content" />
+    <Label fx:id="roleLabel" styleClass="card-content" />
+    <Label fx:id="empIdLabel" styleClass="card-content" />
+    <Label fx:id="dateTimeLabel" styleClass="card-content" />
+    <Label text="请从左侧导航栏开始您的自助服务。😊" styleClass="card-content"/>
+
+</VBox>

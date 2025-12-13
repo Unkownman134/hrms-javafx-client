@@ -2,7 +2,7 @@ package com.gd.hrmsjavafxclient.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gd.hrmsjavafxclient.model.LoginRequest;
-import com.gd.hrmsjavafxclient.model.User;
+import com.gd.hrmsjavafxclient.model.User; // 依然保留，虽然 login 不直接返回它
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -15,7 +15,14 @@ public class AuthService {
     private final HttpClient httpClient = HttpClient.newHttpClient();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public User login(String username, String password) throws Exception {
+    /**
+     * 登录认证，返回 JWT Token 字符串。
+     * 🌟 修正：返回类型为 String，对应后端返回的 JWT 字符串。
+     * @param username 用户名
+     * @param password 密码
+     * @return 认证成功的 JWT Token 字符串，失败返回 null。
+     */
+    public String login(String username, String password) throws Exception { // 👈 修正：返回类型改为 String
         LoginRequest loginRequest = new LoginRequest(username, password);
         String requestBody = objectMapper.writeValueAsString(loginRequest);
 
@@ -28,16 +35,14 @@ public class AuthService {
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
         if (response.statusCode() == 200) {
-            // 登录成功，返回 User 对象
-            return objectMapper.readValue(response.body(), User.class);
+            // 🌟 关键修正：后端现在返回的是 JWT Token 字符串，直接返回响应体
+            return response.body();
         } else if (response.statusCode() == 401) {
-            // 用户名或密码错误
             System.err.println("登录失败，状态码: 401, 错误信息: 用户名或密码错误");
             return null;
         } else {
-            // 其他服务器错误
-            System.err.println("登录时发生服务器错误，状态码: " + response.statusCode());
-            throw new RuntimeException("服务器返回错误：" + response.body());
+            System.err.println("登录失败，状态码: " + response.statusCode() + ", 响应: " + response.body());
+            throw new Exception("登录失败，状态码: " + response.statusCode() + ", 响应: " + response.body());
         }
     }
 }

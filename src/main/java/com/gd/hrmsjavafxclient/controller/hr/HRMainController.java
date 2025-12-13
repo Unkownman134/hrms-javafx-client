@@ -8,6 +8,7 @@ import javafx.scene.text.Text;
 
 /**
  * 角色ID=2：人事管理员主界面控制器
+ * 🌟 修正：实现带有 authToken 的 setUserInfo 方法。
  */
 public class HRMainController implements MainController {
 
@@ -16,8 +17,18 @@ public class HRMainController implements MainController {
     @FXML
     private Label roleTitle;
 
+    // --- 新增字段 ---
+    private String authToken; // 🌟 缓存认证 Token
+
+    /**
+     * 实现 MainController 接口
+     * 🌟 修正：接受并存储 authToken
+     */
     @Override
-    public void setUserInfo(CurrentUserInfo userInfo) {
+    public void setUserInfo(CurrentUserInfo userInfo, String authToken) { // 👈 修正方法签名
+        // 存储 Token
+        this.authToken = authToken;
+
         // 设置界面标题
         roleTitle.setText(userInfo.getRoleName());
 
@@ -32,5 +43,7 @@ public class HRMainController implements MainController {
                 userInfo.getPositionName()
         );
         userInfoText.setText(info);
+
+        // 可以在这里调用 loadView 方法来加载默认视图
     }
 }

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import java.time.LocalDate?>
+<?import java.time.LocalTime?>
+<AnchorPane prefHeight="550.0" prefWidth="750.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.gd.hrmsjavafxclient.controller.employee.AttendanceRecordController"
+            stylesheets="@../../style/hrms-styles.css">
+    <VBox spacing="20.0" styleClass="content-card" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+        <Label text="考勤记录" styleClass="content-header" />
+        <Label text="⚠️ 提示：打卡功能请使用移动端APP或线下考勤机完成。PC端仅提供记录查询服务。" styleClass="text-warning"/>
+        <Separator />
+
+        <HBox spacing="10.0" alignment="CENTER_LEFT">
+            <Label text="月份筛选:"/>
+            <ComboBox fx:id="monthComboBox" prefWidth="120"
+                      promptText="选择月份"/>
+            <Button fx:id="queryButton" text="查 询" styleClass="action-button-primary" onAction="#handleQueryButtonAction" />
+            <Button text="导出记录" styleClass="action-button-secondary" onAction="#handleExportButtonAction" />
+        </HBox>
+
+        <TableView fx:id="attendanceTable" VBox.vgrow="ALWAYS" prefHeight="400">
+            <columns>
+                <TableColumn fx:id="dateCol" text="日期" prefWidth="120" />
+                <TableColumn fx:id="clockInCol"
+                             text="上班时间" prefWidth="120" />
+                <TableColumn fx:id="clockOutCol" text="下班时间" prefWidth="120" />
+                <TableColumn fx:id="statusCol" text="状态" prefWidth="100" />
+                <TableColumn fx:id="noteCol" text="备注" prefWidth="250" />
+            </columns>
+            <placeholder>
+                <Label text="暂无考勤记录数据"/>
+            </placeholder>
+        </TableView>
+
+    </VBox>
+</AnchorPane>
