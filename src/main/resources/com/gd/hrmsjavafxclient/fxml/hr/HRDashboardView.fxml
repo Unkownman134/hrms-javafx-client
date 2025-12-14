@@ -20,25 +20,22 @@
 
     <Separator/>
 
-    <Label text="核心人事指标概览" style="-fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: #333333;"/>
+    <Label text="核心人事指标概览 (数据将通过 API 动态加载)" style="-fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: #333333;"/>
 
     <TilePane prefColumns="3" hgap="20" vgap="20">
         <VBox styleClass="indicator-card" alignment="CENTER" prefHeight="100" prefWidth="200">
             <Label text="本月待审批申请" styleClass="indicator-label"/>
-            <Label text="12" styleClass="indicator-value-high" />
+            <Label text="--" styleClass="indicator-value-high" />
         </VBox>
 
         <VBox styleClass="indicator-card" alignment="CENTER" prefHeight="100" prefWidth="200">
             <Label text="待入职员工数" styleClass="indicator-label"/>
-            <Label text="3" styleClass="indicator-value-medium" />
+            <Label text="--" styleClass="indicator-value-medium" />
         </VBox>
 
         <VBox styleClass="indicator-card" alignment="CENTER" prefHeight="100" prefWidth="200">
             <Label text="在职员工总数" styleClass="indicator-label"/>
-            <Label text="150" styleClass="indicator-value-low" />
+            <Label text="--" styleClass="indicator-value-low" />
         </VBox>
     </TilePane>
-
-    <Label text="您可以在左侧导航栏中进行员工档案、部门、职位等管理操作。👍" styleClass="text-info"/>
-
 </VBox>

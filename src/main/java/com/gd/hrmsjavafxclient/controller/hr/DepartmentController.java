@@ -3,7 +3,7 @@ package com.gd.hrmsjavafxclient.controller.hr;
 import com.gd.hrmsjavafxclient.controller.hr.HRMainController.HRSubController;
 import com.gd.hrmsjavafxclient.model.CurrentUserInfo;
 import com.gd.hrmsjavafxclient.model.Department;
-import com.gd.hrmsjavafxclient.service.HRDataService;
+import com.gd.hrmsjavafxclient.service.hr.HRDataService;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.concurrent.Task;

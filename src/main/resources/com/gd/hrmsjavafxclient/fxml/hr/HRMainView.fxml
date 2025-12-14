@@ -40,9 +40,6 @@
 
             <Label text="人事流程" styleClass="nav-group-label"/>
             <Button fx:id="recruitmentButton" text="招聘管理" styleClass="nav-button" onAction="#showRecruitmentView"/>
-            <Button fx:id="salaryButton" text="薪酬福利" styleClass="nav-button" onAction="#showSalaryBenefitView"/>
-            <Button fx:id="applicationButton" text="审批管理" styleClass="nav-button" onAction="#showApplicationView"/>
-
             <Separator styleClass="nav-separator"/>
 
             <Label text="系统" styleClass="nav-group-label"/>

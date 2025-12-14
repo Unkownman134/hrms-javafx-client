@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<AnchorPane prefHeight="550.0" prefWidth="750.0"
+            xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.gd.hrmsjavafxclient.controller.hr.RecruitmentController"
+            stylesheets="@../../style/hrms-styles.css">
+
+    <VBox spacing="20.0" styleClass="content-card"
+          AnchorPane.bottomAnchor="20.0"
+          AnchorPane.leftAnchor="20.0"
+          AnchorPane.rightAnchor="20.0"
+          AnchorPane.topAnchor="20.0">
+
+        <Label fx:id="titleLabel"
+               text="招聘管理 🔎"
+               styleClass="content-header"/>
+        <Separator/>
+
+        <HBox spacing="10.0" alignment="CENTER_LEFT">
+            <Button text="新增候选人" styleClass="action-button-primary" onAction="#handleAddCandidate"/>
+            <Button text="处理结果" styleClass="action-button-secondary" onAction="#handleUpdateResult"/>
+            <Button text="刷新列表" styleClass="action-button-secondary" onAction="#handleRefresh"/>
+            <Label text="提示：数据从API实时获取" styleClass="text-info"/>
+        </HBox>
+
+        <TableView fx:id="candidateTable" VBox.vgrow="ALWAYS">
+            <columns>
+                <TableColumn fx:id="candIDColumn" text="ID" prefWidth="60"/>
+                <TableColumn fx:id="nameColumn" text="姓名" prefWidth="100"/>
+                <TableColumn fx:id="phoneColumn" text="电话" prefWidth="120"/>
+                <TableColumn fx:id="emailColumn" text="邮箱" prefWidth="180"/>
+                <TableColumn fx:id="positionColumn" text="申请职位" prefWidth="150"/>
+                <TableColumn fx:id="interviewDateColumn" text="面试日期" prefWidth="120"/>
+                <TableColumn fx:id="resultColumn" text="结果" prefWidth="80"/>
+            </columns>
+            <placeholder>
+                <Label text="正在加载候选人数据..." />
+            </placeholder>
+        </TableView>
+    </VBox>
+</AnchorPane>
