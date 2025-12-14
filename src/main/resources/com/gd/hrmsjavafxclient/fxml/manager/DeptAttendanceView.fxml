@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox prefHeight="650.0" prefWidth="950.0" spacing="15.0"
+      xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.gd.hrmsjavafxclient.controller.manager.DeptAttendanceController">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
+
+    <Label fx:id="deptNameLabel" text="部门考勤记录查询 📝" styleClass="view-title"/>
+    <Separator/>
+
+    <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="query-bar">
+        <Label text="选择月份:"/>
+        <ComboBox fx:id="monthComboBox" prefWidth="150.0" promptText="选择月份"/>
+
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="queryButton" text="查 询" onAction="#handleQueryAttendance" styleClass="primary-button"/>
+        <Button text="导出记录" styleClass="secondary-button" onAction="#handleExportButtonAction"/>
+    </HBox>
+
+    <TableView fx:id="attendanceTable" VBox.vgrow="ALWAYS" styleClass="data-table">
+        <columns>
+            <TableColumn fx:id="empIdCol" text="员工ID" prefWidth="80.0"/>
+            <TableColumn fx:id="nameCol" text="员工姓名" prefWidth="120.0"/>
+            <TableColumn fx:id="dateCol" text="日期" prefWidth="120.0"/>
+            <TableColumn fx:id="checkInTimeCol" text="上班打卡" prefWidth="100.0"/>
+            <TableColumn fx:id="checkOutTimeCol" text="下班打卡" prefWidth="100.0"/>
+            <TableColumn fx:id="statusCol" text="考勤状态" prefWidth="120.0"/>
+            <TableColumn fx:id="noteCol" text="备注/异常说明" prefWidth="200.0"/>
+        </columns>
+        <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+        </columnResizePolicy>
+    </TableView>
+</VBox>

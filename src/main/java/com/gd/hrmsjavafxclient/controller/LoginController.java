@@ -1,16 +1,14 @@
 package com.gd.hrmsjavafxclient.controller;
 
 import com.gd.hrmsjavafxclient.App;
-import com.gd.hrmsjavafxclient.model.CurrentUserInfo;
-import com.gd.hrmsjavafxclient.model.Employee;
-import com.gd.hrmsjavafxclient.model.Position;
-import com.gd.hrmsjavafxclient.model.User;
+// 🌟 修正 1: 导入 Department 模型
+import com.gd.hrmsjavafxclient.model.*;
 import com.gd.hrmsjavafxclient.service.AuthService;
 import com.gd.hrmsjavafxclient.service.DataFetchService;
-import javafx.animation.TranslateTransition; // 导入平移动画
-import javafx.animation.Interpolator;      // 导入插值器
+import javafx.animation.TranslateTransition;
+import javafx.animation.Interpolator;
 import javafx.concurrent.Task;
-import javafx.event.ActionEvent; // 🌟 导入 ActionEvent
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -19,113 +17,118 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.util.Duration; // 导入 Duration
+import javafx.util.Duration;
 
 import java.io.IOException;
+import java.util.Optional;
 
 public class LoginController {
 
     @FXML private TextField usernameField;
     @FXML private PasswordField passwordField;
-    @FXML private VBox loginCard; // 绑定 LoginView.fxml 中的 VBox
+    @FXML private VBox loginCard;
 
     private final AuthService authService = new AuthService();
     private final DataFetchService dataFetchService = new DataFetchService();
 
-    // 🌟 修正：实现摇晃动画
-    private void shakeLoginCard() {
-        TranslateTransition tt = new TranslateTransition(Duration.millis(50), loginCard);
-        tt.setFromX(0f);
-        tt.setByX(10f);
-        tt.setCycleCount(4);
-        tt.setAutoReverse(true);
-        tt.setInterpolator(Interpolator.LINEAR);
-        tt.playFromStart();
+    @FXML
+    public void initialize() {
+        // 初始时给登录框加一个轻微的抖动动画，表示等待输入
+        TranslateTransition transition = new TranslateTransition(Duration.millis(500), loginCard);
+        transition.setFromY(-5.0);
+        transition.setToY(0.0);
+        transition.setCycleCount(4);
+        transition.setAutoReverse(true);
+        transition.setInterpolator(Interpolator.EASE_BOTH);
+        transition.play();
     }
 
     @FXML
-    private void handleLogin(ActionEvent event) {
+    public void handleLoginAction(ActionEvent event) {
         String username = usernameField.getText();
         String password = passwordField.getText();
 
-        if (username.trim().isEmpty() || password.trim().isEmpty()) {
-            shakeLoginCard();
-            showAlert("温馨提示", "用户名和密码不能为空哦！");
+        if (username.isEmpty() || password.isEmpty()) {
+            showAlert("登录失败", "用户名或密码不能为空哦！");
             return;
         }
 
-        // 运行在后台线程，避免阻塞 UI
-        Task<Void> loginTask = new Task<>() {
-            private String authToken = null; // 存储认证 Token
-            private User user = null; // 存储用户基础信息 (来自 /auth/user-details)
+        // 禁用输入，显示加载中...
+        loginCard.setDisable(true);
+
+        Task<User> loginTask = new Task<>() {
+            private String authToken = null;
+            private User user = null;
             private Employee employee = null;
             private Position position = null;
+            private Department department = null; // 🌟 新增：用于部门信息
 
             @Override
-            protected Void call() throws Exception {
-                // 1. 登录认证，获取 Token
-                // 🌟 修正 1：authService.login() 现在返回 String authToken
-                authToken = authService.login(username, password);
-
-                if (authToken == null || authToken.isEmpty()) {
-                    throw new Exception("用户名或密码错误。");
+            protected User call() throws Exception {
+                // 1. 调用登录 API
+                String token = authService.login(username, password);
+                if (token == null) {
+                    throw new RuntimeException("登录失败，请检查用户名和密码。");
                 }
+                this.authToken = token;
 
-                // 🌟 修正 2：authToken 已获取，不再需要 user.getAuthToken()
-
-                // 2. 使用 Token 获取用户基础信息 (UserID, RoleID, EmpID)
-                // getUserByToken 默认会带上 Token 请求后端的用户详情接口
-                user = dataFetchService.getUserByToken(authToken);
-
+                // 2. 验证并获取 User 基础信息
+                user = dataFetchService.getUserByToken(authToken); // 👈 🌟 修正：改用 dataFetchService.getUserByToken
                 if (user == null) {
-                    throw new Exception("无法获取用户基本信息。");
+                    throw new RuntimeException("认证失败，无法获取用户信息。");
                 }
 
-                // 3. 获取员工和职位信息（现在所有查询都需要 Token）
-                Integer empId = user.getEmpId();
-
-                if (empId != null) {
-                    // 🌟 修正 3.1：getEmployeeById 必须传入 authToken
-                    employee = dataFetchService.getEmployeeById(empId, authToken);
-
+                // 3. 根据 empId 获取员工和职位信息
+                if (user.getEmpId() != null) {
+                    // 获取员工档案
+                    employee = dataFetchService.getEmployeeById(user.getEmpId(), authToken);
                     if (employee != null && employee.getPosId() != null) {
-                        // 🌟 修正 3.2：getPositionById 必须传入 authToken
+                        // 获取职位信息
                         position = dataFetchService.getPositionById(employee.getPosId(), authToken);
+                    }
+
+                    // 4. 🌟 新增：获取部门信息（为 CurrentUserInfo 构造器准备参数）
+                    if (employee != null && employee.getDeptId() != null) {
+                        // 假设 DataFetchService 中新增了根据部门ID获取部门信息的方法
+                        // 🌟 注意：你需要在项目中创建 com.gd.hrmsjavafxclient.model.Department 模型
+                        // 🌟 并且在 DataFetchService 中实现 getDepartmentById(Integer deptId, String authToken)
+                        department = dataFetchService.getDepartmentById(employee.getDeptId(), authToken);
                     }
                 }
 
-                return null;
+                return user;
             }
 
             @Override
             protected void succeeded() {
-                try {
-                    // 4. 聚合信息
-                    CurrentUserInfo userInfo = new CurrentUserInfo(
-                            user.getUserId(),
-                            user.getUsername(),
-                            user.getRoleId(),
-                            user.getEmpId(), // 使用修正后的 EmpId
-                            employee != null ? employee.getEmpName() : null,
-                            position != null ? position.getPosName() : null
-                    );
+                // 登录成功，线程切换回 JavaFX 线程进行 UI 操作
 
-                    // 5. 启动主界面，传入聚合信息和 Token
-                    launchMainView(userInfo, authToken);
+                // 5. 聚合用户信息 (🌟 关键修正：传递 8 个参数)
+                Integer deptId = employee != null ? employee.getDeptId() : null;
+                String departmentName = department != null ? department.getDeptName() : "N/A"; // 如果获取失败，给个默认值
 
-                } catch (Exception e) {
-                    showAlert("系统错误 🐞", "聚合用户信息失败: " + e.getMessage());
-                    e.printStackTrace();
-                }
+                CurrentUserInfo userInfo = new CurrentUserInfo(
+                        user.getUserId(),
+                        user.getUsername(),
+                        user.getRoleId(),
+                        user.getEmpId(),
+                        employee != null ? employee.getEmpName() : null,
+                        position != null ? position.getPosName() : null,
+                        deptId, // 🌟 新增参数 7: 部门ID
+                        departmentName // 🌟 新增参数 8: 部门名称
+                );
+
+                // 6. 切换主界面
+                switchToMainView(userInfo, authToken);
             }
 
             @Override
             protected void failed() {
-                // ... (错误处理逻辑) ...
+                // 登录失败，线程切换回 JavaFX 线程进行 UI 操作
+                loginCard.setDisable(false);
                 Throwable e = getException();
-                // 动画必须在 JavaFX UI 线程运行
-                javafx.application.Platform.runLater(() -> shakeLoginCard());
-                showAlert("登录失败 ❌", e.getMessage());
+                String message = e.getMessage() != null ? e.getMessage() : "未知登录错误。";
+                showAlert("登录失败 ❌", message);
                 e.printStackTrace();
             }
         };
@@ -134,25 +137,16 @@ public class LoginController {
     }
 
     /**
-     * 根据用户角色启动对应的主界面
-     * 🌟 修正：现在需要传入 authToken
+     * 根据角色ID切换到对应的主界面
      */
-    private void launchMainView(CurrentUserInfo userInfo, String authToken) {
+    private void switchToMainView(CurrentUserInfo userInfo, String authToken) {
         String fxmlFile;
-        String title = "HRMS 人力资源管理系统 - ";
+        String title = "HRMS | ";
 
         switch (userInfo.getRoleId()) {
             case 1:
                 fxmlFile = "fxml/admin/AdminMainView.fxml"; // 超级管理员
                 title += "超级管理员";
-                break;
-            case 2:
-                fxmlFile = "fxml/hr/HRMainView.fxml"; // 人事管理员
-                title += "人事管理员";
-                break;
-            case 3:
-                fxmlFile = "fxml/finance/FinanceMainView.fxml"; // 财务管理员
-                title += "财务管理员";
                 break;
             case 4:
                 fxmlFile = "fxml/manager/ManagerMainView.fxml"; // 部门经理
@@ -171,7 +165,7 @@ public class LoginController {
             // 传递数据到主界面的 Controller
             MainController controller = loader.getController();
             // 🌟 关键修正：调用新的 setUserInfo(userInfo, authToken) 方法
-            controller.setUserInfo(userInfo, authToken); // 👈 传递聚合数据和 Token！
+            controller.setUserInfo(userInfo, authToken);
 
             // 获取当前 Stage 并替换 Scene
             Stage currentStage = (Stage) usernameField.getScene().getWindow();

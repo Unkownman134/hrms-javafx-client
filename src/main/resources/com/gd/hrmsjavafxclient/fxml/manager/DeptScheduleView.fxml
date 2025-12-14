@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox prefHeight="650.0" prefWidth="950.0" spacing="15.0"
+      xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.gd.hrmsjavafxclient.controller.manager.DeptScheduleController">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
+
+    <Label text="部门排班查询 📅" styleClass="view-title"/>
+    <Label fx:id="deptNameLabel" text="当前部门: [部门名称]" styleClass="dashboard-subtitle"/>
+    <Separator/>
+
+    <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="query-bar">
+        <Label text="选择月份:"/>
+        <ComboBox fx:id="monthComboBox" promptText="选择月份" prefWidth="120.0"/>
+        <Button fx:id="queryButton" text="查 询"
+                onAction="#handleQueryButtonAction" styleClass="primary-button"/>
+    </HBox>
+
+    <TableView fx:id="scheduleTable" VBox.vgrow="ALWAYS" styleClass="data-table">
+        <columns>
+            <TableColumn fx:id="employeeNameCol" text="员工姓名" prefWidth="120.0"/>
+            <TableColumn fx:id="dateCol" text="日期" prefWidth="120.0"/>
+            <TableColumn fx:id="shiftNameCol" text="班次名称" prefWidth="150.0"/>
+            <TableColumn fx:id="clockInTimeCol" text="上班时间" prefWidth="100.0"/>
+            <TableColumn fx:id="clockOutTimeCol" text="下班时间" prefWidth="100.0"/>
+
+            <TableColumn fx:id="noteCol" text="备注" prefWidth="250.0"/>
+        </columns>
+    </TableView>
+
+</VBox>

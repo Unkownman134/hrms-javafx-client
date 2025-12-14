@@ -1,22 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Separator?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Text?>
 
-<VBox alignment="CENTER" prefHeight="600.0" prefWidth="800.0" spacing="20.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gd.hrmsjavafxclient.controller.manager.ManagerMainController">
-    <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-    </padding>
-    <children>
-        <Label fx:id="roleTitle" text="部门经理主界面" style="-fx-font-size: 24px; -fx-text-fill: #E74C3C; -fx-font-weight: bold;" />
-        <Text text="欢迎来到部门管理模块，您拥有团队绩效录入、审批等操作权限。" style="-fx-font-size: 14px;" />
-        <Separator />
-        <VBox spacing="10.0" alignment="CENTER_LEFT">
-            <Label text="当前用户信息：" style="-fx-font-weight: bold;" />
-            <Text fx:id="userInfoText" wrappingWidth="700.0" />
+<BorderPane prefHeight="700.0" prefWidth="1200.0"
+            xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.gd.hrmsjavafxclient.controller.manager.ManagerMainController"
+            stylesheets="@../../style/hrms-styles.css" styleClass="root">
+    <top>
+        <VBox styleClass="top-toolbar">
+            <HBox alignment="CENTER_LEFT" spacing="20">
+                <Label text="HRMS | 部门经理管理模块" styleClass="top-title" style="-fx-text-fill: #2ECC71;"/>
+                <Label fx:id="userInfoLabel" styleClass="label"/>
+                <HBox HBox.hgrow="ALWAYS" alignment="CENTER_RIGHT">
+                    <Button text="退 出" onAction="#logout" styleClass="top-logout-button"/>
+                </HBox>
+            </HBox>
         </VBox>
-    </children>
-</VBox>
+    </top>
+
+    <left>
+        <VBox fx:id="sideBar" prefWidth="250.0" styleClass="side-bar">
+
+            <Button text="部门仪表盘" styleClass="nav-button" onAction="#showDashboardView"/>
+            <Separator styleClass="nav-separator"/>
+
+            <Label text="部门数据" styleClass="nav-group-label"/>
+            <Button text="部门员工管理" styleClass="nav-button" onAction="#showDeptEmployeeView"/>
+            <Button text="部门排班查询" styleClass="nav-button" onAction="#showDeptScheduleView"/>
+            <Button text="部门考勤记录" styleClass="nav-button" onAction="#showDeptAttendanceView"/>
+
+            <Separator styleClass="nav-separator"/>
+
+            <Label text="系统信息" styleClass="nav-group-label"/>
+            <Button text="班次规则查看" styleClass="nav-button" onAction="#showShiftRuleView"/>
+            <Button text="我的审批" styleClass="nav-button" onAction="#showApprovalView" disable="true"/> <padding>
+            <Insets top="10.0"/>
+        </padding>
+        </VBox>
+    </left>
+
+    <center>
+        <StackPane fx:id="contentPane" styleClass="content-pane">
+        </StackPane>
+    </center>
+</BorderPane>

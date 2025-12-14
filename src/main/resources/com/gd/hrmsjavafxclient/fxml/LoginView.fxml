@@ -11,46 +11,46 @@
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.gd.hrmsjavafxclient.controller.LoginController"
             stylesheets="@../style/hrms-styles.css"
-            styleClass="root"> <children>
-    <VBox fx:id="loginCard" alignment="CENTER" spacing="24"
-          AnchorPane.topAnchor="0"
-          AnchorPane.bottomAnchor="0"
-          AnchorPane.leftAnchor="0"
-          AnchorPane.rightAnchor="0"
-          styleClass="login-card">
+            styleClass="root">
+    <children>
+        <VBox fx:id="loginCard" alignment="CENTER" spacing="24"
+              AnchorPane.topAnchor="0"
+              AnchorPane.bottomAnchor="0"
+              AnchorPane.leftAnchor="0"
+              AnchorPane.rightAnchor="0"
+              styleClass="login-card">
 
-        <ImageView fitWidth="64" fitHeight="64" pickOnBounds="true">
-            <image>
-                <Image url="@../images/icon.jpg" />
-            </image>
-        </ImageView>
+            <ImageView fitWidth="64" fitHeight="64" pickOnBounds="true">
+                <image>
+                    <Image url="@../images/icon.jpg" />
+                </image>
+            </ImageView>
 
-        <Label text="人事管理系统登录" styleClass="content-header"/>
+            <Label text="人事管理系统登录" styleClass="content-header"/>
 
-        <VBox spacing="6" maxWidth="300">
-            <children>
-                <Label text="用户名：" styleClass="icon-label"/>
-                <TextField fx:id="usernameField"
-                           promptText="请输入用户名"
-                           styleClass="text-field"/>
-            </children>
+            <VBox spacing="6" maxWidth="300">
+                <children>
+                    <Label text="用户名：" styleClass="icon-label"/>
+                    <TextField fx:id="usernameField"
+                               promptText="请输入用户名"
+                               styleClass="text-field"/>
+                </children>
+            </VBox>
+
+            <VBox spacing="6" maxWidth="300">
+                <children>
+                    <Label text="密码：" styleClass="icon-label"/>
+                    <PasswordField fx:id="passwordField"
+                                   promptText="请输入密码"
+                                   styleClass="password-field"/>
+                </children>
+            </VBox>
+
+            <Button text="登 录"
+                    onAction="#handleLoginAction"  styleClass="action-button" />
+
+            <Label fx:id="errorLabel" styleClass="error-label" text="" visible="false"/>
+
         </VBox>
-
-        <VBox spacing="6" maxWidth="300">
-            <children>
-                <Label text="密码：" styleClass="icon-label"/>
-                <PasswordField fx:id="passwordField"
-                               promptText="请输入密码"
-                               styleClass="password-field"/>
-            </children>
-        </VBox>
-
-        <Button text="登 录"
-                onAction="#handleLogin"
-                styleClass="action-button" />
-
-        <Label fx:id="errorLabel" styleClass="error-label" text="" visible="false"/>
-
-    </VBox>
-</children>
+    </children>
 </AnchorPane>

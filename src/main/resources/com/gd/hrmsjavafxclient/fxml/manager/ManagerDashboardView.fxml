@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+
+<VBox alignment="TOP_CENTER" prefHeight="600.0" prefWidth="950.0" spacing="20.0"
+      xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.gd.hrmsjavafxclient.controller.manager.ManagerDashboardController"
+      styleClass="dashboard-view">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
+
+    <Label fx:id="welcomeLabel" text="欢迎回来，[经理姓名]！" styleClass="dashboard-title"/>
+    <Label fx:id="roleLabel" text="[角色名称] ([部门名称])" styleClass="dashboard-subtitle"/>
+
+    <Separator/>
+
+    <VBox spacing="10.0" alignment="TOP_LEFT">
+        <Label text="部门概览 Quick Stats 🚀" styleClass="section-title"/>
+        <Text text="在这里可以看到本月部门员工的考勤异常统计、待审批申请、以及员工总数等关键指标 (KPI) 的快速概览。" wrappingWidth="800.0"/>
+
+        <HBox spacing="20" alignment="CENTER_LEFT" styleClass="card-container">
+            <VBox styleClass="stat-card">
+                <Label text="部门员工总数" styleClass="stat-label"/>
+                <Label text="0" fx:id="deptEmpCountLabel" styleClass="stat-value" style="-fx-text-fill: #2980B9;"/>
+            </VBox>
+            <VBox styleClass="stat-card">
+                <Label text="本月迟到人数" styleClass="stat-label"/>
+                <Label text="0" fx:id="lateCountLabel" styleClass="stat-value" style="-fx-text-fill: #E74C3C;"/>
+            </VBox>
+            <VBox styleClass="stat-card">
+                <Label text="待审批申请" styleClass="stat-label"/>
+                <Label text="0" fx:id="pendingApprovalLabel" styleClass="stat-value" style="-fx-text-fill: #F39C12;"/>
+            </VBox>
+        </HBox>
+    </VBox>
+
+</VBox>
