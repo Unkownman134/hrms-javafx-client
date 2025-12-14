@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane prefHeight="550.0" prefWidth="750.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.gd.hrmsjavafxclient.controller.hr.PositionController"
+            stylesheets="@../../style/hrms-styles.css">
+
+    <VBox spacing="20.0" styleClass="content-card" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+        <Label text="职位信息管理 💼" styleClass="content-header" />
+        <Separator />
+
+        <HBox spacing="10.0" alignment="CENTER_LEFT">
+            <Button text="新增职位" styleClass="action-button-primary" onAction="#handleAddPosition"/>
+            <Button text="编辑职位" styleClass="action-button-secondary" disable="true"/>
+            <Button text="删除职位" styleClass="action-button-danger" disable="true"/>
+            <Label text="提示：数据从API实时获取" styleClass="text-info"/>
+        </HBox>
+
+        <TableView fx:id="positionTable" VBox.vgrow="ALWAYS">
+            <columns>
+                <TableColumn fx:id="posIdCol" text="职位ID" prefWidth="80"/>
+                <TableColumn fx:id="posNameCol" text="职位名称" prefWidth="200"/>
+                <TableColumn fx:id="posLevelCol" text="职位等级" prefWidth="150"/>
+                <TableColumn fx:id="baseSalaryLevelCol" text="薪酬等级" prefWidth="100"/>
+            </columns>
+        </TableView>
+    </VBox>
+</AnchorPane>

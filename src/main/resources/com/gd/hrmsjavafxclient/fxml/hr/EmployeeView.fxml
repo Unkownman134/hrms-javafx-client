@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import java.time.LocalDate?>
+
+<AnchorPane prefHeight="550.0" prefWidth="750.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.gd.hrmsjavafxclient.controller.hr.EmployeeController"
+            stylesheets="@../../style/hrms-styles.css">
+
+    <VBox spacing="20.0" styleClass="content-card" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+        <Label fx:id="titleLabel" text="员工档案管理" styleClass="content-header" />
+        <Separator />
+
+        <HBox spacing="10.0" alignment="CENTER_LEFT">
+            <Button text="新增员工" styleClass="action-button-primary" onAction="#handleAddEmployee"/>
+            <Button text="编辑档案" styleClass="action-button-secondary" disable="true"/>
+            <Button text="删除员工" styleClass="action-button-danger" onAction="#handleDeleteEmployee"/>
+            <Label text="提示：数据从API实时获取" styleClass="text-info"/>
+        </HBox>
+
+        <TableView fx:id="employeeTable" VBox.vgrow="ALWAYS">
+            <columns>
+                <TableColumn fx:id="empIdCol" text="员工ID" prefWidth="80"/>
+                <TableColumn fx:id="empNameCol" text="姓名" prefWidth="120"/>
+                <TableColumn fx:id="genderCol" text="性别" prefWidth="60"/>
+                <TableColumn fx:id="phoneCol" text="电话" prefWidth="120"/>
+                <TableColumn fx:id="emailCol" text="邮箱" prefWidth="180"/>
+                <TableColumn fx:id="joinDateCol" text="入职日期" prefWidth="120"/>
+                <TableColumn fx:id="statusCol" text="状态" prefWidth="80"/>
+                <TableColumn fx:id="deptIdCol" text="部门ID" prefWidth="80"/>
+                <TableColumn fx:id="posIdCol" text="职位ID" prefWidth="80"/>
+                <TableColumn fx:id="managerIdCol" text="经理ID" prefWidth="80"/>
+            </columns>
+        </TableView>
+    </VBox>
+</AnchorPane>

@@ -148,6 +148,10 @@ public class LoginController {
                 fxmlFile = "fxml/admin/AdminMainView.fxml"; // 超级管理员
                 title += "超级管理员";
                 break;
+            case 2: // 👈 🌟 新增：人事管理员的跳转逻辑！
+                fxmlFile = "fxml/hr/HRMainView.fxml"; // 人事管理员
+                title += "人事管理员";
+                break;
             case 4:
                 fxmlFile = "fxml/manager/ManagerMainView.fxml"; // 部门经理
                 title += "部门经理";
