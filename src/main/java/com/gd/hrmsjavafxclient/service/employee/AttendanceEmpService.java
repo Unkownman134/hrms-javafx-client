@@ -12,8 +12,9 @@ public class AttendanceEmpService {
 
     // 假设这是 EmployeeService 接口中 getAttendanceRecords 的实现逻辑
     public List<AttendanceRecord> getAttendanceRecords(int empId, String yearMonth, String authToken) throws Exception {
-        // API: GET /api/attendance/{EmpID}?yearMonth=YYYY-MM
-        String path = String.format("/attendance/%d?yearMonth=%s", empId, yearMonth);
+        // 🌟 修正：后端API不支持月份筛选，我们只请求该员工的所有考勤记录
+        // API: GET /api/attendance/{EmpID}
+        String path = String.format("/attendance/%d", empId);
 
         // 只需要 3 个参数：path, authToken, TypeReference
         return ServiceUtil.sendGetRequestAndParseList(

@@ -29,9 +29,6 @@
                 <TableColumn fx:id="statusCol" text="状态" prefWidth="100" />
                 <TableColumn fx:id="noteCol" text="备注" prefWidth="250" />
             </columns>
-            <placeholder>
-                <Label text="暂无考勤记录数据"/>
-            </placeholder>
         </TableView>
 
     </VBox>
