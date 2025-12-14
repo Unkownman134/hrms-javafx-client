@@ -4,8 +4,8 @@ import com.gd.hrmsjavafxclient.controller.manager.ManagerMainController.ManagerS
 import com.gd.hrmsjavafxclient.model.AttendanceRecord;
 import com.gd.hrmsjavafxclient.model.CurrentUserInfo;
 import com.gd.hrmsjavafxclient.model.Employee;
-import com.gd.hrmsjavafxclient.service.AttendanceManagerService;
-import com.gd.hrmsjavafxclient.service.EmployeeManagerService;
+import com.gd.hrmsjavafxclient.service.manager.AttendanceManagerService;
+import com.gd.hrmsjavafxclient.service.manager.EmployeeManagerService;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;

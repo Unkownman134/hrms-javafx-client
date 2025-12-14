@@ -1,7 +1,7 @@
 package com.gd.hrmsjavafxclient.controller.admin;
 
 import com.gd.hrmsjavafxclient.model.Employee;
-import com.gd.hrmsjavafxclient.service.EmployeeAdminService;
+import com.gd.hrmsjavafxclient.service.admin.EmployeeAdminService;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

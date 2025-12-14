@@ -4,8 +4,8 @@ import com.gd.hrmsjavafxclient.controller.manager.ManagerMainController.ManagerS
 import com.gd.hrmsjavafxclient.model.CurrentUserInfo;
 import com.gd.hrmsjavafxclient.model.Schedule; // 排班 Model
 import com.gd.hrmsjavafxclient.model.Employee;
-import com.gd.hrmsjavafxclient.service.ScheduleManagerService;
-import com.gd.hrmsjavafxclient.service.EmployeeManagerService;
+import com.gd.hrmsjavafxclient.service.manager.ScheduleManagerService;
+import com.gd.hrmsjavafxclient.service.manager.EmployeeManagerService;
 
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
@@ -17,12 +17,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;

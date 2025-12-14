@@ -1,4 +1,4 @@
-package com.gd.hrmsjavafxclient.service;
+package com.gd.hrmsjavafxclient.service.employee;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.gd.hrmsjavafxclient.model.SalaryRecord;

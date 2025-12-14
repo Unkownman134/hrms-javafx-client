@@ -4,7 +4,7 @@ import com.gd.hrmsjavafxclient.controller.employee.EmployeeMainController.Employ
 import com.gd.hrmsjavafxclient.model.ApprovalRequest;
 import com.gd.hrmsjavafxclient.model.CurrentUserInfo;
 // ✅ 导入新的 ApplicationEmpService，专门负责提交申请！
-import com.gd.hrmsjavafxclient.service.ApplicationEmpService;
+import com.gd.hrmsjavafxclient.service.employee.ApplicationEmpService;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.concurrent.Task;

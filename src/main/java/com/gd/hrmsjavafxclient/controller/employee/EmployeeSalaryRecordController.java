@@ -8,7 +8,7 @@ import com.gd.hrmsjavafxclient.model.CurrentUserInfo;
 // import com.gd.hrmsjavafxclient.service.EmployeeServiceImpl;
 
 // ✅ 导入新的 SalaryEmpService
-import com.gd.hrmsjavafxclient.service.SalaryEmpService;
+import com.gd.hrmsjavafxclient.service.employee.SalaryEmpService;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;

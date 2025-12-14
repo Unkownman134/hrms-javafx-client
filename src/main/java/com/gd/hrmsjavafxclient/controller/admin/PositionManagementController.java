@@ -1,7 +1,7 @@
 package com.gd.hrmsjavafxclient.controller.admin;
 
 import com.gd.hrmsjavafxclient.model.Position;
-import com.gd.hrmsjavafxclient.service.PositionAdminService;
+import com.gd.hrmsjavafxclient.service.admin.PositionAdminService;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

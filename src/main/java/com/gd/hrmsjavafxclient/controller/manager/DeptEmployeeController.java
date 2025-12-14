@@ -4,8 +4,8 @@ import com.gd.hrmsjavafxclient.controller.manager.ManagerMainController.ManagerS
 import com.gd.hrmsjavafxclient.model.CurrentUserInfo;
 import com.gd.hrmsjavafxclient.model.Employee;
 import com.gd.hrmsjavafxclient.model.Position;
-import com.gd.hrmsjavafxclient.service.EmployeeManagerService;
-import com.gd.hrmsjavafxclient.service.PositionManagerService;
+import com.gd.hrmsjavafxclient.service.manager.EmployeeManagerService;
+import com.gd.hrmsjavafxclient.service.manager.PositionManagerService;
 
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;

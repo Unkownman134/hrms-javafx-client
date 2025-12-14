@@ -1,4 +1,4 @@
-package com.gd.hrmsjavafxclient.service;
+package com.gd.hrmsjavafxclient.service.admin;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;

@@ -1,4 +1,4 @@
-package com.gd.hrmsjavafxclient.service;
+package com.gd.hrmsjavafxclient.service.manager;
 
 import com.gd.hrmsjavafxclient.model.Schedule;
 import com.gd.hrmsjavafxclient.model.ShiftRule;

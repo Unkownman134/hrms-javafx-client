@@ -1,4 +1,4 @@
-package com.gd.hrmsjavafxclient.service;
+package com.gd.hrmsjavafxclient.service.manager;
 
 import com.gd.hrmsjavafxclient.model.Position;
 import com.gd.hrmsjavafxclient.util.ServiceUtil;

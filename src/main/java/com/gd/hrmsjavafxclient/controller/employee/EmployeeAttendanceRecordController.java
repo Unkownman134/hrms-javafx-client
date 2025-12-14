@@ -8,7 +8,7 @@ import com.gd.hrmsjavafxclient.model.CurrentUserInfo;
 // import com.gd.hrmsjavafxclient.service.EmployeeServiceImpl;
 
 // ✅ 导入新的 AttendanceEmpService
-import com.gd.hrmsjavafxclient.service.AttendanceEmpService;
+import com.gd.hrmsjavafxclient.service.employee.AttendanceEmpService;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;

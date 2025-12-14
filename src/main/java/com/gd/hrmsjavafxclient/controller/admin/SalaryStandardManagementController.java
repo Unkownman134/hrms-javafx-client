@@ -1,7 +1,7 @@
 package com.gd.hrmsjavafxclient.controller.admin;
 
 import com.gd.hrmsjavafxclient.model.SalaryStandard;
-import com.gd.hrmsjavafxclient.service.SalaryStandardAdminService;
+import com.gd.hrmsjavafxclient.service.admin.SalaryStandardAdminService;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;

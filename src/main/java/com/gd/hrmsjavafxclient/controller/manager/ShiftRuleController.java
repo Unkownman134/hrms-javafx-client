@@ -3,7 +3,7 @@ package com.gd.hrmsjavafxclient.controller.manager;
 import com.gd.hrmsjavafxclient.controller.manager.ManagerMainController.ManagerSubController;
 import com.gd.hrmsjavafxclient.model.CurrentUserInfo;
 import com.gd.hrmsjavafxclient.model.ShiftRule;
-import com.gd.hrmsjavafxclient.service.ShiftRuleManagerService;
+import com.gd.hrmsjavafxclient.service.manager.ShiftRuleManagerService;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
