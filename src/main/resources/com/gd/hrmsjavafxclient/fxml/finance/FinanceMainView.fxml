@@ -10,7 +10,7 @@
     <top>
         <VBox styleClass="top-toolbar">
             <HBox alignment="CENTER_LEFT" spacing="20">
-                <Label text="HRMS | 薪酬财务控制台" styleClass="top-title" style="-fx-text-fill: #27AE60;"/>
+                <Label text="HRMS | 财务管理系统" styleClass="top-title" style="-fx-text-fill: #27AE60;"/>
                 <Label fx:id="userInfoLabel" styleClass="label"/>
             </HBox>
         </VBox>
@@ -18,22 +18,14 @@
 
     <left>
         <VBox fx:id="sideBar" prefWidth="220.0" styleClass="side-bar">
-            <Button text="财务仪表盘" styleClass="nav-button" onAction="#showDashboardView"/>
+            <Button text="📈 财务仪表盘" styleClass="nav-button" onAction="#showDashboardView"/>
             <Separator styleClass="nav-separator"/>
 
-            <Label text="薪酬管理" styleClass="nav-group-label"/>
-            <Button text="工资条发放" styleClass="nav-button" onAction="#handlePlaceholderAction"/>
-            <Button text="薪资标准维护" styleClass="nav-button" onAction="#handlePlaceholderAction"/>
-            <Button text="五险一金配置" styleClass="nav-button" onAction="#handlePlaceholderAction"/>
-
-            <Separator styleClass="nav-separator"/>
-
-            <Label text="统计分析" styleClass="nav-group-label"/>
-            <Button text="人力成本报表" styleClass="nav-button" onAction="#handlePlaceholderAction"/>
-            <Button text="个税申报记录" styleClass="nav-button" onAction="#handlePlaceholderAction"/>
+            <Label text="业务中心" styleClass="nav-group-label"/>
+            <Button text="💵 工资条管理" styleClass="nav-button" onAction="#showSalaryManagementView"/>
 
             <Region VBox.vgrow="ALWAYS" />
-            <Button text="安全退出" styleClass="nav-button" style="-fx-text-fill: #E74C3C;" onAction="#handleLogout"/>
+            <Button text="退出登录" styleClass="nav-button" style="-fx-text-fill: #E74C3C;" onAction="#handleLogout"/>
         </VBox>
     </left>
 

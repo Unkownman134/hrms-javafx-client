@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox spacing="15.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.gd.hrmsjavafxclient.controller.finance.SalaryManagementController"
+      style="-fx-background-color: white;">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <HBox alignment="CENTER_LEFT" spacing="15" styleClass="form-container-card" style="-fx-padding: 15;">
+        <Label text="选择账期:" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+        <ComboBox fx:id="monthFilterCombo" promptText="全部月份" prefWidth="180" />
+
+        <Button text="重置条件" onAction="#handleReset" styleClass="action-button"
+                style="-fx-background-color: #95A5A6; -fx-text-fill: white;"/>
+
+        <Region HBox.hgrow="ALWAYS" />
+        <Button text="刷新数据" onAction="#loadData" styleClass="action-button"
+                style="-fx-background-color: #3498DB; -fx-text-fill: white;"/>
+    </HBox>
+
+    <TableView fx:id="salaryTable" VBox.vgrow="ALWAYS" styleClass="data-table">
+        <columns>
+            <TableColumn fx:id="colId" text="流水号" prefWidth="80"/>
+            <TableColumn fx:id="colEmpId" text="员工ID" prefWidth="80"/>
+            <TableColumn fx:id="colMonth" text="工资月份" prefWidth="150"/>
+            <TableColumn fx:id="colGross" text="应发总额 (￥)" prefWidth="120"/>
+            <TableColumn fx:id="colTax" text="个人所得税 (￥)" prefWidth="120"/>
+            <TableColumn fx:id="colNet" text="实发净额 (￥)" prefWidth="120"/>
+            <TableColumn fx:id="colDate" text="结算日期" prefWidth="150"/>
+        </columns>
+        <placeholder>
+            <Label text="暂无工资发放记录 Σ( ° △ °|||)"/>
+        </placeholder>
+    </TableView>
+</VBox>

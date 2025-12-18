@@ -72,7 +72,7 @@ public class EmployeeSalaryRecordController implements EmployeeSubController {
 
         // 绑定 TableView
         salaryRecordTable.setItems(data);
-        monthCol.setCellValueFactory(cellData -> cellData.getValue().monthProperty());
+        monthCol.setCellValueFactory(cellData -> cellData.getValue().salaryMonthProperty());
         payDateCol.setCellValueFactory(cellData -> cellData.getValue().payDateProperty());
         grossPayCol.setCellValueFactory(cellData -> cellData.getValue().grossPayProperty());
         netPayCol.setCellValueFactory(cellData -> cellData.getValue().netPayProperty());
@@ -177,7 +177,7 @@ public class EmployeeSalaryRecordController implements EmployeeSubController {
     private void showDetailAlert(SalaryRecord record) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("工资条详细信息 💰");
-        alert.setHeaderText(record.getMonth() + " 工资详情");
+        alert.setHeaderText(record.getSalaryMonth() + " 工资详情");
 
         // 假设 SalaryRecord 包含所有必要的字段
         String content = String.format(
