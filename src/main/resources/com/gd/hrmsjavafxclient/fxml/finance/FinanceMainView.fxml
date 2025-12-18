@@ -1,22 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Separator?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Text?>
 
-<VBox alignment="CENTER" prefHeight="600.0" prefWidth="800.0" spacing="20.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gd.hrmsjavafxclient.controller.finance.FinanceMainController">
-    <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-    </padding>
-    <children>
-        <Label fx:id="roleTitle" text="财务管理员主界面" style="-fx-font-size: 24px; -fx-text-fill: #27AE60; -fx-font-weight: bold;" />
-        <Text text="欢迎来到薪酬财务模块，您拥有薪酬核算、标准配置等操作权限。" style="-fx-font-size: 14px;" />
-        <Separator />
-        <VBox spacing="10.0" alignment="CENTER_LEFT">
-            <Label text="当前用户信息：" style="-fx-font-weight: bold;" />
-            <Text fx:id="userInfoText" wrappingWidth="700.0" />
+<BorderPane prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.gd.hrmsjavafxclient.controller.finance.FinanceMainController"
+            stylesheets="@../../style/hrms-styles.css" styleClass="root">
+    <top>
+        <VBox styleClass="top-toolbar">
+            <HBox alignment="CENTER_LEFT" spacing="20">
+                <Label text="HRMS | 薪酬财务控制台" styleClass="top-title" style="-fx-text-fill: #27AE60;"/>
+                <Label fx:id="userInfoLabel" styleClass="label"/>
+            </HBox>
         </VBox>
-    </children>
-</VBox>
+    </top>
+
+    <left>
+        <VBox fx:id="sideBar" prefWidth="220.0" styleClass="side-bar">
+            <Button text="财务仪表盘" styleClass="nav-button" onAction="#showDashboardView"/>
+            <Separator styleClass="nav-separator"/>
+
+            <Label text="薪酬管理" styleClass="nav-group-label"/>
+            <Button text="工资条发放" styleClass="nav-button" onAction="#handlePlaceholderAction"/>
+            <Button text="薪资标准维护" styleClass="nav-button" onAction="#handlePlaceholderAction"/>
+            <Button text="五险一金配置" styleClass="nav-button" onAction="#handlePlaceholderAction"/>
+
+            <Separator styleClass="nav-separator"/>
+
+            <Label text="统计分析" styleClass="nav-group-label"/>
+            <Button text="人力成本报表" styleClass="nav-button" onAction="#handlePlaceholderAction"/>
+            <Button text="个税申报记录" styleClass="nav-button" onAction="#handlePlaceholderAction"/>
+
+            <Region VBox.vgrow="ALWAYS" />
+            <Button text="安全退出" styleClass="nav-button" style="-fx-text-fill: #E74C3C;" onAction="#handleLogout"/>
+        </VBox>
+    </left>
+
+    <center>
+        <StackPane fx:id="contentPane">
+        </StackPane>
+    </center>
+</BorderPane>

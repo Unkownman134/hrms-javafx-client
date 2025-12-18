@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.geometry.Insets?>
+
+<VBox alignment="TOP_CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      styleClass="dashboard-card" style="-fx-background-color: #F4F7F6;">
+    <padding>
+        <Insets top="40" right="40" bottom="40" left="40"/>
+    </padding>
+
+    <Label text="财务概览仪表盘" styleClass="card-title" style="-fx-font-size: 28px; -fx-text-fill: #2C3E50;" />
+
+    <VBox spacing="10" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);">
+        <Label text="💰 本月薪酬发放状态：待审核" styleClass="card-content" style="-fx-font-size: 16px;"/>
+        <Label text="📊 当前系统总人数：128 人" styleClass="card-content" style="-fx-font-size: 16px;"/>
+        <Label text="📅 最近一次发薪日期：2025-12-05" styleClass="card-content" style="-fx-font-size: 16px;"/>
+    </VBox>
+
+    <Label text="温馨提示：请及时核对员工加班数据以确保本月工资计算准确。"
+           style="-fx-text-fill: #7F8C8D; -fx-font-style: italic;"/>
+</VBox>
