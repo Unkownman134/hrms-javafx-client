@@ -5,20 +5,17 @@ import com.gd.hrmsjavafxclient.service.admin.PositionAdminService;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import java.util.Optional;
-import java.util.List;
+import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
-/**
- * R9: 职位信息管理控制器 (超级管理员/人事管理员子视图)
- */
 public class PositionManagementController {
-
-    // --- TableView 控件 ---
     @FXML private TableView<Position> positionTable;
     @FXML private TableColumn<Position, Integer> posIdCol;
     @FXML private TableColumn<Position, String> posNameCol;
@@ -26,251 +23,109 @@ public class PositionManagementController {
     @FXML private TableColumn<Position, Integer> baseSalaryLevelCol;
     @FXML private TableColumn<Position, Void> actionCol;
 
-    // --- Form 控件 ---
-    @FXML private Label formTitle;
-    @FXML private TextField posIdField;
-    @FXML private TextField posNameField;
-    @FXML private TextField posLevelField;
-    @FXML private TextField baseSalaryLevelField;
-    @FXML private Button saveButton;
-
-    // --- 数据和 Service ---
-    private final PositionAdminService positionService = new PositionAdminService();
-    private final ObservableList<Position> positionList = FXCollections.observableArrayList();
-    private Position selectedPosition = null; // 用于跟踪当前编辑/新增的职位
+    private final PositionAdminService service = new PositionAdminService();
+    private final ObservableList<Position> list = FXCollections.observableArrayList();
 
     @FXML
     public void initialize() {
-        // 1. 初始化表格列和数据绑定
         posIdCol.setCellValueFactory(new PropertyValueFactory<>("posId"));
         posNameCol.setCellValueFactory(new PropertyValueFactory<>("posName"));
         posLevelCol.setCellValueFactory(new PropertyValueFactory<>("posLevel"));
         baseSalaryLevelCol.setCellValueFactory(new PropertyValueFactory<>("baseSalaryLevel"));
-        positionTable.setItems(positionList);
 
-        // 2. 监听表格选择事件，加载详情
-        positionTable.getSelectionModel().selectedItemProperty().addListener(
-                (observable, oldValue, newValue) -> showPositionDetails(newValue));
-
-        // 3. 设置操作列 (Edit/Delete Button)
-        setupActionColumn();
-
-        // 4. 默认加载数据
+        initActionButtons();
         loadPositionData();
     }
 
-    // --- 数据加载 (R) ---
-
-    private void loadPositionData() {
-        Task<List<Position>> loadTask = new Task<>() {
-            @Override
-            protected List<Position> call() throws Exception {
-                return positionService.getAllPositions();
+    public void loadPositionData() {
+        new Thread(() -> {
+            try {
+                var data = service.getAllPositions();
+                Platform.runLater(() -> {
+                    list.setAll(data);
+                    positionTable.setItems(list);
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-
-            @Override
-            protected void succeeded() {
-                positionList.clear();
-                positionList.addAll(getValue());
-                // 成功加载，但一般不弹窗，避免打扰用户
-            }
-
-            @Override
-            protected void failed() {
-                getException().printStackTrace();
-                showAlert(Alert.AlertType.ERROR, "加载失败 🚨", "无法从服务器获取职位数据：" + getException().getMessage());
-            }
-        };
-
-        new Thread(loadTask).start();
+        }).start();
     }
 
-    // --- 表格操作列 (Edit/Delete) ---
-    private void setupActionColumn() {
+    private void initActionButtons() {
         actionCol.setCellFactory(param -> new TableCell<>() {
+            private final Button editBtn = new Button("修改");
+            private final Button delBtn = new Button("删除");
+            private final HBox box = new HBox(10, editBtn, delBtn);
 
-            final Button editButton = new Button("编辑");
-            final Button deleteButton = new Button("删除");
-            final HBox pane = new HBox(5, editButton, deleteButton);
+            {
+                editBtn.getStyleClass().add("action-button-small");
+                delBtn.setStyle("-fx-background-color: #e74c3c; -fx-text-fill: white;");
+                editBtn.setOnAction(e -> showEditDialog(getTableView().getItems().get(getIndex())));
+                delBtn.setOnAction(e -> handleDelete(getTableView().getItems().get(getIndex())));
+            }
 
             @Override
-            public void updateItem(Void item, boolean empty) {
+            protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty) {
-                    setGraphic(null);
-                } else {
-                    setGraphic(pane);
-                    Position position = getTableView().getItems().get(getIndex());
-
-                    editButton.setOnAction(event -> {
-                        showPositionDetails(position); // 选中并填充表单
-                        formTitle.setText("编辑职位 ID: " + position.getPosId());
-                        selectedPosition = position; // 标记为编辑状态
-                    });
-
-                    deleteButton.setOnAction(event -> handleDelete(position));
-                }
+                setGraphic(empty ? null : box);
             }
         });
     }
 
-    // --- 详情显示与编辑 (R/U Form) ---
+    @FXML private void handleNewPosition() { showEditDialog(new Position()); }
 
-    private void showPositionDetails(Position position) {
-        if (position == null) {
-            handleCancel();
-            return;
-        }
+    private void showEditDialog(Position p) {
+        Stage stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setTitle(p.getPosId() == null ? "新增岗位" : "修改岗位");
 
-        // 填充表单字段
-        posIdField.setText(position.getPosId() != null ? String.valueOf(position.getPosId()) : "");
-        posNameField.setText(position.getPosName());
-        posLevelField.setText(position.getPosLevel());
-        baseSalaryLevelField.setText(position.getBaseSalaryLevel() != null ? String.valueOf(position.getBaseSalaryLevel()) : "");
+        GridPane grid = new GridPane();
+        grid.setHgap(10); grid.setVgap(10);
+        grid.setStyle("-fx-padding: 20;");
 
-        // 更新表单标题和状态
-        formTitle.setText("职位信息详情/编辑 ID: " + position.getPosId());
-        selectedPosition = position;
-    }
+        TextField nameField = new TextField(p.getPosName());
+        TextField levelField = new TextField(p.getPosLevel());
+        TextField salIdField = new TextField(p.getBaseSalaryLevel() == null ? "" : String.valueOf(p.getBaseSalaryLevel()));
 
-    // --- 按钮事件处理 (C/U/D) ---
+        grid.add(new Label("岗位名称:"), 0, 0); grid.add(nameField, 1, 0);
+        grid.add(new Label("职级等级:"), 0, 1); grid.add(levelField, 1, 1);
+        grid.add(new Label("薪标ID:"), 0, 2); grid.add(salIdField, 1, 2);
 
-    @FXML
-    private void handleRefresh() {
-        loadPositionData();
-    }
+        Button saveBtn = new Button("保存提交");
+        saveBtn.getStyleClass().add("action-button");
+        saveBtn.setOnAction(e -> {
+            try {
+                p.setPosName(nameField.getText());
+                p.setPosLevel(levelField.getText());
+                p.setBaseSalaryLevel(Integer.parseInt(salIdField.getText()));
 
-    @FXML
-    private void handleNewPosition() {
-        clearForm();
-        formTitle.setText("新增职位信息");
-        selectedPosition = new Position(); // 标记为新增状态
-    }
+                if (p.getPosId() == null) service.createPosition(p);
+                else service.updatePosition(p.getPosId(), p);
 
-    @FXML
-    private void handleCancel() {
-        clearForm();
-        formTitle.setText("职位信息详情");
-        selectedPosition = null;
-        positionTable.getSelectionModel().clearSelection(); // 清除表格选中
-    }
-
-    // 创建/保存 (C/U)
-    @FXML
-    private void handleSave() {
-        if (selectedPosition == null) {
-            showAlert(Alert.AlertType.WARNING, "操作警告", "请先选择要编辑的职位或点击 '新增职位' 按钮。");
-            return;
-        }
-
-        // 1. 校验和构建数据对象
-        Position dataToSend = new Position();
-        boolean isNew = selectedPosition.getPosId() == null;
-
-        try {
-            String name = posNameField.getText().trim();
-            String level = posLevelField.getText().trim();
-            String baseSalaryLevelText = baseSalaryLevelField.getText().trim();
-
-            if (name.isEmpty() || level.isEmpty() || baseSalaryLevelText.isEmpty()) {
-                showAlert(Alert.AlertType.ERROR, "输入错误", "职位名称、职位等级和薪酬标准ID都是必填项！");
-                return;
+                stage.close();
+                loadPositionData();
+            } catch (Exception ex) {
+                new Alert(Alert.AlertType.ERROR, "保存失败: " + ex.getMessage()).show();
             }
+        });
 
-            // --- 赋值 ---
-            dataToSend.setPosName(name);
-            dataToSend.setPosLevel(level);
-
-            // 外键赋值 (必须是数字)
-            dataToSend.setBaseSalaryLevel(Integer.parseInt(baseSalaryLevelText));
-
-        } catch (NumberFormatException e) {
-            showAlert(Alert.AlertType.ERROR, "输入错误", "薪酬标准ID必须是有效的数字。");
-            return;
-        } catch (Exception e) {
-            showAlert(Alert.AlertType.ERROR, "输入错误", "请检查所有输入字段是否正确填写。");
-            return;
-        }
-
-        // 2. 执行网络操作
-        Task<Position> saveTask = new Task<>() {
-            @Override
-            protected Position call() throws Exception {
-                if (isNew) {
-                    // C: Create
-                    return positionService.createPosition(dataToSend);
-                } else {
-                    // U: Update (更新操作需要 ID)
-                    return positionService.updatePosition(selectedPosition.getPosId(), dataToSend);
-                }
-            }
-
-            @Override
-            protected void succeeded() {
-                Position result = getValue();
-                showAlert(Alert.AlertType.INFORMATION, "成功 ✅", (isNew ? "新增" : "更新") + "职位信息成功！ID: " + result.getPosId());
-                clearForm();
-                loadPositionData(); // 刷新数据
-            }
-
-            @Override
-            protected void failed() {
-                showAlert(Alert.AlertType.ERROR, "操作失败 ❌", "执行操作时出错：" + getException().getMessage());
-                getException().printStackTrace();
-            }
-        };
-        new Thread(saveTask).start();
+        VBox root = new VBox(20, grid, saveBtn);
+        root.setStyle("-fx-alignment: center; -fx-padding: 10;");
+        stage.setScene(new Scene(root, 350, 300));
+        stage.show();
     }
 
-    // 删除 (D)
-    private void handleDelete(Position position) {
-        Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmAlert.setTitle("确认删除");
-        confirmAlert.setHeaderText("确认删除职位: " + position.getPosName() + " (ID: " + position.getPosId() + ") 吗？");
-        confirmAlert.setContentText("注意：如果该职位下有员工，后端通常会阻止删除！");
-
-        Optional<ButtonType> result = confirmAlert.showAndWait();
-        if (result.isPresent() && result.get() == ButtonType.OK) {
-            Task<Void> deleteTask = new Task<>() {
-                @Override
-                protected Void call() throws Exception {
-                    positionService.deletePosition(position.getPosId());
-                    return null;
-                }
-
-                @Override
-                protected void succeeded() {
-                    showAlert(Alert.AlertType.INFORMATION, "删除成功 ✅", "职位信息 " + position.getPosName() + " 已被删除。");
+    private void handleDelete(Position p) {
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "确定删除岗位 [" + p.getPosName() + "] 吗？");
+        confirm.showAndWait().ifPresent(res -> {
+            if (res == ButtonType.OK) {
+                try {
+                    service.deletePosition(p.getPosId());
                     loadPositionData();
-                    handleCancel();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
                 }
-
-                @Override
-                protected void failed() {
-                    showAlert(Alert.AlertType.ERROR, "删除失败 ❌", "删除操作失败：" + getException().getMessage());
-                    getException().printStackTrace();
-                }
-            };
-            new Thread(deleteTask).start();
-        }
-    }
-
-    // --- 辅助方法 ---
-    private void clearForm() {
-        posIdField.setText("");
-        posNameField.setText("");
-        posLevelField.setText("");
-        baseSalaryLevelField.setText("");
-        selectedPosition = null;
-    }
-
-    private void showAlert(Alert.AlertType type, String title, String content) {
-        Platform.runLater(() -> {
-            Alert alert = new Alert(type);
-            alert.setTitle(title);
-            alert.setHeaderText(null);
-            alert.setContentText(content);
-            alert.showAndWait();
+            }
         });
     }
 }

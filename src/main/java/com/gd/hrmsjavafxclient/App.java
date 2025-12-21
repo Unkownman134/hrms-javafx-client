@@ -9,17 +9,12 @@ import javafx.scene.image.Image;
 import java.io.InputStream;
 import java.io.IOException;
 
-/**
- * JavaFX App 启动类
- */
 public class App extends Application {
 
     private static Stage primaryStage;
 
-    // 🌟 关键点：使用逻辑路径 (ClassPath Path)
-    private static final String APP_ICON_PATH = "images/icon.jpg"; //
+    private static final String APP_ICON_PATH = "images/icon.jpg";
 
-    // 静态方法，用于获取 FXML 资源的便捷路径
     private static Parent loadFXML(String fxml) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("fxml/" + fxml + ".fxml"));
         return fxmlLoader.load();
@@ -29,16 +24,15 @@ public class App extends Application {
     public void start(Stage stage) throws IOException {
         primaryStage = stage;
 
-        // 设置应用程序图标
-        try (InputStream is = App.class.getResourceAsStream(APP_ICON_PATH)) { //
+        try (InputStream is = App.class.getResourceAsStream(APP_ICON_PATH)) {
             if (is != null) {
                 Image appIcon = new Image(is);
                 primaryStage.getIcons().add(appIcon);
             } else {
-                System.err.println("❌ 应用程序图标文件未找到: " + APP_ICON_PATH + " (请检查路径和文件名是否正确)");
+                System.err.println("应用程序图标文件未找到: " + APP_ICON_PATH);
             }
         } catch (Exception e) {
-            System.err.println("❌ 应用程序图标加载失败，请检查文件格式。");
+            System.err.println("应用程序图标加载失败。");
             e.printStackTrace();
         }
 
@@ -59,12 +53,11 @@ public class App extends Application {
 
     private static void loadLoginView(Stage stage) throws IOException {
         Parent root = loadFXML("LoginView");
-        Scene scene = new Scene(root, 500, 500);
-
+        Scene scene = new Scene(root);
         stage.setTitle("人事管理系统 - 登录");
         stage.setScene(scene);
+        stage.setMaximized(true);
         stage.show();
-        stage.centerOnScreen();
     }
 
     public static void main(String[] args) {

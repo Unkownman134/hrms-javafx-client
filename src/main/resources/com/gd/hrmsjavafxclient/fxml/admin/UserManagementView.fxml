@@ -1,71 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.SplitPane?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.PasswordField?>
-<?import javafx.scene.control.TableView?>
 
-<SplitPane dividerPositions="0.6" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="650.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gd.hrmsjavafxclient.controller.admin.UserManagementController" stylesheets="@../../style/hrms-styles.css">
+<VBox spacing="20.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.gd.hrmsjavafxclient.controller.admin.UserManagementController"
+      stylesheets="@../../style/hrms-styles.css" styleClass="root">
+    <padding>
+        <Insets top="25" right="25" bottom="25" left="25"/>
+    </padding>
 
-    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
-        <VBox alignment="TOP_LEFT" layoutX="10.0" layoutY="10.0" spacing="10.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
-            <Label text="用户账号列表 (R2)" styleClass="content-header" />
-            <TableView fx:id="userTable" VBox.vgrow="ALWAYS">
-                <columns>
-                    <TableColumn fx:id="userIdCol" text="ID" prefWidth="50.0" />
-                    <TableColumn fx:id="usernameCol" text="登录名" prefWidth="100.0" />
-                    <TableColumn fx:id="roleIdCol" text="角色ID" prefWidth="60.0" />
-                    <TableColumn fx:id="empIdCol" text="员工ID" prefWidth="60.0" />
-                    <TableColumn fx:id="actionCol" text="操作" prefWidth="120.0" />
-                </columns>
-                <columnResizePolicy>
-                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-                </columnResizePolicy>
-            </TableView>
-        </VBox>
-    </AnchorPane>
+    <HBox alignment="CENTER_LEFT" spacing="15">
+        <children>
+            <VBox>
+                <Label text="用户账号管理" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: -fx-text-main;"/>
+                <Label text="管理系统登录凭证与权限分配" style="-fx-font-size: 12px; -fx-text-fill: -fx-text-muted;"/>
+            </VBox>
+            <Region HBox.hgrow="ALWAYS" />
+            <Button text="🔄 刷新" onAction="#loadUserData" styleClass="refresh-button"/>
+            <Button text="➕ 新增用户" onAction="#handleNewUser" styleClass="action-button" />
+        </children>
+    </HBox>
 
-    <AnchorPane minHeight="0.0" minWidth="0.0">
-        <VBox alignment="TOP_LEFT" layoutX="10.0" layoutY="10.0" spacing="10.0" styleClass="form-container-card" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
-            <Label fx:id="formTitle" text="用户账号详情" styleClass="content-header" />
-
-            <GridPane hgap="10.0" vgap="10.0">
-                <columnConstraints>
-                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="120.0" />
-                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="200.0" />
-                </columnConstraints>
-
-                <Label text="用户ID (UserID):" GridPane.rowIndex="0" />
-                <TextField fx:id="userIdField" editable="false" promptText="自动生成/不可修改" GridPane.columnIndex="1" GridPane.rowIndex="0" />
-
-                <Label text="登录名 (Username):" GridPane.rowIndex="1" />
-                <TextField fx:id="usernameField" promptText="用于系统登录" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-
-                <Label text="新密码 (Password):" GridPane.rowIndex="2" />
-                <PasswordField fx:id="passwordField" promptText="新增时必填，修改时留空则不修改" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-
-                <Label text="角色ID (RoleID):" GridPane.rowIndex="3" />
-                <TextField fx:id="roleIdField" promptText="1-超级管理员, 2-人事..." GridPane.columnIndex="1" GridPane.rowIndex="3" />
-
-                <Label text="关联员工ID (EmpID):" GridPane.rowIndex="4" />
-                <TextField fx:id="empIdField" promptText="关联一个存在的员工ID" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-
-            </GridPane>
-
-            <HBox spacing="10.0" alignment="CENTER_LEFT" VBox.vgrow="ALWAYS">
-                <Button fx:id="saveButton" mnemonicParsing="false" onAction="#handleSave" prefWidth="100.0" text="保存" styleClass="action-button" />
-                <Button mnemonicParsing="false" onAction="#handleCancel" prefWidth="100.0" text="取消/新增" styleClass="action-button-secondary" />
-            </HBox>
-        </VBox>
-    </AnchorPane>
-</SplitPane>
+    <TableView fx:id="userTable" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="userIdCol" text="ID" prefWidth="100"/>
+            <TableColumn fx:id="usernameCol" text="用户名" prefWidth="250"/>
+            <TableColumn fx:id="roleIdCol" text="角色" prefWidth="150"/>
+            <TableColumn fx:id="empIdCol" text="关联员工ID" prefWidth="150"/>
+            <TableColumn fx:id="actionCol" text="操作" prefWidth="200"/>
+        </columns>
+        <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+        </columnResizePolicy>
+    </TableView>
+</VBox>

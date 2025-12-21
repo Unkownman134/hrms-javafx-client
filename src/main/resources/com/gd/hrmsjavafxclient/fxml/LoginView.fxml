@@ -6,51 +6,56 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 
-<AnchorPane prefHeight="500.0" prefWidth="500.0"
-            xmlns="http://javafx.com/javafx/17"
+<AnchorPane xmlns="http://javafx.com/javafx/17"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.gd.hrmsjavafxclient.controller.LoginController"
             stylesheets="@../style/hrms-styles.css"
             styleClass="root">
     <children>
-        <VBox fx:id="loginCard" alignment="CENTER" spacing="24"
-              AnchorPane.topAnchor="0"
-              AnchorPane.bottomAnchor="0"
-              AnchorPane.leftAnchor="0"
-              AnchorPane.rightAnchor="0"
-              styleClass="login-card">
+        <StackPane AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
+                   AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+            <children>
+                <VBox fx:id="loginCard" alignment="CENTER_LEFT" spacing="45"
+                      maxWidth="450" maxHeight="600" styleClass="login-card">
+                    <padding>
+                        <Insets top="60" right="60" bottom="60" left="60"/>
+                    </padding>
+                    <children>
+                        <VBox spacing="10">
+                            <ImageView fitWidth="48" fitHeight="48" pickOnBounds="true" preserveRatio="true">
+                                <image>
+                                    <Image url="@../images/icon.jpg" />
+                                </image>
+                            </ImageView>
+                            <Label text="Sign In" styleClass="welcome-label"/>
+                            <Label text="Enter your details to access HRMS."
+                                   style="-fx-text-fill: -fx-text-muted; -fx-font-size: 14px;"/>
+                        </VBox>
 
-            <ImageView fitWidth="64" fitHeight="64" pickOnBounds="true">
-                <image>
-                    <Image url="@../images/icon.jpg" />
-                </image>
-            </ImageView>
+                        <VBox spacing="30">
+                            <children>
+                                <VBox spacing="5">
+                                    <Label text="USERNAME"
+                                           style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: -fx-primary-color; -fx-letter-spacing: 1px;"/>
+                                    <TextField fx:id="usernameField" promptText="工号或用户名"/>
+                                </VBox>
+                                <VBox spacing="5">
+                                    <Label text="PASSWORD"
+                                           style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: -fx-primary-color; -fx-letter-spacing: 1px;"/>
+                                    <PasswordField fx:id="passwordField" promptText="登录密码"/>
+                                </VBox>
+                            </children>
+                        </VBox>
 
-            <Label text="人事管理系统登录" styleClass="content-header"/>
-
-            <VBox spacing="6" maxWidth="300">
-                <children>
-                    <Label text="用户名：" styleClass="icon-label"/>
-                    <TextField fx:id="usernameField"
-                               promptText="请输入用户名"
-                               styleClass="text-field"/>
-                </children>
-            </VBox>
-
-            <VBox spacing="6" maxWidth="300">
-                <children>
-                    <Label text="密码：" styleClass="icon-label"/>
-                    <PasswordField fx:id="passwordField"
-                                   promptText="请输入密码"
-                                   styleClass="password-field"/>
-                </children>
-            </VBox>
-
-            <Button text="登 录"
-                    onAction="#handleLoginAction"  styleClass="action-button" />
-
-            <Label fx:id="errorLabel" styleClass="error-label" text="" visible="false"/>
-
-        </VBox>
+                        <VBox spacing="20" alignment="CENTER_LEFT">
+                            <Button text="LOGIN SYSTEM" onAction="#handleLoginAction"
+                                    styleClass="action-button" maxWidth="Infinity" prefHeight="50"/>
+                            <Label fx:id="errorLabel" visible="false"
+                                   style="-fx-text-fill: #E74C3C; -fx-font-size: 13px;" text="账号或密码有误"/>
+                        </VBox>
+                    </children>
+                </VBox>
+            </children>
+        </StackPane>
     </children>
 </AnchorPane>
