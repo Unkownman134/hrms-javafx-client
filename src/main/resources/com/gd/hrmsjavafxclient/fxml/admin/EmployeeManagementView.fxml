@@ -24,13 +24,16 @@
 
     <TableView fx:id="employeeTable" VBox.vgrow="ALWAYS">
         <columns>
-            <TableColumn fx:id="empIdCol" text="ID" prefWidth="60"/>
-            <TableColumn fx:id="empNameCol" text="姓名" prefWidth="100"/>
-            <TableColumn fx:id="genderCol" text="性别" prefWidth="60"/>
-            <TableColumn fx:id="phoneCol" text="电话" prefWidth="150"/>
-            <TableColumn fx:id="statusCol" text="状态" prefWidth="100"/>
-            <TableColumn fx:id="deptIdCol" text="部门" prefWidth="120"/>
-            <TableColumn fx:id="actionCol" text="操作" prefWidth="250"/>
+            <TableColumn fx:id="empIdCol" text="ID" prefWidth="50"/>
+            <TableColumn fx:id="empNameCol" text="姓名" prefWidth="80"/>
+            <TableColumn fx:id="genderCol" text="性别" prefWidth="50"/>
+            <TableColumn fx:id="phoneCol" text="电话" prefWidth="110"/>
+            <TableColumn fx:id="emailCol" text="电子邮箱" prefWidth="150"/>
+            <TableColumn fx:id="deptIdCol" text="部门ID" prefWidth="60"/>
+            <TableColumn fx:id="posIdCol" text="职位ID" prefWidth="60"/>
+            <TableColumn fx:id="managerIdCol" text="上级ID" prefWidth="60"/>
+            <TableColumn fx:id="statusCol" text="状态" prefWidth="70"/>
+            <TableColumn fx:id="actionCol" text="操作" prefWidth="140"/>
         </columns>
         <columnResizePolicy>
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

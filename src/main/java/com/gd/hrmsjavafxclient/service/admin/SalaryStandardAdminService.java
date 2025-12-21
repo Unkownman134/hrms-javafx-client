@@ -37,9 +37,16 @@ public class SalaryStandardAdminService {
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(json))
                 .build();
+
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
         if (response.statusCode() == 200 || response.statusCode() == 201) {
-            return objectMapper.readValue(response.body(), SalaryStandard.class);
+            String body = response.body();
+            if (body != null && body.trim().startsWith("{")) {
+                return objectMapper.readValue(body, SalaryStandard.class);
+            } else {
+                return standard;
+            }
         } else {
             throw new RuntimeException("创建失败: " + response.body());
         }

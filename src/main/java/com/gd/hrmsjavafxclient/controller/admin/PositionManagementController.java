@@ -1,6 +1,7 @@
 package com.gd.hrmsjavafxclient.controller.admin;
 
 import com.gd.hrmsjavafxclient.model.Position;
+import com.gd.hrmsjavafxclient.model.SalaryStandard;
 import com.gd.hrmsjavafxclient.service.admin.PositionAdminService;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -14,6 +15,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 
 public class PositionManagementController {
     @FXML private TableView<Position> positionTable;
@@ -33,11 +35,12 @@ public class PositionManagementController {
         posLevelCol.setCellValueFactory(new PropertyValueFactory<>("posLevel"));
         baseSalaryLevelCol.setCellValueFactory(new PropertyValueFactory<>("baseSalaryLevel"));
 
-        initActionButtons();
+        setupActionColumn();
         loadPositionData();
     }
 
-    public void loadPositionData() {
+    @FXML
+    private void loadPositionData() {
         new Thread(() -> {
             try {
                 var data = service.getAllPositions();
@@ -51,19 +54,17 @@ public class PositionManagementController {
         }).start();
     }
 
-    private void initActionButtons() {
+    private void setupActionColumn() {
         actionCol.setCellFactory(param -> new TableCell<>() {
             private final Button editBtn = new Button("修改");
             private final Button delBtn = new Button("删除");
             private final HBox box = new HBox(10, editBtn, delBtn);
-
             {
-                editBtn.getStyleClass().add("action-button-small");
-                delBtn.setStyle("-fx-background-color: #e74c3c; -fx-text-fill: white;");
+                editBtn.getStyleClass().add("action-button-white");
+                delBtn.getStyleClass().add("action-button-delete");
                 editBtn.setOnAction(e -> showEditDialog(getTableView().getItems().get(getIndex())));
                 delBtn.setOnAction(e -> handleDelete(getTableView().getItems().get(getIndex())));
             }
-
             @Override
             protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
@@ -72,46 +73,90 @@ public class PositionManagementController {
         });
     }
 
-    @FXML private void handleNewPosition() { showEditDialog(new Position()); }
+    @FXML
+    private void handleNewPosition() {
+        showEditDialog(new Position());
+    }
 
     private void showEditDialog(Position p) {
         Stage stage = new Stage();
         stage.initModality(Modality.APPLICATION_MODAL);
-        stage.setTitle(p.getPosId() == null ? "新增岗位" : "修改岗位");
+        stage.setTitle(p.getPosId() == null ? "新增职位" : "修改职位");
 
         GridPane grid = new GridPane();
-        grid.setHgap(10); grid.setVgap(10);
-        grid.setStyle("-fx-padding: 20;");
+        grid.setHgap(10); grid.setVgap(15);
+        grid.setStyle("-fx-padding: 25;");
 
         TextField nameField = new TextField(p.getPosName());
         TextField levelField = new TextField(p.getPosLevel());
-        TextField salIdField = new TextField(p.getBaseSalaryLevel() == null ? "" : String.valueOf(p.getBaseSalaryLevel()));
 
-        grid.add(new Label("岗位名称:"), 0, 0); grid.add(nameField, 1, 0);
-        grid.add(new Label("职级等级:"), 0, 1); grid.add(levelField, 1, 1);
-        grid.add(new Label("薪标ID:"), 0, 2); grid.add(salIdField, 1, 2);
+        ComboBox<SalaryStandard> salaryCombo = new ComboBox<>();
+        salaryCombo.setPromptText("请选择薪资标准");
+        salaryCombo.setMaxWidth(Double.MAX_VALUE);
+
+        salaryCombo.setConverter(new StringConverter<>() {
+            @Override public String toString(SalaryStandard s) {
+                return s == null ? "" : s.getStandardName() + " (￥" + s.getTotalAmount() + ")";
+            }
+            @Override public SalaryStandard fromString(String string) { return null; }
+        });
+
+        new Thread(() -> {
+            try {
+                var standards = service.getAllSalaryStandards();
+                Platform.runLater(() -> {
+                    salaryCombo.setItems(FXCollections.observableArrayList(standards));
+                    if (p.getBaseSalaryLevel() != null) {
+                        standards.stream()
+                                .filter(s -> s.getStdId().equals(p.getBaseSalaryLevel()))
+                                .findFirst()
+                                .ifPresent(salaryCombo::setValue);
+                    }
+                });
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }).start();
+
+        grid.add(new Label("职位名称:"), 0, 0); grid.add(nameField, 1, 0);
+        grid.add(new Label("职位级别:"), 0, 1); grid.add(levelField, 1, 1);
+        grid.add(new Label("薪资标准:"), 0, 2); grid.add(salaryCombo, 1, 2);
 
         Button saveBtn = new Button("保存提交");
         saveBtn.getStyleClass().add("action-button");
+        saveBtn.setMaxWidth(Double.MAX_VALUE);
+
         saveBtn.setOnAction(e -> {
             try {
                 p.setPosName(nameField.getText());
                 p.setPosLevel(levelField.getText());
-                p.setBaseSalaryLevel(Integer.parseInt(salIdField.getText()));
 
-                if (p.getPosId() == null) service.createPosition(p);
-                else service.updatePosition(p.getPosId(), p);
+                if (salaryCombo.getValue() != null) {
+                    p.setBaseSalaryLevel(salaryCombo.getValue().getStdId());
+                } else {
+                    throw new RuntimeException("请选择薪资标准！");
+                }
 
-                stage.close();
-                loadPositionData();
+                new Thread(() -> {
+                    try {
+                        if (p.getPosId() == null) service.createPosition(p);
+                        else service.updatePosition(p.getPosId(), p);
+                        Platform.runLater(() -> {
+                            stage.close();
+                            loadPositionData();
+                        });
+                    } catch (Exception ex) {
+                        Platform.runLater(() -> new Alert(Alert.AlertType.ERROR, "保存失败: " + ex.getMessage()).show());
+                    }
+                }).start();
             } catch (Exception ex) {
-                new Alert(Alert.AlertType.ERROR, "保存失败: " + ex.getMessage()).show();
+                new Alert(Alert.AlertType.ERROR, ex.getMessage()).show();
             }
         });
 
         VBox root = new VBox(20, grid, saveBtn);
         root.setStyle("-fx-alignment: center; -fx-padding: 10;");
-        stage.setScene(new Scene(root, 350, 300));
+        stage.setScene(new Scene(root, 400, 350));
         stage.show();
     }
 
@@ -119,12 +164,14 @@ public class PositionManagementController {
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "确定删除岗位 [" + p.getPosName() + "] 吗？");
         confirm.showAndWait().ifPresent(res -> {
             if (res == ButtonType.OK) {
-                try {
-                    service.deletePosition(p.getPosId());
-                    loadPositionData();
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+                new Thread(() -> {
+                    try {
+                        service.deletePosition(p.getPosId());
+                        Platform.runLater(this::loadPositionData);
+                    } catch (Exception ex) {
+                        Platform.runLater(() -> new Alert(Alert.AlertType.ERROR, "删除失败: " + ex.getMessage()).show());
+                    }
+                }).start();
             }
         });
     }

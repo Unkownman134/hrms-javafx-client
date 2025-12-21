@@ -18,6 +18,7 @@ public class DepartmentManagementController {
     @FXML private TableView<Department> departmentTable;
     @FXML private TableColumn<Department, Integer> deptIdCol;
     @FXML private TableColumn<Department, String> deptNameCol;
+    @FXML private TableColumn<Department, String> deptDescCol;
     @FXML private TableColumn<Department, Void> actionCol;
 
     private final DepartmentAdminService service = new DepartmentAdminService();
@@ -27,6 +28,7 @@ public class DepartmentManagementController {
     public void initialize() {
         deptIdCol.setCellValueFactory(new PropertyValueFactory<>("deptId"));
         deptNameCol.setCellValueFactory(new PropertyValueFactory<>("deptName"));
+        deptDescCol.setCellValueFactory(new PropertyValueFactory<>("deptDesc"));
         addActionButtons();
         loadDepartmentData();
     }
@@ -73,19 +75,45 @@ public class DepartmentManagementController {
     private void showEditDialog(Department d) {
         Stage stage = new Stage();
         stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setTitle(d.getDeptId() == null ? "新增部门" : "编辑部门");
+
         TextField nameIn = new TextField(d.getDeptName());
+        nameIn.setPromptText("请输入部门名称");
+
+        TextArea descIn = new TextArea(d.getDeptDesc());
+        descIn.setPromptText("请输入部门描述");
+        descIn.setPrefRowCount(3);
+
         Button save = new Button("保存");
         save.setOnAction(e -> {
-            try {
-                d.setDeptName(nameIn.getText());
-                if (d.getDeptId() == null) service.createDepartment(d);
-                else service.updateDepartment(d.getDeptId(), d);
-                stage.close(); loadDepartmentData();
-            } catch (Exception ex) { showError("保存失败", ex.getMessage()); }
+            new Thread(() -> {
+                try {
+                    d.setDeptName(nameIn.getText());
+                    d.setDeptDesc(descIn.getText());
+
+                    if (d.getDeptId() == null) {
+                        service.createDepartment(d);
+                    } else {
+                        service.updateDepartment(d.getDeptId(), d);
+                    }
+
+                    Platform.runLater(() -> {
+                        stage.close();
+                        loadDepartmentData();
+                    });
+                } catch (Exception ex) {
+                    showError("保存失败", "后端反馈：" + ex.getMessage());
+                }
+            }).start();
         });
-        VBox root = new VBox(15, new Label("部门名称:"), nameIn, save);
-        root.setStyle("-fx-padding: 20; -fx-alignment: center;");
-        stage.setScene(new Scene(root, 300, 200));
+
+        VBox root = new VBox(15,
+                new Label("部门名称:"), nameIn,
+                new Label("部门描述:"), descIn,
+                save
+        );
+        root.setStyle("-fx-padding: 20; -fx-alignment: center-left;");
+        stage.setScene(new Scene(root, 350, 350));
         stage.show();
     }
 

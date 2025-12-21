@@ -54,7 +54,7 @@ public class App extends Application {
     private static void loadLoginView(Stage stage) throws IOException {
         Parent root = loadFXML("LoginView");
         Scene scene = new Scene(root);
-        stage.setTitle("人事管理系统 - 登录");
+        stage.setTitle("人事管理系统");
         stage.setScene(scene);
         stage.setMaximized(true);
         stage.show();

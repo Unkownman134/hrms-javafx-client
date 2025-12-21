@@ -23,21 +23,43 @@ public class DepartmentAdminService {
         throw new RuntimeException("部门查询失败");
     }
 
-    public Department createDepartment(Department d) throws Exception {
+    public void createDepartment(Department d) throws Exception {
         String body = objectMapper.writeValueAsString(d);
-        HttpRequest req = HttpRequest.newBuilder().uri(URI.create(BASE_URL)).header("Content-Type", "application/json").POST(HttpRequest.BodyPublishers.ofString(body)).build();
-        return objectMapper.readValue(httpClient.send(req, HttpResponse.BodyHandlers.ofString()).body(), Department.class);
+        HttpRequest req = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(body))
+                .build();
+
+        HttpResponse<String> response = httpClient.send(req, HttpResponse.BodyHandlers.ofString());
+        String responseBody = response.body();
+
+        if (response.statusCode() == 200 || response.statusCode() == 201) {
+            System.out.println("后端返回信息: " + responseBody);
+            return;
+        }
+        throw new RuntimeException("新增失败，状态码：" + response.statusCode() + " 响应内容：" + responseBody);
     }
 
-    public Department updateDepartment(Integer id, Department d) throws Exception {
+    public void updateDepartment(Integer id, Department d) throws Exception {
         String body = objectMapper.writeValueAsString(d);
-        HttpRequest req = HttpRequest.newBuilder().uri(URI.create(BASE_URL + "/" + id)).header("Content-Type", "application/json").PUT(HttpRequest.BodyPublishers.ofString(body)).build();
-        httpClient.send(req, HttpResponse.BodyHandlers.ofString());
-        return d;
+        HttpRequest req = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL + "/" + id))
+                .header("Content-Type", "application/json")
+                .PUT(HttpRequest.BodyPublishers.ofString(body))
+                .build();
+
+        HttpResponse<String> response = httpClient.send(req, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() != 200) {
+            throw new RuntimeException("更新失败，状态码：" + response.statusCode());
+        }
     }
 
     public void deleteDepartment(Integer id) throws Exception {
         HttpRequest req = HttpRequest.newBuilder().uri(URI.create(BASE_URL + "/" + id)).DELETE().build();
-        httpClient.send(req, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> response = httpClient.send(req, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() != 200 && response.statusCode() != 204) {
+            throw new RuntimeException("删除失败");
+        }
     }
 }

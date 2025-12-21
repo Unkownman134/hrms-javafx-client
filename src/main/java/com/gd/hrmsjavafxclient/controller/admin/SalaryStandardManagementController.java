@@ -52,6 +52,9 @@ public class SalaryStandardManagementController {
                 });
             } catch (Exception e) {
                 e.printStackTrace();
+                Platform.runLater(() -> {
+                    new Alert(Alert.AlertType.ERROR, "加载数据失败：" + e.getMessage()).show();
+                });
             }
         }).start();
     }
@@ -92,9 +95,9 @@ public class SalaryStandardManagementController {
         grid.setStyle("-fx-padding: 25;");
 
         TextField nameIn = new TextField(s.getStandardName());
-        TextField baseIn = new TextField(String.valueOf(s.getBasicSalary() == null ? "" : s.getBasicSalary()));
-        TextField mealIn = new TextField(String.valueOf(s.getMealAllowance() == null ? "" : s.getMealAllowance()));
-        TextField otherIn = new TextField(String.valueOf(s.getAllowances() == null ? "" : s.getAllowances()));
+        TextField baseIn = new TextField(s.getBasicSalary() == null ? "0" : String.valueOf(s.getBasicSalary()));
+        TextField mealIn = new TextField(s.getMealAllowance() == null ? "0" : String.valueOf(s.getMealAllowance()));
+        TextField otherIn = new TextField(s.getAllowances() == null ? "0" : String.valueOf(s.getAllowances()));
 
         grid.add(new Label("标准名称:"), 0, 0); grid.add(nameIn, 1, 0);
         grid.add(new Label("基本工资:"), 0, 1); grid.add(baseIn, 1, 1);
@@ -107,21 +110,44 @@ public class SalaryStandardManagementController {
 
         save.setOnAction(e -> {
             try {
-                s.setStandardName(nameIn.getText());
-                s.setBasicSalary(Double.parseDouble(baseIn.getText()));
-                s.setMealAllowance(Double.parseDouble(mealIn.getText()));
-                s.setAllowances(Double.parseDouble(otherIn.getText()));
+                // 1. 先进行格式转换校验，避免把错误带到后端
+                String name = nameIn.getText();
+                double base = Double.parseDouble(baseIn.getText().trim());
+                double meal = Double.parseDouble(mealIn.getText().trim());
+                double other = Double.parseDouble(otherIn.getText().trim());
 
-                if (s.getStdId() == null) {
-                    service.createSalaryStandard(s);
-                } else {
-                    service.updateSalaryStandard(s.getStdId(), s);
+                if (name == null || name.trim().isEmpty()) {
+                    throw new IllegalArgumentException("名称不能为空！");
                 }
 
-                stage.close();
-                loadStandardData();
-            } catch (Exception ex) {
-                new Alert(Alert.AlertType.ERROR, "保存失败：请输入正确的数字格式！").show();
+                s.setStandardName(name);
+                s.setBasicSalary(base);
+                s.setMealAllowance(meal);
+                s.setAllowances(other);
+
+                new Thread(() -> {
+                    try {
+                        if (s.getStdId() == null) {
+                            service.createSalaryStandard(s);
+                        } else {
+                            service.updateSalaryStandard(s.getStdId(), s);
+                        }
+                        // 4. 成功后回到 UI 线程操作
+                        Platform.runLater(() -> {
+                            stage.close();
+                            loadStandardData();
+                        });
+                    } catch (Exception ex) {
+                        Platform.runLater(() -> {
+                            new Alert(Alert.AlertType.ERROR, "服务器保存失败：" + ex.getMessage()).show();
+                        });
+                    }
+                }).start();
+
+            } catch (NumberFormatException nfe) {
+                new Alert(Alert.AlertType.ERROR, "输入内容不是合法的数字").show();
+            } catch (IllegalArgumentException iae) {
+                new Alert(Alert.AlertType.ERROR, iae.getMessage()).show();
             }
         });
 
@@ -135,12 +161,16 @@ public class SalaryStandardManagementController {
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "确定删除标准 [" + s.getStandardName() + "] 吗？");
         confirm.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
-                try {
-                    service.deleteSalaryStandard(s.getStdId());
-                    loadStandardData();
-                } catch (Exception ex) {
-                    new Alert(Alert.AlertType.ERROR, "删除失败: " + ex.getMessage()).show();
-                }
+                new Thread(() -> {
+                    try {
+                        service.deleteSalaryStandard(s.getStdId());
+                        Platform.runLater(this::loadStandardData);
+                    } catch (Exception ex) {
+                        Platform.runLater(() -> {
+                            new Alert(Alert.AlertType.ERROR, "删除失败: " + ex.getMessage()).show();
+                        });
+                    }
+                }).start();
             }
         });
     }
