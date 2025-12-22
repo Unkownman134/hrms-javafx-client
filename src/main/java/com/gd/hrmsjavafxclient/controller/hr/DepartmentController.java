@@ -7,41 +7,30 @@ import com.gd.hrmsjavafxclient.service.hr.HRDataService;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import java.util.List;
 
-/**
- * 部门管理子视图控制器 (加载并显示部门列表)
- */
 public class DepartmentController implements HRSubController {
 
     @FXML private TableView<Department> departmentTable;
-    // 🌟 Table Columns (fx:id 必须匹配 FXML)
     @FXML private TableColumn<Department, Integer> deptIdCol;
     @FXML private TableColumn<Department, String> deptNameCol;
+    @FXML private TableColumn<Department, String> deptDescCol;
 
     private final HRDataService hrDataService = new HRDataService();
     private String authToken;
 
     @FXML
     public void initialize() {
-        setupTableColumns();
-    }
-
-    /**
-     * 配置 TableView 的列与 Department Model 的属性绑定。
-     */
-    private void setupTableColumns() {
-        // 绑定 Department.java 中的属性名
+        // 映射 Model 中的属性名
         deptIdCol.setCellValueFactory(new PropertyValueFactory<>("deptId"));
         deptNameCol.setCellValueFactory(new PropertyValueFactory<>("deptName"));
-
-        departmentTable.setPlaceholder(new Label("正在加载部门数据..."));
+        deptDescCol.setCellValueFactory(new PropertyValueFactory<>("deptDesc"));
     }
 
     @Override
@@ -50,56 +39,31 @@ public class DepartmentController implements HRSubController {
         loadDepartmentData();
     }
 
-    /**
-     * 在后台线程中调用 API 获取部门数据。
-     */
-    private void loadDepartmentData() {
-        departmentTable.getItems().clear();
-        departmentTable.setPlaceholder(new Label("正在从 API 加载数据，请稍候..."));
+    @FXML
+    private void handleRefresh(ActionEvent event) {
+        loadDepartmentData();
+    }
 
-        Task<List<Department>> loadTask = new Task<>() {
-            @Override
-            protected List<Department> call() throws Exception {
-                // 🌟 调用 Service 获取真实数据
+    private void loadDepartmentData() {
+        if (authToken == null) return;
+        Task<List<Department>> task = new Task<>() {
+            @Override protected List<Department> call() throws Exception {
                 return hrDataService.getAllDepartments(authToken);
             }
-
-            @Override
-            protected void succeeded() {
-                List<Department> result = getValue();
-                Platform.runLater(() -> {
-                    if (result.isEmpty()) {
-                        departmentTable.setPlaceholder(new Label("暂无部门数据 🙅‍♀️ 或 API 调用失败。"));
-                    } else {
-                        departmentTable.setItems(FXCollections.observableArrayList(result));
-                        departmentTable.setPlaceholder(new Label(""));
-                    }
-                    System.out.println("部门列表加载成功，共 " + result.size() + " 条记录。");
-                });
+            @Override protected void succeeded() {
+                departmentTable.setItems(FXCollections.observableArrayList(getValue()));
             }
-
-            @Override
-            protected void failed() {
-                Platform.runLater(() -> {
-                    showAlert("加载失败 ❌", "无法加载部门数据，请检查网络或后端服务。");
-                    departmentTable.setPlaceholder(new Label("数据加载失败。"));
-                });
-                getException().printStackTrace();
+            @Override protected void failed() {
+                System.err.println("加载部门数据失败: " + getException().getMessage());
             }
         };
-        new Thread(loadTask).start();
+        new Thread(task).start();
     }
 
-    @FXML
-    private void handleAddDepartment() {
-        showAlert("提示 💡", "新增部门功能待实现。");
-    }
-
-    private void showAlert(String title, String content) {
+    @FXML private void handleAddDepartment(ActionEvent event) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
+        alert.setTitle("提示");
+        alert.setContentText("新增部门功能待实现。");
         alert.showAndWait();
     }
 }
