@@ -1,46 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
-<AnchorPane prefHeight="550.0" prefWidth="750.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.gd.hrmsjavafxclient.controller.employee.EmployeeApplicationController"
-            stylesheets="@../../style/hrms-styles.css">
-    <VBox spacing="20.0" styleClass="content-card" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
-        <Label text="我的申请" styleClass="content-header" />
-        <Separator />
 
-        <GridPane hgap="15.0" vgap="15.0">
+<VBox spacing="20.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.gd.hrmsjavafxclient.controller.employee.EmployeeApplicationController"
+      stylesheets="@../../style/hrms-styles.css" styleClass="root">
+    <padding><Insets top="25" right="25" bottom="25" left="25"/></padding>
+
+    <HBox alignment="CENTER_LEFT" spacing="15">
+        <VBox>
+            <Label text="业务申请" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: -fx-text-main;"/>
+            <Label text="提交个人事务申请，由管理员统一审批" style="-fx-font-size: 12px; -fx-text-fill: -fx-text-muted;"/>
+        </VBox>
+    </HBox>
+
+    <VBox spacing="25.0" styleClass="login-card" VBox.vgrow="ALWAYS">
+        <padding><Insets top="30" right="30" bottom="30" left="30"/></padding>
+        <GridPane hgap="20.0" vgap="20.0">
             <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="120.0" />
-
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="300.0" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="120.0" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="300.0" />
+                <ColumnConstraints prefWidth="120"/><ColumnConstraints prefWidth="300"/>
+                <ColumnConstraints prefWidth="120"/><ColumnConstraints prefWidth="300"/>
             </columnConstraints>
+            <children>
+                <Label text="申请人" style="-fx-font-weight: bold;" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                <TextField fx:id="applicantNameField" editable="false" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
 
-            <Label text="申请人：" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-            <TextField fx:id="applicantNameField" promptText="当前登录员工姓名" editable="false" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                <Label text="申请类型" style="-fx-font-weight: bold;" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                <ComboBox fx:id="applicationTypeComboBox" maxWidth="Infinity" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
+                <Label text="关联日期" style="-fx-font-weight: bold;" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                <DatePicker fx:id="relatedDateField" maxWidth="Infinity" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
 
-            <Label text="申请类型：" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-            <ComboBox fx:id="applicationTypeComboBox" promptText="请选择申请类型 (如：请假/报销/调岗)" prefWidth="300" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                <Label text="关联事项" style="-fx-font-weight: bold;" GridPane.rowIndex="2" GridPane.columnIndex="2"/>
+                <TextField fx:id="relatedDetailField" promptText="时长或金额" GridPane.rowIndex="2" GridPane.columnIndex="3"/>
 
-            <Label text="相关日期：" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-            <DatePicker fx:id="relatedDateField" promptText="如：开始日期/发生日期" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
-
-            <Label text="关联事项：" GridPane.rowIndex="2" GridPane.columnIndex="2"/>
-            <TextField fx:id="relatedDetailField" promptText="如：请假时长(天)/报销金额(元)" GridPane.rowIndex="2" GridPane.columnIndex="3"/>
-
-
-            <Label text="申请详情：" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-            <TextArea fx:id="descriptionTextArea" promptText="请输入详细的申请描述和理由" prefHeight="150" GridPane.rowIndex="3" GridPane.columnIndex="1" GridPane.columnSpan="3"/>
+                <Label text="详细说明" style="-fx-font-weight: bold;" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                <TextArea fx:id="descriptionTextArea" prefHeight="150" GridPane.rowIndex="3" GridPane.columnIndex="1" GridPane.columnSpan="3"/>
+            </children>
         </GridPane>
-
-        <HBox spacing="10.0" alignment="CENTER_LEFT">
-            <Button fx:id="submitButton" text="提 交 申 请" styleClass="action-button-primary" onAction="#handleSubmitButtonAction" />
-            <Button text="查 看 历 史" styleClass="action-button" onAction="#handleViewHistoryButtonAction" />
+        <HBox spacing="15" alignment="CENTER_RIGHT">
+            <Button text="重 置" onAction="#clearForm" styleClass="action-button-secondary"/>
+            <Button fx:id="submitButton" text="提 交 申 请" onAction="#handleSubmitButtonAction" styleClass="action-button-primary" prefWidth="150"/>
         </HBox>
-
     </VBox>
-</AnchorPane>
+</VBox>

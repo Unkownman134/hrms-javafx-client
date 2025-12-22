@@ -1,38 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import java.math.BigDecimal?>
-<?import java.time.LocalDate?>
-<AnchorPane prefHeight="550.0" prefWidth="750.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.gd.hrmsjavafxclient.controller.employee.EmployeeSalaryRecordController"
-            stylesheets="@../../style/hrms-styles.css">
-    <VBox spacing="20.0" styleClass="content-card" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
-        <Label text="我的工资条" styleClass="content-header" />
-        <Separator />
+<?import javafx.geometry.Insets?>
 
-        <HBox spacing="10.0" alignment="CENTER_LEFT">
-            <Label text="年份筛选:"/>
-            <ComboBox fx:id="yearComboBox" prefWidth="100" promptText="选择年份"/>
+<VBox spacing="20.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.gd.hrmsjavafxclient.controller.employee.EmployeeSalaryRecordController"
+      stylesheets="@../../style/hrms-styles.css" styleClass="root">
+    <padding><Insets top="25" right="25" bottom="25" left="25"/></padding>
 
-            <Button fx:id="queryButton" text="查 询" styleClass="action-button-primary" onAction="#handleQueryButtonAction" />
-            <Label text="提示：点击记录可查看详细工资单。😊" styleClass="text-info"/>
-        </HBox>
+    <HBox alignment="CENTER_LEFT" spacing="15">
+        <VBox>
+            <Label text="薪资查询" style="-fx-font-size: 22px; -fx-font-weight: bold;"/>
+            <Label text="查阅历史工资单明细" style="-fx-font-size: 12px; -fx-text-fill: -fx-text-muted;"/>
+        </VBox>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label text="年度:"/>
+        <ComboBox fx:id="yearComboBox" prefWidth="100"/>
+        <Button fx:id="queryButton" text="查询" onAction="#handleQueryButtonAction" styleClass="action-button-primary"/>
+    </HBox>
 
-        <TableView fx:id="salaryRecordTable" VBox.vgrow="ALWAYS" prefHeight="400">
-            <columns>
-                <TableColumn fx:id="monthCol" text="发放月份" prefWidth="120" />
-                <TableColumn fx:id="payDateCol" text="发放日期" prefWidth="120" />
-
-                <TableColumn fx:id="grossPayCol" text="应发总额" prefWidth="120" />
-                <TableColumn fx:id="taxDeductionCol" text="扣税额" prefWidth="100" />
-                <TableColumn fx:id="netPayCol" text="实发净额" prefWidth="120" />
-                <TableColumn fx:id="actionCol" text="详情" prefWidth="80" />
-            </columns>
-            <placeholder>
-                <Label text="暂无工资记录数据"/>
-            </placeholder>
-        </TableView>
-
-    </VBox>
-</AnchorPane>
+    <TableView fx:id="salaryRecordTable" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="monthCol" text="发放月份" prefWidth="120"/>
+            <TableColumn fx:id="payDateCol" text="发放日期" prefWidth="120"/>
+            <TableColumn fx:id="grossPayCol" text="应发薪资" prefWidth="120"/>
+            <TableColumn fx:id="netPayCol" text="实发净额" prefWidth="120"/>
+            <TableColumn fx:id="actionCol" text="明细" prefWidth="100"/>
+        </columns>
+        <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
+    </TableView>
+</VBox>

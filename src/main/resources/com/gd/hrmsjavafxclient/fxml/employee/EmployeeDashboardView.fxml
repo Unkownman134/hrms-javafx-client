@@ -1,21 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
 <?import javafx.geometry.Insets?>
 
-<VBox fx:controller="com.gd.hrmsjavafxclient.controller.employee.EmployeeDashboardController"
-      alignment="TOP_CENTER" spacing="10.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
-      styleClass="dashboard-card" stylesheets="@../../style/hrms-styles.css">
-    <padding>
-        <Insets top="20" right="20" bottom="20" left="20"/>
-    </padding>
+<VBox alignment="TOP_CENTER" spacing="30.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.gd.hrmsjavafxclient.controller.employee.EmployeeDashboardController"
+      stylesheets="@../../style/hrms-styles.css" styleClass="root">
+    <padding><Insets top="40" right="40" bottom="40" left="40"/></padding>
 
-    <Label text="我的仪表盘" styleClass="card-title" fx:id="dashboardTitle" />
-    <Label fx:id="welcomeLabel" styleClass="card-content" />
-    <Label fx:id="roleLabel" styleClass="card-content" />
-    <Label fx:id="empIdLabel" styleClass="card-content" />
-    <Label fx:id="dateTimeLabel" styleClass="card-content" />
-    <Label text="请从左侧导航栏开始您的自助服务。😊" styleClass="card-content"/>
+    <VBox alignment="CENTER_LEFT" spacing="15.0" styleClass="login-card" maxWidth="Infinity">
+        <padding><Insets top="40" right="40" bottom="40" left="40"/></padding>
+        <children>
+            <Label fx:id="dashboardTitle" text="我的工作台" styleClass="welcome-label" style="-fx-font-size: 28px;"/>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label fx:id="welcomeLabel" style="-fx-text-fill: -fx-primary-color; -fx-font-weight: bold;"/>
+                <Separator orientation="VERTICAL" prefHeight="15"/>
+                <Label fx:id="roleLabel" style="-fx-text-fill: -fx-text-muted;"/>
+                <Label fx:id="empIdLabel" style="-fx-text-fill: -fx-text-muted;"/>
+            </HBox>
+        </children>
+    </VBox>
 
+    <VBox spacing="20" VBox.vgrow="ALWAYS" styleClass="login-card" maxWidth="Infinity">
+        <padding><Insets top="30" right="30" bottom="30" left="30"/></padding>
+        <children>
+            <HBox alignment="CENTER_LEFT">
+                <Label text="📢 个人通知" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="dateTimeLabel" style="-fx-text-fill: -fx-text-muted;"/>
+            </HBox>
+            <Separator/>
+            <Label text="• 欢迎使用 HRMS 员工自助系统，您可以在此查看考勤与薪资。" styleClass="text-main"/>
+            <Label text="• 请及时处理您的待办申请，以免耽误审批进度。" styleClass="text-main"/>
+        </children>
+    </VBox>
 </VBox>

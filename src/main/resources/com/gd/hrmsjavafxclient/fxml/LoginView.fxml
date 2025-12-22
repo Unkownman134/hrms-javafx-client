@@ -37,7 +37,7 @@
                                 <VBox spacing="5">
                                     <Label text="USERNAME"
                                            style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: -fx-primary-color; -fx-letter-spacing: 1px;"/>
-                                    <TextField fx:id="usernameField" promptText="工号或用户名"/>
+                                    <TextField fx:id="usernameField" promptText="用户名"/>
                                 </VBox>
                                 <VBox spacing="5">
                                     <Label text="PASSWORD"
