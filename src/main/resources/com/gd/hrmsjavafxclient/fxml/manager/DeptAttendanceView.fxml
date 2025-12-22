@@ -4,23 +4,25 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox prefHeight="650.0" prefWidth="950.0" spacing="15.0"
-      xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.gd.hrmsjavafxclient.controller.manager.DeptAttendanceController">
+<VBox spacing="20.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.gd.hrmsjavafxclient.controller.manager.DeptAttendanceController"
+      stylesheets="@../../style/hrms-styles.css" styleClass="root">
     <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+        <Insets top="25" right="25" bottom="25" left="25"/>
     </padding>
 
-    <Label fx:id="deptNameLabel" text="部门考勤记录查询 📝" styleClass="view-title"/>
-    <Separator/>
-
-    <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="query-bar">
-        <Label text="选择月份:"/>
-        <ComboBox fx:id="monthComboBox" prefWidth="150.0" promptText="选择月份"/>
-
-        <Region HBox.hgrow="ALWAYS"/>
-        <Button fx:id="queryButton" text="查 询" onAction="#handleQueryAttendance" styleClass="primary-button"/>
-        <Button text="导出记录" styleClass="secondary-button" onAction="#handleExportButtonAction"/>
+    <HBox alignment="CENTER_LEFT" spacing="15">
+        <children>
+            <VBox>
+                <Label text="部门考勤记录 📝" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: -fx-text-main;"/>
+                <Label fx:id="deptNameLabel" text="查看全员考勤明细" style="-fx-font-size: 12px; -fx-text-fill: -fx-text-muted;"/>
+            </VBox>
+            <Region HBox.hgrow="ALWAYS" />
+            <Label text="选择月份:"/>
+            <ComboBox fx:id="monthComboBox" prefWidth="150.0" promptText="选择月份"/>
+            <Button fx:id="queryButton" text="查 询" onAction="#handleQueryAttendance" styleClass="action-button"/>
+            <Button text="导出" onAction="#handleExportButtonAction" styleClass="refresh-button"/>
+        </children>
     </HBox>
 
     <TableView fx:id="attendanceTable" VBox.vgrow="ALWAYS" styleClass="data-table">

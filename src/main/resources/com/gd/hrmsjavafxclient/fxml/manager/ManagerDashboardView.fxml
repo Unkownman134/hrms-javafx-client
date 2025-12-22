@@ -1,41 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.text.Text?>
 
-<VBox alignment="TOP_CENTER" prefHeight="600.0" prefWidth="950.0" spacing="20.0"
-      xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+<VBox alignment="TOP_CENTER" spacing="30.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.gd.hrmsjavafxclient.controller.manager.ManagerDashboardController"
-      styleClass="dashboard-view">
+      stylesheets="@../../style/hrms-styles.css" styleClass="root">
     <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+        <Insets top="40" right="40" bottom="40" left="40"/>
     </padding>
 
-    <Label fx:id="welcomeLabel" text="欢迎回来，[经理姓名]！" styleClass="dashboard-title"/>
-    <Label fx:id="roleLabel" text="[角色名称] ([部门名称])" styleClass="dashboard-subtitle"/>
-
-    <Separator/>
-
-    <VBox spacing="10.0" alignment="TOP_LEFT">
-        <Label text="部门概览 Quick Stats 🚀" styleClass="section-title"/>
-        <Text text="在这里可以看到本月部门员工的考勤异常统计、待审批申请、以及员工总数等关键指标 (KPI) 的快速概览。" wrappingWidth="800.0"/>
-
-        <HBox spacing="20" alignment="CENTER_LEFT" styleClass="card-container">
-            <VBox styleClass="stat-card">
-                <Label text="部门员工总数" styleClass="stat-label"/>
-                <Label text="0" fx:id="deptEmpCountLabel" styleClass="stat-value" style="-fx-text-fill: #2980B9;"/>
-            </VBox>
-            <VBox styleClass="stat-card">
-                <Label text="本月迟到人数" styleClass="stat-label"/>
-                <Label text="0" fx:id="lateCountLabel" styleClass="stat-value" style="-fx-text-fill: #E74C3C;"/>
-            </VBox>
-            <VBox styleClass="stat-card">
-                <Label text="待审批申请" styleClass="stat-label"/>
-                <Label text="0" fx:id="pendingApprovalLabel" styleClass="stat-value" style="-fx-text-fill: #F39C12;"/>
-            </VBox>
-        </HBox>
+    <VBox alignment="CENTER_LEFT" spacing="15.0" styleClass="login-card" maxWidth="Infinity">
+        <padding>
+            <Insets top="40" right="40" bottom="40" left="40"/>
+        </padding>
+        <children>
+            <Label fx:id="welcomeLabel" text="欢迎回来，[经理姓名]！" styleClass="welcome-label" style="-fx-font-size: 28px;"/>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="当前部门：" style="-fx-text-fill: -fx-text-muted;"/>
+                <Label fx:id="roleLabel" text="[角色名称] ([部门名称])" style="-fx-text-fill: #2ECC71; -fx-font-weight: bold;"/>
+            </HBox>
+        </children>
     </VBox>
 
+    <VBox spacing="20" VBox.vgrow="ALWAYS" styleClass="login-card" maxWidth="Infinity">
+        <padding>
+            <Insets top="30" right="30" bottom="30" left="30"/>
+        </padding>
+        <children>
+            <Label text="🚀 部门概览 Quick Stats" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: -fx-text-main;"/>
+            <Separator />
+            <Text text="在这里可以看到本月部门员工的考勤异常统计、待审批申请、以及员工总数等关键指标 (KPI) 的快速概览。"
+                  wrappingWidth="800.0" style="-fx-fill: -fx-text-muted;"/>
+
+            <HBox spacing="20" alignment="CENTER_LEFT">
+                <VBox styleClass="stat-card" style="-fx-background-color: #f8f9fa; -fx-padding: 20; -fx-background-radius: 8; -fx-min-width: 180;">
+                    <Label text="部门员工总数" style="-fx-text-fill: -fx-text-muted; -fx-font-size: 14px;"/>
+                    <Label text="0" fx:id="deptEmpCountLabel" style="-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: #2980B9;"/>
+                </VBox>
+                <VBox styleClass="stat-card" style="-fx-background-color: #f8f9fa; -fx-padding: 20; -fx-background-radius: 8; -fx-min-width: 180;">
+                    <Label text="本月迟到人数" style="-fx-text-fill: -fx-text-muted; -fx-font-size: 14px;"/>
+                    <Label text="0" fx:id="lateCountLabel" style="-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: #E74C3C;"/>
+                </VBox>
+                <VBox styleClass="stat-card" style="-fx-background-color: #f8f9fa; -fx-padding: 20; -fx-background-radius: 8; -fx-min-width: 180;">
+                    <Label text="待审批申请" style="-fx-text-fill: -fx-text-muted; -fx-font-size: 14px;"/>
+                    <Label text="0" fx:id="pendingApprovalLabel" style="-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: #F39C12;"/>
+                </VBox>
+            </HBox>
+        </children>
+    </VBox>
 </VBox>

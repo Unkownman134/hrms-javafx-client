@@ -4,34 +4,35 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox prefHeight="650.0" prefWidth="950.0" spacing="15.0"
-      xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.gd.hrmsjavafxclient.controller.manager.DeptEmployeeController">
+<VBox spacing="20.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.gd.hrmsjavafxclient.controller.manager.DeptEmployeeController"
+      stylesheets="@../../style/hrms-styles.css" styleClass="root">
     <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+        <Insets top="25" right="25" bottom="25" left="25"/>
     </padding>
 
-    <Label text="部门员工信息 👥" styleClass="view-title"/>
-    <Label fx:id="deptNameLabel" text="当前部门: [部门名称]" styleClass="dashboard-subtitle"/>
-    <Separator/>
-
-    <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="query-bar">
-        <TextField promptText="输入员工姓名或ID搜索..." prefWidth="200.0"/>
-        <Button text="搜 索" styleClass="secondary-button"/>
-        <Region HBox.hgrow="ALWAYS"/>
-        <Button text="导入员工" styleClass="secondary-button" disable="true"/>
-        <Button text="新增员工" styleClass="primary-button" disable="true"/>
+    <HBox alignment="CENTER_LEFT" spacing="15">
+        <children>
+            <VBox>
+                <Label text="部门员工信息 👥" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: -fx-text-main;"/>
+                <Label fx:id="deptNameLabel" text="当前部门: [部门名称]" style="-fx-font-size: 12px; -fx-text-fill: -fx-text-muted;"/>
+            </VBox>
+            <Region HBox.hgrow="ALWAYS" />
+            <TextField fx:id="searchField" promptText="输入员工姓名或ID搜索..." prefWidth="200.0" styleClass="text-field"/>
+            <Button text="🔍 搜索" onAction="#handleSearch" styleClass="refresh-button"/>
+        </children>
     </HBox>
 
     <TableView fx:id="employeeTable" VBox.vgrow="ALWAYS" styleClass="data-table">
         <columns>
             <TableColumn fx:id="empIdCol" text="员工ID" prefWidth="80.0"/>
-            <TableColumn fx:id="nameCol" text="姓名" prefWidth="120.0"/>
+            <TableColumn fx:id="nameCol" text="姓名" prefWidth="100.0"/>
+            <TableColumn fx:id="genderCol" text="性别" prefWidth="60.0"/>
             <TableColumn fx:id="positionCol" text="职位" prefWidth="120.0"/>
-            <TableColumn fx:id="phoneCol" text="电话" prefWidth="150.0"/>
-            <TableColumn fx:id="emailCol" text="邮箱" prefWidth="200.0"/>
-            <TableColumn text="入职日期" prefWidth="120.0"/>
-            <TableColumn text="操作" prefWidth="100.0"/>
+            <TableColumn fx:id="phoneCol" text="电话" prefWidth="130.0"/>
+            <TableColumn fx:id="emailCol" text="邮箱" prefWidth="180.0"/>
+            <TableColumn fx:id="joinDateCol" text="入职日期" prefWidth="120.0"/>
+            <TableColumn fx:id="statusCol" text="状态" prefWidth="80.0"/>
         </columns>
         <columnResizePolicy>
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
