@@ -14,27 +14,49 @@
     <HBox alignment="CENTER_LEFT" spacing="15">
         <children>
             <VBox>
-                <Label text="部门排班查询 📅" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: -fx-text-main;"/>
-                <Label fx:id="deptNameLabel" text="当前部门: [部门名称]" style="-fx-font-size: 12px; -fx-text-fill: -fx-text-muted;"/>
+                <Label text="部门排班管理 📅" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: -fx-text-main;"/>
+                <Label fx:id="deptNameLabel" text="当前部门: 加载中..." style="-fx-font-size: 12px; -fx-text-fill: -fx-text-muted;"/>
             </VBox>
             <Region HBox.hgrow="ALWAYS" />
-            <Label text="选择月份:"/>
+            <Label text="快速查询月份:"/>
             <ComboBox fx:id="monthComboBox" promptText="选择月份" prefWidth="120.0"/>
-            <Button fx:id="queryButton" text="查 询" onAction="#handleQueryButtonAction" styleClass="action-button"/>
+            <Button text="刷新列表" onAction="#handleRefresh" styleClass="action-button-secondary"/>
         </children>
     </HBox>
 
+    <TitledPane text="新增批量排班任务" expanded="true" styleClass="sub-panel">
+        <HBox spacing="15" alignment="CENTER_LEFT">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+            <VBox spacing="5">
+                <Label text="选择员工"/>
+                <ComboBox fx:id="employeeComboBox" promptText="选择员工" prefWidth="150"/>
+            </VBox>
+            <VBox spacing="5">
+                <Label text="开始日期"/>
+                <DatePicker fx:id="startDatePicker" prefWidth="150"/>
+            </VBox>
+            <VBox spacing="5">
+                <Label text="结束日期"/>
+                <DatePicker fx:id="endDatePicker" prefWidth="150"/>
+            </VBox>
+            <VBox spacing="5">
+                <Label text="选择班次"/>
+                <ComboBox fx:id="shiftRuleComboBox" promptText="班次规则" prefWidth="150"/>
+            </VBox>
+            <Button text="确认批量排班" onAction="#handleBatchAdd"
+                    style="-fx-background-color: #2ECC71; -fx-text-fill: white; -fx-font-weight: bold;"
+                    prefHeight="45"/>
+        </HBox>
+    </TitledPane>
+
     <TableView fx:id="scheduleTable" VBox.vgrow="ALWAYS" styleClass="data-table">
         <columns>
-            <TableColumn fx:id="employeeNameCol" text="员工姓名" prefWidth="120.0"/>
-            <TableColumn fx:id="dateCol" text="日期" prefWidth="120.0"/>
+            <TableColumn fx:id="employeeNameCol" text="员工姓名" prefWidth="150.0"/>
+            <TableColumn fx:id="dateCol" text="排班日期" prefWidth="150.0"/>
             <TableColumn fx:id="shiftNameCol" text="班次名称" prefWidth="150.0"/>
-            <TableColumn fx:id="clockInTimeCol" text="上班时间" prefWidth="100.0"/>
-            <TableColumn fx:id="clockOutTimeCol" text="下班时间" prefWidth="100.0"/>
-            <TableColumn fx:id="noteCol" text="备注" prefWidth="250.0"/>
+            <TableColumn fx:id="statusCol" text="状态" prefWidth="100.0"/>
         </columns>
-        <columnResizePolicy>
-            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-        </columnResizePolicy>
     </TableView>
 </VBox>

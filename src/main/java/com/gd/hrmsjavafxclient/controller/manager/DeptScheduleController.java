@@ -1,316 +1,220 @@
 package com.gd.hrmsjavafxclient.controller.manager;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.gd.hrmsjavafxclient.controller.manager.ManagerMainController.ManagerSubController;
 import com.gd.hrmsjavafxclient.model.CurrentUserInfo;
-import com.gd.hrmsjavafxclient.model.Schedule; // 排班 Model
 import com.gd.hrmsjavafxclient.model.Employee;
+import com.gd.hrmsjavafxclient.model.Schedule;
+import com.gd.hrmsjavafxclient.model.ShiftRule;
 import com.gd.hrmsjavafxclient.service.manager.ScheduleManagerService;
-import com.gd.hrmsjavafxclient.service.manager.EmployeeManagerService;
-
+import com.gd.hrmsjavafxclient.util.ServiceUtil;
 import javafx.application.Platform;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.util.StringConverter;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.YearMonth;
-import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.Map;
 
 /**
- * 部门排班查询视图控制器 (t_employee_schedule)
- * 🌟 修正：为 LocalDate 和 LocalTime 类型的列添加了 CellFactory 以确保显示。
- * 🚨 新增：在 succeeded() 中添加了调试打印。
+ * 部门经理排班界面控制器
+ * 🌟 已修复 queryButton 为 null 的报错，并优化了员工遍历逻辑
  */
 public class DeptScheduleController implements ManagerSubController {
 
-    @FXML private ComboBox<String> monthComboBox;
-    @FXML private Button queryButton;
-    @FXML private TableView<Schedule> scheduleTable;
     @FXML private Label deptNameLabel;
+    @FXML private ComboBox<String> monthComboBox;
+    @FXML private ComboBox<Employee> employeeComboBox;
+    @FXML private ComboBox<ShiftRule> shiftRuleComboBox;
+    @FXML private DatePicker startDatePicker;
+    @FXML private DatePicker endDatePicker;
 
-    // Table Columns (确保 fx:id 与 FXML 文件一致)
+    @FXML private TableView<Schedule> scheduleTable;
     @FXML private TableColumn<Schedule, String> employeeNameCol;
     @FXML private TableColumn<Schedule, LocalDate> dateCol;
     @FXML private TableColumn<Schedule, String> shiftNameCol;
-    @FXML private TableColumn<Schedule, LocalTime> clockInTimeCol;
-    @FXML private TableColumn<Schedule, LocalTime> clockOutTimeCol;
-    @FXML private TableColumn<Schedule, String> noteCol;
+    @FXML private TableColumn<Schedule, String> statusCol;
 
-    // --- 数据和状态 ---
-    private final ObservableList<Schedule> data = FXCollections.observableArrayList();
-    private final ScheduleManagerService scheduleManagerService = new ScheduleManagerService();
-    private final EmployeeManagerService employeeManagerService = new EmployeeManagerService(); // 用于获取员工列表
-    private Map<Integer, Employee> employeeMap; // 员工ID -> 员工对象 的映射表
     private String authToken;
-    private CurrentUserInfo currentUserInfo;
+    private CurrentUserInfo currentUser;
 
-    // ------------------------------------------------------------------
-    // ManagerSubController 接口实现
-    // ------------------------------------------------------------------
+    private final ScheduleManagerService scheduleService = new ScheduleManagerService();
+    private final ObservableList<Schedule> scheduleData = FXCollections.observableArrayList();
+    private final ObservableList<Employee> deptEmployees = FXCollections.observableArrayList();
+
     @Override
     public void setManagerContext(CurrentUserInfo userInfo, String authToken) {
-        this.currentUserInfo = userInfo;
+        this.currentUser = userInfo;
         this.authToken = authToken;
-        this.deptNameLabel.setText("当前部门: " + userInfo.getDepartmentName());
-        initializeMonthComboBox();
-        loadInitialData();
+
+        Platform.runLater(() -> {
+            deptNameLabel.setText("当前部门: " + (userInfo.getDepartmentName() != null ? userInfo.getDepartmentName() : "未知"));
+            initUI();
+            loadInitialData(); // 加载员工和规则
+        });
     }
 
-    // ------------------------------------------------------------------
-    // 初始化逻辑 (修复显示问题的关键)
-    // ------------------------------------------------------------------
+    private void initUI() {
+        // 月份初始化
+        monthComboBox.setItems(FXCollections.observableArrayList("2025-11", "2025-12", "2026-01"));
+        monthComboBox.setValue("2025-12");
 
-    @FXML
-    public void initialize() {
-        // 初始化 TableView
-        scheduleTable.setItems(data);
-        scheduleTable.setPlaceholder(new Label("请选择月份，并点击查询按钮 🔍"));
+        // 表格列绑定
+        employeeNameCol.setCellValueFactory(d -> d.getValue().employeeNameProperty());
+        dateCol.setCellValueFactory(d -> d.getValue().dateProperty());
+        shiftNameCol.setCellValueFactory(d -> d.getValue().shiftNameProperty());
+        statusCol.setCellValueFactory(d -> d.getValue().statusProperty());
+        scheduleTable.setItems(scheduleData);
 
-        // 绑定列到 Schedule 对象的属性
-        // 员工姓名 (特殊处理的绑定，已正常显示)
-        employeeNameCol.setCellValueFactory(cellData -> {
-            Integer empId = cellData.getValue().getEmpId();
-            String name = employeeMap != null && employeeMap.containsKey(empId)
-                    ? employeeMap.get(empId).getEmpName()
-                    : "未知员工 (ID: " + empId + ")";
-            return new SimpleStringProperty(name);
-        });
-
-        // ----------------------------------------------------
-        // 🚨 修正 1: Date 列绑定和格式化 (LocalDate)
-        // ----------------------------------------------------
-        dateCol.setCellValueFactory(new PropertyValueFactory<>("date"));
-        // 添加 CellFactory 用于格式化 LocalDate (yyyy-MM-dd)
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        dateCol.setCellFactory(column -> new TableCell<Schedule, LocalDate>() {
+        // 员工 ComboBox 转换器
+        employeeComboBox.setConverter(new StringConverter<Employee>() {
             @Override
-            protected void updateItem(LocalDate item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                } else {
-                    setText(dateFormatter.format(item));
-                }
-            }
-        });
-
-        // 班次名称 (String)
-        shiftNameCol.setCellValueFactory(new PropertyValueFactory<>("shiftName"));
-
-        // ----------------------------------------------------
-        // 🚨 修正 2: Time 列绑定和格式化 (LocalTime)
-        // ----------------------------------------------------
-        clockInTimeCol.setCellValueFactory(new PropertyValueFactory<>("clockInTime"));
-        clockOutTimeCol.setCellValueFactory(new PropertyValueFactory<>("clockOutTime"));
-
-        // 添加 CellFactory 用于格式化 LocalTime (HH:mm)
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
-
-        // 上班时间列 (LocalTime)
-        clockInTimeCol.setCellFactory(column -> new TableCell<Schedule, LocalTime>() {
+            public String toString(Employee e) { return e == null ? "" : e.getEmpName() + " (ID:" + e.getEmpId() + ")"; }
             @Override
-            protected void updateItem(LocalTime item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                } else {
-                    setText(timeFormatter.format(item));
-                }
-            }
+            public Employee fromString(String s) { return null; }
         });
+        employeeComboBox.setItems(deptEmployees);
 
-        // 下班时间列 (LocalTime)
-        clockOutTimeCol.setCellFactory(column -> new TableCell<Schedule, LocalTime>() {
+        // 班次 ComboBox 转换器
+        shiftRuleComboBox.setConverter(new StringConverter<ShiftRule>() {
             @Override
-            protected void updateItem(LocalTime item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                } else {
-                    setText(timeFormatter.format(item));
-                }
-            }
+            public String toString(ShiftRule r) { return r == null ? "" : r.getRuleName(); }
+            @Override
+            public ShiftRule fromString(String s) { return null; }
         });
-
-        // 备注 (String)
-        noteCol.setCellValueFactory(new PropertyValueFactory<>("note"));
     }
 
-    private void initializeMonthComboBox() {
-        // 填充近 6 个月到 ComboBox
-        YearMonth currentMonth = YearMonth.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM");
-        monthComboBox.getItems().clear();
-
-        IntStream.range(0, 6).mapToObj(currentMonth::minusMonths)
-                .map(formatter::format)
-                .forEach(monthComboBox.getItems()::add);
-
-        // 默认选中当前月
-        monthComboBox.getSelectionModel().selectFirst();
-    }
-
-    // ------------------------------------------------------------------
-    // 数据加载逻辑
-    // ------------------------------------------------------------------
-
+    /**
+     * 加载元数据：获取所有员工后进行前端过滤
+     */
     private void loadInitialData() {
-        // 第一次加载时，需要先加载员工列表
-        Task<Map<Integer, Employee>> loadEmployeeTask = new Task<>() {
+        Task<Void> task = new Task<>() {
             @Override
-            protected Map<Integer, Employee> call() throws Exception {
-                // 1. 获取所有员工信息
-                List<Employee> allEmployees = employeeManagerService.getAllEmployees(authToken);
-                // 2. 客户端过滤出本部门员工
-                Integer deptId = currentUserInfo.getDeptId();
-                if (deptId == null) {
-                    throw new IllegalStateException("用户部门ID缺失，无法查询部门员工。");
-                }
-                List<Employee> deptEmployees = allEmployees.stream()
-                        .filter(e -> deptId.equals(e.getDeptId()))
+            protected Void call() throws Exception {
+                // 1. 获取所有员工并过滤
+                Optional<List<Employee>> allEmpsOpt = ServiceUtil.sendGet("/employees", authToken, new TypeReference<List<Employee>>() {});
+                List<Employee> filtered = allEmpsOpt.orElse(new ArrayList<>()).stream()
+                        .filter(e -> e.getDeptId() != null && e.getDeptId().equals(currentUser.getDeptId()))
                         .collect(Collectors.toList());
 
-                // 3. 转化为 Map 供查询
-                return deptEmployees.stream().collect(Collectors.toMap(Employee::getEmpId, e -> e));
-            }
+                // 2. 获取所有班次规则
+                Optional<List<ShiftRule>> rulesOpt = ServiceUtil.sendGet("/shift/rules", authToken, new TypeReference<List<ShiftRule>>() {});
+                List<ShiftRule> rules = rulesOpt.orElse(new ArrayList<>());
 
-            @Override
-            protected void succeeded() {
                 Platform.runLater(() -> {
-                    employeeMap = getValue();
-                    handleQueryButtonAction(null); // 员工加载成功后，自动执行一次查询
+                    deptEmployees.setAll(filtered);
+                    shiftRuleComboBox.setItems(FXCollections.observableArrayList(rules));
+                    // 加载完员工后自动刷一次排班表
+                    handleRefresh();
                 });
-            }
-
-            @Override
-            protected void failed() {
-                Platform.runLater(() -> {
-                    showAlert("初始化失败 ❌", "加载部门员工信息失败：\n" + getException().getMessage(), Alert.AlertType.ERROR);
-                    scheduleTable.setPlaceholder(new Label("初始化失败，请检查网络或权限。"));
-                    getException().printStackTrace();
-                });
+                return null;
             }
         };
-        new Thread(loadEmployeeTask).start();
+        new Thread(task).start();
     }
 
-
+    /**
+     * 刷新逻辑：遍历本部门员工请求 API
+     */
     @FXML
-    private void handleQueryButtonAction(ActionEvent event) {
-        if (employeeMap == null || employeeMap.isEmpty()) {
-            showAlert("提示", "未找到本部门员工信息，无法查询排班记录。", Alert.AlertType.WARNING);
-            return;
-        }
+    private void handleRefresh() {
+        String monthStr = monthComboBox.getValue();
+        if (monthStr == null || deptEmployees.isEmpty()) return;
 
-        String selectedMonthText = monthComboBox.getSelectionModel().getSelectedItem();
-        if (selectedMonthText == null) {
-            showAlert("提示", "请先选择一个月份。", Alert.AlertType.WARNING);
-            return;
-        }
+        YearMonth ym = YearMonth.parse(monthStr);
+        String startDate = ym.atDay(1).toString();
+        String endDate = ym.atEndOfMonth().toString();
 
-        queryButton.setDisable(true);
-        queryButton.setText("查询中...");
-        scheduleTable.setPlaceholder(new Label("正在加载 " + selectedMonthText + " 的排班记录... ⏳"));
+        // 提示正在查询
+        scheduleTable.setPlaceholder(new Label("正在同步部门排班数据，请稍候..."));
 
-
-        Task<List<Schedule>> loadTask = new Task<>() {
+        Task<List<Schedule>> task = new Task<>() {
             @Override
             protected List<Schedule> call() throws Exception {
-                YearMonth yearMonth = YearMonth.parse(selectedMonthText, DateTimeFormatter.ofPattern("yyyy-MM"));
-                // 获取该月的第一天和最后一天
-                String startDate = yearMonth.atDay(1).format(DateTimeFormatter.ISO_LOCAL_DATE);
-                String endDate = yearMonth.atEndOfMonth().format(DateTimeFormatter.ISO_LOCAL_DATE);
-
-                // 获取本部门所有员工 ID
-                List<Integer> empIds = employeeMap.keySet().stream().collect(Collectors.toList());
-
-                // 调用 API 获取排班记录
-                List<Schedule> schedules = scheduleManagerService.getSchedulesByEmpIdsAndDateRange(empIds, startDate, endDate, authToken);
-
-                // 对结果进行员工姓名填充 (在客户端完成)
-                for (Schedule s : schedules) {
-                    if (employeeMap.containsKey(s.getEmpId())) {
-                        s.setEmployeeName(employeeMap.get(s.getEmpId()).getEmpName());
-                    } else {
-                        s.setEmployeeName("未知员工 (ID:" + s.getEmpId() + ")");
+                List<Schedule> totalSchedules = new ArrayList<>();
+                // 遍历每个员工 ID 进行 API 调用
+                for (Employee emp : deptEmployees) {
+                    try {
+                        List<Schedule> res = scheduleService.getSchedulesByRange(emp.getEmpId(), startDate, endDate, authToken);
+                        totalSchedules.addAll(res);
+                    } catch (Exception e) {
+                        System.err.println("❌ 获取员工 " + emp.getEmpName() + " 的排班失败: " + e.getMessage());
                     }
                 }
-
-                return schedules;
+                return totalSchedules;
             }
 
             @Override
             protected void succeeded() {
-                Platform.runLater(() -> {
-                    data.setAll(getValue());
-                    queryButton.setText("查 询");
-                    queryButton.setDisable(false);
-
-                    // 🚨 调试打印 🚨
-                    System.out.println("==============================================");
-                    System.out.println("📊 TableView 数据设置完成，最终条目数: " + data.size());
-                    if (!data.isEmpty()) {
-                        Schedule firstSchedule = data.get(0);
-                        System.out.println("📋 第一条排班记录数据检查:");
-                        System.out.println(" - 员工ID: " + firstSchedule.getEmpId());
-                        System.out.println(" - 员工姓名: " + firstSchedule.getEmployeeName());
-                        System.out.println(" - 日期: " + firstSchedule.getDate());
-                        System.out.println(" - 班次名称: " + firstSchedule.getShiftName());
-                        System.out.println(" - 上班时间: " + firstSchedule.getClockInTime());
-                        System.out.println(" - 下班时间: " + firstSchedule.getClockOutTime());
-                        System.out.println(" - 备注: " + firstSchedule.getNote());
-                    }
-                    System.out.println("==============================================");
-
-                    if (data.isEmpty()) {
-                        scheduleTable.setPlaceholder(new Label(selectedMonthText + " 暂时没有排班记录呢。"));
-                    } else {
-                        scheduleTable.setPlaceholder(new Label("没有数据。")); // 默认占位符
-                    }
-                });
+                scheduleData.setAll(getValue());
+                if (scheduleData.isEmpty()) {
+                    scheduleTable.setPlaceholder(new Label(monthStr + " 暂无任何排班记录。"));
+                }
             }
 
             @Override
             protected void failed() {
-                Platform.runLater(() -> {
-                    // 捕捉到 403 错误会在这里抛出 RuntimeException
-                    String errorMessage = getException().getMessage();
-
-                    // 明确提示 403 错误是权限问题
-                    if (errorMessage != null && errorMessage.contains("状态码: 403")) {
-                        showAlert("权限不足 🚫", "加载排班记录失败：\nAPI 访问被拒绝 (403 Forbidden)。\n请联系管理员确认您的 [部门经理] 角色是否拥有 /api/schedules/filter 的访问权限！", Alert.AlertType.ERROR);
-                        scheduleTable.setPlaceholder(new Label("权限不足 (403) 🚫"));
-                    } else {
-                        showAlert("错误 ❌", "加载排班记录失败：\n" + errorMessage, Alert.AlertType.ERROR);
-                        scheduleTable.setPlaceholder(new Label("加载失败 ❌"));
-                    }
-
-                    queryButton.setText("查 询");
-                    queryButton.setDisable(false);
-                    getException().printStackTrace();
-                });
+                showAlert("刷新失败", "无法获取排班数据：" + getException().getMessage(), Alert.AlertType.ERROR);
             }
         };
-
-        new Thread(loadTask).start();
+        new Thread(task).start();
     }
 
-    private void showAlert(String title, String message, Alert.AlertType type) {
+    @FXML
+    private void handleBatchAdd() {
+        Employee selectedEmp = employeeComboBox.getValue();
+        ShiftRule rule = shiftRuleComboBox.getValue();
+        LocalDate start = startDatePicker.getValue();
+        LocalDate end = endDatePicker.getValue();
+
+        if (selectedEmp == null || rule == null || start == null || end == null) {
+            showAlert("提示", "请填写完整的排班信息！", Alert.AlertType.WARNING);
+            return;
+        }
+
+        Task<Integer> task = new Task<>() {
+            @Override
+            protected Integer call() throws Exception {
+                int count = 0;
+                LocalDate curr = start;
+                while (!curr.isAfter(end)) {
+                    Schedule s = new Schedule();
+                    s.setEmpId(selectedEmp.getEmpId());
+                    s.setShiftRuleId(rule.getRuleId());
+                    s.setScheduleDate(curr);
+                    if (scheduleService.addSchedule(s, authToken)) count++;
+                    curr = curr.plusDays(1);
+                }
+                return count;
+            }
+
+            @Override
+            protected void succeeded() {
+                showAlert("操作成功", "已为 " + selectedEmp.getEmpName() + " 批量排班 " + getValue() + " 天！", Alert.AlertType.INFORMATION);
+                handleRefresh();
+            }
+
+            @Override
+            protected void failed() {
+                showAlert("操作失败", "错误详情：" + getException().getMessage(), Alert.AlertType.ERROR);
+            }
+        };
+        new Thread(task).start();
+    }
+
+    private void showAlert(String title, String msg, Alert.AlertType type) {
         Platform.runLater(() -> {
             Alert alert = new Alert(type);
             alert.setTitle(title);
             alert.setHeaderText(null);
-            alert.setContentText(message);
+            alert.setContentText(msg);
             alert.showAndWait();
         });
     }
