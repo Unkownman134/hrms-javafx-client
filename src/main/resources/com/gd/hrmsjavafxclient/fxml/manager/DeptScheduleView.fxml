@@ -18,9 +18,13 @@
                 <Label fx:id="deptNameLabel" text="当前部门: 加载中..." style="-fx-font-size: 12px; -fx-text-fill: -fx-text-muted;"/>
             </VBox>
             <Region HBox.hgrow="ALWAYS" />
-            <Label text="快速查询月份:"/>
-            <ComboBox fx:id="monthComboBox" promptText="选择月份" prefWidth="120.0"/>
-            <Button text="刷新列表" onAction="#handleRefresh" styleClass="action-button-secondary"/>
+
+            <Label text="查询区间:"/>
+            <DatePicker fx:id="queryStartDatePicker" prefWidth="140.0" promptText="开始日期"/>
+            <Label text="至"/>
+            <DatePicker fx:id="queryEndDatePicker" prefWidth="140.0" promptText="结束日期"/>
+
+            <Button text="查询/刷新" onAction="#handleRefresh" styleClass="refresh-button" />
         </children>
     </HBox>
 

@@ -9,6 +9,7 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -17,75 +18,63 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * 班次规则视图控制器 (t_shift_rule)
- * 🌟 修正：将 TableColumn 绑定到 ShiftRule Model 中正确的属性名称 (workStartTime / workEndTime)。
+ * 班次规则视图控制器 (只读展示)
+ * 🌟 确认：不包含备注/描述字段，仅展示核心排班参数 (oﾟvﾟ)ノ
  */
 public class ShiftRuleController implements ManagerSubController {
 
     @FXML private TableView<ShiftRule> shiftRuleTable;
     @FXML private TableColumn<ShiftRule, Integer> ruleIdCol;
     @FXML private TableColumn<ShiftRule, String> ruleNameCol;
-    // 尽管 FXML 中的 fx:id 是 startTimeCol/endTimeCol，但 PropertyValueFactory 必须使用 Model 中的属性名
     @FXML private TableColumn<ShiftRule, String> startTimeCol;
     @FXML private TableColumn<ShiftRule, String> endTimeCol;
     @FXML private TableColumn<ShiftRule, Integer> toleranceCol;
 
-    // --- 数据和状态 ---
-    private final ObservableList<ShiftRule> data = FXCollections.observableArrayList();
     private final ShiftRuleManagerService shiftRuleService = new ShiftRuleManagerService();
-
+    private final ObservableList<ShiftRule> data = FXCollections.observableArrayList();
     private String authToken;
 
     @FXML
     public void initialize() {
-        // 初始化 TableView 列绑定
+        // 绑定 Model 属性到表格列
         ruleIdCol.setCellValueFactory(new PropertyValueFactory<>("ruleId"));
         ruleNameCol.setCellValueFactory(new PropertyValueFactory<>("ruleName"));
-
-        // 🚨 修正点 1：将 "startTime" 绑定到 ShiftRule 模型中的 "workStartTime"
         startTimeCol.setCellValueFactory(new PropertyValueFactory<>("workStartTime"));
-
-        // 🚨 修正点 2：将 "endTime" 绑定到 ShiftRule 模型中的 "workEndTime"
         endTimeCol.setCellValueFactory(new PropertyValueFactory<>("workEndTime"));
-
-        // 假设 Model 中的 lateToleranceMin 对应 FXML 中的 toleranceCol
         toleranceCol.setCellValueFactory(new PropertyValueFactory<>("lateToleranceMin"));
 
         shiftRuleTable.setItems(data);
-
-        // 初始化时设置占位符
-        shiftRuleTable.setPlaceholder(new Label("等待加载班次规则..."));
     }
 
-    /**
-     * 实现统一接口：接收并设置上下文
-     */
     @Override
     public void setManagerContext(CurrentUserInfo userInfo, String authToken) {
         this.authToken = authToken;
-        // 接收到上下文后，立即加载数据
-        Platform.runLater(this::loadShiftRules);
+        loadShiftRules();
     }
 
     /**
-     * 异步加载班次规则列表
+     * 响应 FXML 中的重载按钮点击事件
+     */
+    @FXML
+    public void handleRefresh(ActionEvent event) {
+        loadShiftRules();
+    }
+
+    /**
+     * 从后端异步加载数据
      */
     private void loadShiftRules() {
-        if (authToken == null) {
-            showAlert("错误 ❌", "认证信息丢失，无法加载班次规则。", Alert.AlertType.ERROR);
+        // 防止没有 Token 就请求
+        if (authToken == null || authToken.isEmpty()) {
+            shiftRuleTable.setPlaceholder(new Label("未检测到登录状态，请重新登录。"));
             return;
         }
 
         Task<List<ShiftRule>> loadTask = new Task<>() {
             @Override
             protected List<ShiftRule> call() throws Exception {
-                // 🌟 Service 抛出 InterruptedException 和 IOException，必须处理
-                try {
-                    return shiftRuleService.getAllShiftRules(authToken);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt(); // 重新设置中断标志
-                    throw new IOException("API 请求被中断。", e);
-                }
+                // 调用服务获取数据
+                return shiftRuleService.getAllShiftRules(authToken);
             }
 
             @Override
@@ -101,8 +90,8 @@ public class ShiftRuleController implements ManagerSubController {
             @Override
             protected void failed() {
                 Platform.runLater(() -> {
-                    shiftRuleTable.setPlaceholder(new Label("加载班次规则失败 😭: " + getException().getMessage()));
-                    showAlert("错误 ❌", "加载班次规则失败：\n" + getException().getMessage(), Alert.AlertType.ERROR);
+                    shiftRuleTable.setPlaceholder(new Label("加载班次规则失败 😭"));
+                    showAlert("错误 ❌", "无法连接至服务器，请检查网络设置。", Alert.AlertType.ERROR);
                     getException().printStackTrace();
                 });
             }
@@ -112,12 +101,10 @@ public class ShiftRuleController implements ManagerSubController {
     }
 
     private void showAlert(String title, String message, Alert.AlertType type) {
-        Platform.runLater(() -> {
-            Alert alert = new Alert(type);
-            alert.setTitle(title);
-            alert.setHeaderText(null);
-            alert.setContentText(message);
-            alert.showAndWait();
-        });
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }

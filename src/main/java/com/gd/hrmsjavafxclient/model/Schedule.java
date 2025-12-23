@@ -23,8 +23,11 @@ public class Schedule {
 
     private final StringProperty employeeName = new SimpleStringProperty();
     private final StringProperty shiftName = new SimpleStringProperty();
+
+    // 🌟 修正：显式指定 LocalTime 的格式，防止后端解析 "2:0:0" 这种格式失败
     private final ObjectProperty<LocalTime> clockInTime = new SimpleObjectProperty<>();
     private final ObjectProperty<LocalTime> clockOutTime = new SimpleObjectProperty<>();
+
     private final StringProperty status = new SimpleStringProperty();
     private final StringProperty note = new SimpleStringProperty();
 
@@ -57,6 +60,15 @@ public class Schedule {
 
     public String getStatus() { return status.get(); }
     public void setStatus(String s) { this.status.set(s); }
+
+    // 🌟 增加对时间的 Getter/Setter 和格式化支持
+    @JsonFormat(pattern = "H:m:s") // 兼容后端可能传来的非补零格式
+    public LocalTime getClockInTime() { return clockInTime.get(); }
+    public void setClockInTime(LocalTime time) { this.clockInTime.set(time); }
+
+    @JsonFormat(pattern = "H:m:s")
+    public LocalTime getClockOutTime() { return clockOutTime.get(); }
+    public void setClockOutTime(LocalTime time) { this.clockOutTime.set(time); }
 
     // =========================================================
     // 2. Property Accessors (用于 JavaFX TableView 绑定)
