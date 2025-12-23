@@ -15,25 +15,21 @@
         <children>
             <VBox>
                 <Label text="职位体系管理" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: -fx-text-main;"/>
-                <Label text="维护公司标准职位名称与层级" style="-fx-font-size: 12px; -fx-text-fill: -fx-text-muted;"/>
+                <Label text="管理公司标准职位与职级" style="-fx-font-size: 12px; -fx-text-fill: -fx-text-muted;"/>
             </VBox>
             <Region HBox.hgrow="ALWAYS" />
-            <HBox spacing="10" alignment="CENTER">
-                <Button text="➕ 新增职位" onAction="#handleAddPosition" styleClass="action-button-primary" />
-                <Button text="🔄 刷新" onAction="#handleRefresh" styleClass="refresh-button" />
-            </HBox>
+            <Button text="刷新" onAction="#handleRefresh" styleClass="refresh-button" />
+            <Button text="新增职位" onAction="#handleNewPosition" styleClass="action-button-primary" />
         </children>
     </HBox>
 
-    <TableView fx:id="positionTable" VBox.vgrow="ALWAYS" fixedCellSize="40">
+    <TableView fx:id="positionTable" VBox.vgrow="ALWAYS">
         <columns>
             <TableColumn fx:id="posIdCol" text="职位ID" prefWidth="100"/>
-            <TableColumn fx:id="posNameCol" text="职位名称" prefWidth="200"/>
-            <TableColumn fx:id="levelCol" text="职位等级" prefWidth="150"/>
-            <TableColumn fx:id="salaryLevelCol" text="薪资标准ID" prefWidth="150"/>
+            <TableColumn fx:id="posNameCol" text="职位名称" prefWidth="150"/>
+            <TableColumn fx:id="levelCol" text="职级" prefWidth="100"/>
+            <TableColumn fx:id="salaryLevelCol" text="薪资等级" prefWidth="100"/>
+            <TableColumn fx:id="actionCol" text="操作" prefWidth="120"/>
         </columns>
-        <columnResizePolicy>
-            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-        </columnResizePolicy>
     </TableView>
 </VBox>

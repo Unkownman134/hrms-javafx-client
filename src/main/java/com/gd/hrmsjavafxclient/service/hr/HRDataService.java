@@ -17,6 +17,7 @@ public class HRDataService {
     private static final String POSITION_ENDPOINT = "/positions";
     private static final String CANDIDATE_ENDPOINT = "/candidates";
 
+    // --- 查询方法 ---
     public List<Candidate> getAllCandidates(String token) throws IOException, InterruptedException {
         return ServiceUtil.sendGet(CANDIDATE_ENDPOINT, token, new TypeReference<List<Candidate>>() {}).orElse(List.of());
     }
@@ -33,40 +34,90 @@ public class HRDataService {
         return ServiceUtil.sendGet(EMPLOYEE_ENDPOINT, token, new TypeReference<List<Employee>>() {}).orElse(List.of());
     }
 
-    public boolean addCandidate(Candidate c, String token) {
-        System.out.println("[DEBUG] 尝试新增候选人: " + c.getName() + ", 性别: " + c.getGender());
+    // --- 员工管理 (Employee) ---
+    public Optional<Employee> createEmployee(Employee emp, String token) {
         try {
-            ServiceUtil.sendRequest(CANDIDATE_ENDPOINT, token, c, "POST", new TypeReference<Void>() {});
-            return true;
+            ServiceUtil.sendRequest(EMPLOYEE_ENDPOINT, token, emp, "POST", new TypeReference<String>() {});
+            List<Employee> all = getAllEmployees(token);
+            return all.stream().filter(e -> e.getPhone().equals(emp.getPhone())).findFirst();
         } catch (Exception e) {
-            System.err.println("[DEBUG] 新增候选人失败: " + e.getMessage());
-            throw new RuntimeException(e);
+            System.err.println("[DEBUG] 创建员工异常: " + e.getMessage());
+            return Optional.empty();
         }
     }
 
+    public boolean updateEmployee(Employee emp, String token) {
+        try {
+            ServiceUtil.sendRequest(EMPLOYEE_ENDPOINT + "/" + emp.getEmpId(), token, emp, "PUT", new TypeReference<Void>() {});
+            return true;
+        } catch (Exception e) { return false; }
+    }
+
+    public boolean deleteEmployee(int empId, String token) {
+        try {
+            ServiceUtil.sendRequest(EMPLOYEE_ENDPOINT + "/" + empId, token, null, "DELETE", new TypeReference<Void>() {});
+            return true;
+        } catch (Exception e) { return false; }
+    }
+
+    // --- 部门管理 (Department) ---
+    public boolean addDepartment(Department dept, String token) {
+        try {
+            ServiceUtil.sendRequest(DEPARTMENT_ENDPOINT, token, dept, "POST", new TypeReference<Void>() {});
+            return true;
+        } catch (Exception e) { return false; }
+    }
+
+    public boolean updateDepartment(Department dept, String token) {
+        try {
+            ServiceUtil.sendRequest(DEPARTMENT_ENDPOINT + "/" + dept.getDeptId(), token, dept, "PUT", new TypeReference<Void>() {});
+            return true;
+        } catch (Exception e) { return false; }
+    }
+
+    public boolean deleteDepartment(int deptId, String token) {
+        try {
+            ServiceUtil.sendRequest(DEPARTMENT_ENDPOINT + "/" + deptId, token, null, "DELETE", new TypeReference<Void>() {});
+            return true;
+        } catch (Exception e) { return false; }
+    }
+
+    // --- 职位管理 (Position) ---
+    public boolean addPosition(Position pos, String token) {
+        try {
+            ServiceUtil.sendRequest(POSITION_ENDPOINT, token, pos, "POST", new TypeReference<Void>() {});
+            return true;
+        } catch (Exception e) { return false; }
+    }
+
+    public boolean updatePosition(Position pos, String token) {
+        try {
+            ServiceUtil.sendRequest(POSITION_ENDPOINT + "/" + pos.getPosId(), token, pos, "PUT", new TypeReference<Void>() {});
+            return true;
+        } catch (Exception e) { return false; }
+    }
+
+    public boolean deletePosition(int posId, String token) {
+        try {
+            ServiceUtil.sendRequest(POSITION_ENDPOINT + "/" + posId, token, null, "DELETE", new TypeReference<Void>() {});
+            return true;
+        } catch (Exception e) { return false; }
+    }
+
+    // --- 候选人与结果更新 ---
+    public boolean addCandidate(Candidate c, String token) {
+        try {
+            ServiceUtil.sendRequest(CANDIDATE_ENDPOINT, token, c, "POST", new TypeReference<Void>() {});
+            return true;
+        } catch (Exception e) { return false; }
+    }
+
     public boolean updateCandidateResult(int id, String res, String token) {
-        System.out.println("[DEBUG] 更新结果请求: ID=" + id + ", Result=" + res);
         try {
             Map<String, String> p = new HashMap<>(); p.put("result", res);
             ServiceUtil.sendRequest(CANDIDATE_ENDPOINT + "/" + id + "/result", token, p, "PUT", new TypeReference<Void>() {});
             return true;
         } catch (Exception e) { return false; }
-    }
-
-    public Optional<Employee> createEmployee(Employee emp, String token) {
-        try {
-            // 1. 发送请求
-            ServiceUtil.sendRequest(EMPLOYEE_ENDPOINT, token, emp, "POST", new TypeReference<String>() {});
-
-            List<Employee> all = getAllEmployees(token);
-            return all.stream()
-                    .filter(e -> e.getPhone().equals(emp.getPhone()))
-                    .findFirst();
-
-        } catch (Exception e) {
-            System.err.println("[DEBUG] 创建员工异常: " + e.getMessage());
-            return Optional.empty();
-        }
     }
 
     public boolean createUser(User user, String token) {

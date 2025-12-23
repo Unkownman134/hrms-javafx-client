@@ -14,25 +14,21 @@
     <HBox alignment="CENTER_LEFT" spacing="15">
         <children>
             <VBox>
-                <Label text="部门组织查看" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: -fx-text-main;"/>
-                <Label text="实时同步全公司部门架构信息" style="-fx-font-size: 12px; -fx-text-fill: -fx-text-muted;"/>
+                <Label text="部门架构管理" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: -fx-text-main;"/>
+                <Label text="维护企业部门层级信息" style="-fx-font-size: 12px; -fx-text-fill: -fx-text-muted;"/>
             </VBox>
             <Region HBox.hgrow="ALWAYS" />
-            <HBox spacing="10" alignment="CENTER">
-                <Button text="➕ 新增部门" onAction="#handleAddDepartment" styleClass="action-button-primary" />
-                <Button text="🔄 刷新数据" onAction="#handleRefresh" styleClass="refresh-button" />
-            </HBox>
+            <Button text="刷新数据" onAction="#handleRefresh" styleClass="refresh-button" />
+            <Button text="新增部门" onAction="#handleNewDepartment" styleClass="action-button-primary" />
         </children>
     </HBox>
 
     <TableView fx:id="departmentTable" VBox.vgrow="ALWAYS" fixedCellSize="40">
         <columns>
             <TableColumn fx:id="deptIdCol" text="部门ID" prefWidth="100"/>
-            <TableColumn fx:id="deptNameCol" text="部门名称" prefWidth="250"/>
-            <TableColumn fx:id="deptDescCol" text="部门描述" prefWidth="400"/>
+            <TableColumn fx:id="deptNameCol" text="部门名称" prefWidth="150"/>
+            <TableColumn fx:id="deptDescCol" text="部门描述" prefWidth="300"/>
+            <TableColumn fx:id="actionCol" text="操作" prefWidth="120"/>
         </columns>
-        <columnResizePolicy>
-            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-        </columnResizePolicy>
     </TableView>
 </VBox>
