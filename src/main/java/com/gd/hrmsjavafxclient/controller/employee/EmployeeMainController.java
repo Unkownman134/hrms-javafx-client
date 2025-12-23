@@ -79,6 +79,13 @@ public class EmployeeMainController implements MainController {
         loadView("AttendanceRecordView");
     }
 
+    // 🌟 新增：显示修改密码界面
+    @FXML
+    public void showChangePasswordView(ActionEvent event) {
+        updateNavStyle(event);
+        loadView("ChangePasswordView");
+    }
+
     @FXML
     public void showSalaryRecordView(ActionEvent event) {
         updateNavStyle(event);

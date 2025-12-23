@@ -167,3 +167,30 @@
     -fx-background-color: rgba(46, 204, 113, 0.1);
     -fx-rotate: 180; /* 悬停时旋转180度，超酷的！ */
 }
+
+/* 小眼睛按钮基础样式 */
+.eye-button {
+    -fx-background-color: transparent;
+    -fx-cursor: hand;
+    -fx-text-fill: #95a5a6;
+    -fx-padding: 0 10 0 0;
+    /* 增加一个平滑的过渡动画，让出现不那么突兀 */
+    -fx-transition: opacity 0.3s;
+}
+
+/* 当鼠标移入密码容器（StackPane）时，显示小眼睛 */
+.password-wrapper:hover .eye-button {
+    -fx-opacity: 1.0;
+}
+
+/* 即使鼠标没悬停，如果按钮被选中（正在看密码），也应该保持显示 */
+.eye-button:selected {
+    -fx-opacity: 1.0;
+    -fx-text-fill: -fx-primary-color;
+}
+
+/* 输入框内边距，防止文字重叠在眼睛上 */
+.password-wrapper .text-field,
+.password-wrapper .password-field {
+    -fx-padding: 8 35 8 10;
+}

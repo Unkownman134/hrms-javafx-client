@@ -34,6 +34,8 @@
                 <Label text="SELF SERVICE" style="-fx-text-fill: #5D6D7E; -fx-padding: 0 0 15 25; -fx-font-size: 11px; -fx-font-weight: bold;"/>
                 <Button text="我的申请" onAction="#showApplicationView" styleClass="nav-button" maxWidth="Infinity"/>
                 <Button text="考勤记录" onAction="#showAttendanceRecordView" styleClass="nav-button" maxWidth="Infinity"/>
+                <Button text="修改密码" onAction="#showChangePasswordView" styleClass="nav-button" maxWidth="Infinity"/>
+
                 <Region prefHeight="25"/>
                 <Label text="FINANCE" style="-fx-text-fill: #5D6D7E; -fx-padding: 0 0 15 25; -fx-font-size: 11px; -fx-font-weight: bold;"/>
                 <Button text="工资条" onAction="#showSalaryRecordView" styleClass="nav-button" maxWidth="Infinity"/>
@@ -43,7 +45,7 @@
 
     <center>
         <StackPane fx:id="contentPane">
-            <padding><Insets top="30" right="30" bottom="30" left="30"/></padding>
+            <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
         </StackPane>
     </center>
 </BorderPane>
