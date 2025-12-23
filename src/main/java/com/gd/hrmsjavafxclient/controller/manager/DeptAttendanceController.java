@@ -15,8 +15,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.util.StringConverter;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.YearMonth;
@@ -25,16 +25,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 /**
- * 部门考勤记录视图控制器 (t_attendance_record)
- * 🌟 修正：通过客户端聚合 (Client Aggregation) 的方式实现部门考勤查询功能，并统一了上下文接收方法。
- * 🚨 修正：更新 TableColumn 绑定属性，修复 clockOutTime 命名错误。
+ * 部门考勤记录视图控制器
+ * 🌟 最终进化版：
+ * 1. 使用 DatePicker 并通过 StringConverter 锁定“年-月”显示格式。
+ * 2. 彻底移除导出功能，界面清爽 100%。
+ * 3. 逻辑依然保持严谨的客户端聚合查询。
  */
 public class DeptAttendanceController implements ManagerSubController {
 
-    @FXML private ComboBox<String> monthComboBox;
+    @FXML private Label deptNameLabel;
+    @FXML private DatePicker monthDatePicker;
+    @FXML private Button queryButton;
+
     @FXML private TableView<AttendanceRecord> attendanceTable;
     @FXML private TableColumn<AttendanceRecord, Integer> empIdCol;
     @FXML private TableColumn<AttendanceRecord, String> nameCol;
@@ -43,217 +47,144 @@ public class DeptAttendanceController implements ManagerSubController {
     @FXML private TableColumn<AttendanceRecord, LocalTime> checkOutTimeCol;
     @FXML private TableColumn<AttendanceRecord, String> statusCol;
     @FXML private TableColumn<AttendanceRecord, String> noteCol;
-    @FXML private Button queryButton;
-    @FXML private Label deptNameLabel;
 
-    // --- 数据和状态 ---
-    private final ObservableList<AttendanceRecord> data = FXCollections.observableArrayList();
-    private final AttendanceManagerService attendanceManagerService = new AttendanceManagerService();
-    private final EmployeeManagerService employeeManagerService = new EmployeeManagerService();
-
-    private CurrentUserInfo currentUserInfo;
     private String authToken;
-    private Map<Integer, Employee> departmentEmployeeMap;
+    private CurrentUserInfo currentUser;
+    private final AttendanceManagerService attendanceService = new AttendanceManagerService();
+    private final EmployeeManagerService employeeService = new EmployeeManagerService();
 
-    @FXML
-    public void initialize() {
-        // 初始化 ComboBox：填充最近 12 个月
-        YearMonth currentMonth = YearMonth.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM");
-        List<String> months = IntStream.range(0, 12)
-                .mapToObj(currentMonth::minusMonths)
-                .map(formatter::format)
-                .collect(Collectors.toList());
-        monthComboBox.setItems(FXCollections.observableArrayList(months));
-        monthComboBox.getSelectionModel().selectFirst(); // 默认选择本月
+    private final ObservableList<AttendanceRecord> attendanceData = FXCollections.observableArrayList();
 
-        // 初始化 TableView 列绑定
+    @Override
+    public void setManagerContext(CurrentUserInfo userInfo, String authToken) {
+        this.currentUser = userInfo;
+        this.authToken = authToken;
+
+        Platform.runLater(() -> {
+            if (userInfo != null && userInfo.getDepartmentName() != null) {
+                deptNameLabel.setText("当前部门: " + userInfo.getDepartmentName());
+            }
+            initTable();
+            initDatePicker(); // 初始化日期选择器
+        });
+    }
+
+    /**
+     * 初始化表格列绑定
+     */
+    private void initTable() {
         empIdCol.setCellValueFactory(new PropertyValueFactory<>("empId"));
         nameCol.setCellValueFactory(new PropertyValueFactory<>("employeeName"));
-
-        // 绑定 Model 中的 Property
         dateCol.setCellValueFactory(new PropertyValueFactory<>("date"));
         checkInTimeCol.setCellValueFactory(new PropertyValueFactory<>("clockInTime"));
-        // 🌟 修正点：将错误的 "clockOutOutTime" 修正为正确的 "clockOutTime"
         checkOutTimeCol.setCellValueFactory(new PropertyValueFactory<>("clockOutTime"));
         statusCol.setCellValueFactory(new PropertyValueFactory<>("status"));
         noteCol.setCellValueFactory(new PropertyValueFactory<>("note"));
 
-        // 设置日期/时间列的格式（省略格式化代码，与上次提供的一致）
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
-
-        dateCol.setCellFactory(column -> new TableCell<AttendanceRecord, LocalDate>() {
-            @Override
-            protected void updateItem(LocalDate item, boolean empty) {
-                super.updateItem(item, empty);
-                setText(empty || item == null ? null : dateFormatter.format(item));
-            }
-        });
-        checkInTimeCol.setCellFactory(column -> new TableCell<AttendanceRecord, LocalTime>() {
-            @Override
-            protected void updateItem(LocalTime item, boolean empty) {
-                super.updateItem(item, empty);
-                setText(empty || item == null ? null : timeFormatter.format(item));
-            }
-        });
-        checkOutTimeCol.setCellFactory(column -> new TableCell<AttendanceRecord, LocalTime>() {
-            @Override
-            protected void updateItem(LocalTime item, boolean empty) {
-                super.updateItem(item, empty);
-                setText(empty || item == null ? null : timeFormatter.format(item));
-            }
-        });
-
-        attendanceTable.setItems(data);
+        attendanceTable.setItems(attendanceData);
     }
 
-    // ... (其他方法如 setManagerContext, loadDepartmentEmployeesAndInitQuery, handleQueryAttendance, handleExportButtonAction, showAlert 保持不变，请沿用上一轮的带调试信息的版本)
-    @Override
-    public void setManagerContext(CurrentUserInfo userInfo, String authToken) {
-        this.currentUserInfo = userInfo;
-        this.authToken = authToken;
-        Platform.runLater(this::loadDepartmentEmployeesAndInitQuery);
+    /**
+     * 配置 DatePicker 魔法，让它只显示年月 ✨
+     */
+    private void initDatePicker() {
+        // 默认选中今天（本月）
+        monthDatePicker.setValue(LocalDate.now());
+
+        // 设置显示格式为 "yyyy年MM月"
+        monthDatePicker.setConverter(new StringConverter<LocalDate>() {
+            private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy年MM月");
+
+            @Override
+            public String toString(LocalDate date) {
+                return (date != null) ? formatter.format(date) : "";
+            }
+
+            @Override
+            public LocalDate fromString(String string) {
+                if (string == null || string.isEmpty()) return null;
+                // 注意：这里由于只输入年月，解析需要特殊处理，但通常用户通过日历选日子，toString 负责展示即可
+                return monthDatePicker.getValue();
+            }
+        });
+
+        // 禁止手动输入，只能点选，防止格式报错
+        monthDatePicker.getEditor().setEditable(false);
     }
 
-    private void loadDepartmentEmployeesAndInitQuery() {
-        if (currentUserInfo == null || authToken == null || currentUserInfo.getDeptId() == null) {
-            showAlert("错误 ❌", "用户、认证信息或部门ID丢失，无法加载数据。", Alert.AlertType.ERROR);
+    /**
+     * 查询按钮逻辑
+     */
+    @FXML
+    private void handleQueryAttendance(ActionEvent event) {
+        LocalDate selectedDate = monthDatePicker.getValue();
+        if (selectedDate == null) {
+            showAlert("提示", "请选择要查询的月份哦！", Alert.AlertType.WARNING);
             return;
         }
 
-        Integer deptId = currentUserInfo.getDeptId();
-        deptNameLabel.setText(currentUserInfo.getDepartmentName() + " 部门考勤记录");
-        attendanceTable.setPlaceholder(new Label("正在加载部门员工列表... 🏃‍♀️"));
-
-        Task<Void> task = new Task<>() {
-            @Override
-            protected Void call() throws Exception {
-                List<Employee> allEmployees = employeeManagerService.getAllEmployees(authToken);
-                departmentEmployeeMap = allEmployees.stream()
-                        .filter(e -> deptId.equals(e.getDeptId()))
-                        .collect(Collectors.toMap(Employee::getEmpId, e -> e));
-
-                Platform.runLater(() -> handleQueryAttendance(null));
-                return null;
-            }
-
-            @Override
-            protected void failed() {
-                Platform.runLater(() -> {
-                    attendanceTable.setPlaceholder(new Label("初始化数据失败 😭: " + getException().getMessage()));
-                    showAlert("错误 ❌", "初始化数据失败：\n" + getException().getMessage(), Alert.AlertType.ERROR);
-                    getException().printStackTrace();
-                });
-            }
-        };
-        new Thread(task).start();
-    }
-
-
-    /**
-     * 🌟 修正并添加调试信息：查询考勤记录的事件处理方法
-     * 请注意：此方法内容与上一轮提供的一致，包含调试信息。
-     */
-    @FXML
-    public void handleQueryAttendance(ActionEvent event) {
-        String selectedMonthText = monthComboBox.getSelectionModel().getSelectedItem();
-
-        if (selectedMonthText == null || currentUserInfo == null || departmentEmployeeMap == null) return;
-
-        System.out.println("--- 🔎 开始考勤查询调试 (北京时间 " + java.time.LocalDateTime.now() + ") ---");
-        System.out.println("查询月份: " + selectedMonthText);
-
-        List<Integer> deptEmpIds = new ArrayList<>(departmentEmployeeMap.keySet());
-        YearMonth selectedYearMonth = YearMonth.parse(selectedMonthText, DateTimeFormatter.ofPattern("yyyy-MM"));
+        // 提取所选日期所在的月份
+        YearMonth targetMonth = YearMonth.from(selectedDate);
 
         queryButton.setDisable(true);
-        queryButton.setText("查询中... 🔎");
-        attendanceTable.setPlaceholder(new Label("正在查询 " + selectedMonthText + " 的考勤记录..."));
+        queryButton.setText("查询中...");
+        attendanceData.clear();
+        attendanceTable.setPlaceholder(new ProgressIndicator());
 
         Task<List<AttendanceRecord>> loadTask = new Task<>() {
             @Override
             protected List<AttendanceRecord> call() throws Exception {
-                List<AttendanceRecord> aggregatedRecords = new ArrayList<>();
-                int totalFetchedCount = 0;
-
-                // 1. 遍历部门所有员工ID，逐个调用 API
-                for (Integer empId : deptEmpIds) {
-                    try {
-                        List<AttendanceRecord> empRecords = attendanceManagerService.getAttendanceRecordsByEmpId(empId, authToken);
-
-                        System.out.println(" -> 员工 " + empId + " (姓名: " + departmentEmployeeMap.get(empId).getEmpName() + ") 成功获取 " + empRecords.size() + " 条记录。");
-
-                        empRecords.forEach(r -> {
-                            r.setEmpId(empId);
-                            // 调试：检查日期是否被正确解析
-                            System.out.println("    [DEBUG] Record ID: " + r.getRecordId() + ", AttDate: " + r.getDate() + ", Status: " + r.getStatus());
-                        });
-
-                        aggregatedRecords.addAll(empRecords);
-                        totalFetchedCount += empRecords.size();
-
-                    } catch (IOException e) {
-                        System.err.println("❌ API 错误：无法加载员工 ID: " + empId + " 的考勤记录：" + e.getMessage());
-                        // 遇到单个员工的 API 错误，跳过该员工，继续查询下一个。
-                    }
-                }
-
-                System.out.println("总共从 API 获取到的记录数 (聚合前): " + totalFetchedCount + " 条。");
-
-                // 2. 客户端过滤：按选择的月份筛选数据
-                List<AttendanceRecord> filteredRecords = aggregatedRecords.stream()
-                        // r.getDate() 不为 null 且月份匹配
-                        .filter(r -> r.getDate() != null && YearMonth.from(r.getDate()).equals(selectedYearMonth))
+                // 1. 获取部门下所有员工
+                List<Employee> allEmployees = employeeService.getAllEmployees(authToken);
+                List<Employee> deptEmps = allEmployees.stream()
+                        .filter(e -> e.getDeptId() != null && e.getDeptId().equals(currentUser.getDeptId()))
                         .collect(Collectors.toList());
 
-                System.out.println("经过月份过滤后的记录数: " + filteredRecords.size() + " 条。");
+                Map<Integer, String> empNameMap = deptEmps.stream()
+                        .collect(Collectors.toMap(Employee::getEmpId, Employee::getEmpName, (v1, v2) -> v1));
 
-                // 3. 客户端聚合：设置员工姓名到每个记录中
-                for (AttendanceRecord record : filteredRecords) {
-                    Employee emp = departmentEmployeeMap.get(record.getEmpId());
-                    record.setEmployeeName(emp != null ? emp.getEmpName() : "N/A (ID: " + record.getEmpId() + ")");
+                List<AttendanceRecord> results = new ArrayList<>();
+
+                // 2. 遍历查询每个人的考勤（后端如果没提供部门接口，只能这样聚合）
+                for (Employee emp : deptEmps) {
+                    if (isCancelled()) break;
+                    List<AttendanceRecord> empRecords = attendanceService.getAttendanceRecordsByEmpId(emp.getEmpId(), authToken);
+
+                    // 🌟 核心过滤逻辑：只拿选中月份的数据
+                    List<AttendanceRecord> filtered = empRecords.stream()
+                            .filter(r -> r.getDate() != null && YearMonth.from(r.getDate()).equals(targetMonth))
+                            .peek(r -> r.setEmployeeName(empNameMap.get(r.getEmpId())))
+                            .collect(Collectors.toList());
+
+                    results.addAll(filtered);
                 }
-
-                return filteredRecords;
+                return results;
             }
 
             @Override
             protected void succeeded() {
-                Platform.runLater(() -> {
-                    data.setAll(getValue());
-                    queryButton.setText("查 询");
-                    queryButton.setDisable(false);
-                    if (data.isEmpty()) {
-                        attendanceTable.setPlaceholder(new Label(selectedMonthText + " 暂时没有考勤记录呢。"));
-                    }
-                    System.out.println("✅ 考勤查询完成，表格显示 " + data.size() + " 条记录。");
-                    System.out.println("--- 调试结束 ---");
-                });
+                attendanceData.setAll(getValue());
+                resetQueryButton();
+                if (attendanceData.isEmpty()) {
+                    attendanceTable.setPlaceholder(new Label(targetMonth.toString() + " 暂无记录数据。"));
+                }
             }
 
             @Override
             protected void failed() {
-                Platform.runLater(() -> {
-                    attendanceTable.setPlaceholder(new Label("加载考勤记录失败 ❌: " + getException().getMessage()));
-                    showAlert("错误 ❌", "加载考勤记录失败：\n" + getException().getMessage(), Alert.AlertType.ERROR);
-                    queryButton.setText("查 询");
-                    queryButton.setDisable(false);
-                    getException().printStackTrace();
-                    System.err.println("❌ 考勤查询失败，请检查 Service 或网络连接。");
-                    System.out.println("--- 调试结束 ---");
-                });
+                resetQueryButton();
+                attendanceTable.setPlaceholder(new Label("加载失败 ❌"));
+                showAlert("错误", "获取考勤数据时崩溃了：" + getException().getMessage(), Alert.AlertType.ERROR);
+            }
+
+            private void resetQueryButton() {
+                queryButton.setDisable(false);
+                queryButton.setText("查 询");
             }
         };
 
         new Thread(loadTask).start();
     }
-
-    @FXML
-    private void handleExportButtonAction(ActionEvent event) {
-        showAlert("提示 💡", "导出记录功能尚未实现哦！", Alert.AlertType.INFORMATION);
-    }
-
 
     private void showAlert(String title, String message, Alert.AlertType type) {
         Platform.runLater(() -> {
