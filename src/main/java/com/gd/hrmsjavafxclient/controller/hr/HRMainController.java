@@ -17,13 +17,13 @@ import java.io.IOException;
 import java.net.URL;
 
 /**
- * HR 角色主界面控制器
- * 实现 MainController 接口以兼容 App.java 的登录流
+ * HR 主界面控制器
+ * 负责切换不同的子功能视图
  */
 public class HRMainController implements MainController {
 
     /**
-     * 子界面控制器需要实现的接口，用于接收父界面的上下文
+     * 定义子控制器接口，用于传递登录上下文
      */
     public interface HRSubController {
         void setHRContext(CurrentUserInfo userInfo, String authToken);
@@ -38,68 +38,62 @@ public class HRMainController implements MainController {
     @FXML private Button departmentButton;
     @FXML private Button positionButton;
     @FXML private Button recruitmentButton;
-    @FXML private Button salaryButton; // 🌟 薪资管理按钮
+    @FXML private Button shiftButton;
 
     private CurrentUserInfo currentUser;
-    private String token;
-    private Button activeNavButton;
+    private String authToken;
 
-    // 视图路径定义
-    private static final String HR_DASHBOARD_VIEW = "hr/HRDashboardView";
-    private static final String HR_EMPLOYEE_VIEW = "hr/EmployeeView";
-    private static final String HR_DEPARTMENT_VIEW = "hr/DepartmentView";
-    private static final String HR_POSITION_VIEW = "hr/PositionView";
-    private static final String HR_RECRUITMENT_VIEW = "hr/RecruitmentView";
-    private static final String HR_SALARY_VIEW = "hr/SalaryView"; // 🌟 新增薪资视图
+    // 路径常量，请务必确认这些文件位于 resources/com/gd/hrmsjavafxclient/fxml/hr/ 目录下
+    private static final String HR_DASHBOARD_VIEW = "/com/gd/hrmsjavafxclient/fxml/hr/HRDashboardView.fxml";
+    private static final String HR_EMPLOYEE_VIEW = "/com/gd/hrmsjavafxclient/fxml/hr/EmployeeView.fxml";
+    private static final String HR_DEPARTMENT_VIEW = "/com/gd/hrmsjavafxclient/fxml/hr/DepartmentView.fxml";
+    private static final String HR_POSITION_VIEW = "/com/gd/hrmsjavafxclient/fxml/hr/PositionView.fxml";
+    private static final String HR_RECRUITMENT_VIEW = "/com/gd/hrmsjavafxclient/fxml/hr/RecruitmentView.fxml";
+    private static final String HR_SHIFT_VIEW = "/com/gd/hrmsjavafxclient/fxml/hr/ShiftView.fxml";
 
-    /**
-     * 实现 MainController 接口的方法
-     * 由登录逻辑调用，初始化用户信息和 Token
-     */
     @Override
     public void setUserInfo(CurrentUserInfo userInfo, String authToken) {
         this.currentUser = userInfo;
-        this.token = authToken;
-
-        if (userInfo != null) {
-            userInfoLabel.setText(userInfo.getRoleName() + " (" + userInfo.getRoleName() + ")");
-        }
-
+        this.authToken = authToken;
+        // 设置顶栏用户信息
+        userInfoLabel.setText("👤 HR: " + userInfo.getEmployeeName() + " | " + userInfo.getDepartmentName());
         // 默认加载仪表盘
         loadView(HR_DASHBOARD_VIEW);
-        if (dashboardButton != null) {
-            setActiveButton(dashboardButton);
-        }
+        setActiveButton(dashboardButton);
     }
 
     /**
-     * 动态加载子视图并注入上下文
+     * 核心加载方法：动态切换中间 contentPane 的内容
      */
     private void loadView(String fxmlPath) {
         try {
-            URL url = App.class.getResource("fxml/" + fxmlPath + ".fxml");
+            URL url = getClass().getResource(fxmlPath);
             if (url == null) {
-                System.err.println("找不到资源文件: " + fxmlPath);
-                return;
+                throw new IOException("找不到 FXML 资源文件: " + fxmlPath + "\n请检查 resources 目录下的路径是否正确。");
             }
 
             FXMLLoader loader = new FXMLLoader(url);
             Parent view = loader.load();
 
-            // 获取子控制器并传递 Token 和用户信息
+            // 如果子控制器需要用户信息，则进行传递
             Object controller = loader.getController();
             if (controller instanceof HRSubController) {
-                ((HRSubController) controller).setHRContext(currentUser, token);
+                ((HRSubController) controller).setHRContext(currentUser, authToken);
             }
 
+            // 将新视图放入 StackPane
             contentPane.getChildren().setAll(view);
         } catch (IOException e) {
-            new Alert(Alert.AlertType.ERROR, "界面加载失败: " + e.getMessage()).show();
             e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("界面加载失败");
+            alert.setHeaderText("无法切换视图");
+            alert.setContentText("错误详情: " + e.getMessage());
+            alert.show();
         }
     }
 
-    // --- 导航事件处理 ---
+    // --- 按钮点击事件处理 ---
 
     @FXML
     private void showDashboardView(ActionEvent event) {
@@ -132,28 +126,25 @@ public class HRMainController implements MainController {
     }
 
     @FXML
-    private void showSalaryView(ActionEvent event) {
+    private void showShiftView(ActionEvent event) {
         setActiveButton((Button) event.getSource());
-        loadView(HR_SALARY_VIEW);
+        loadView(HR_SHIFT_VIEW);
     }
 
-    /**
-     * 处理登出逻辑，调用 App 的静态方法回退到登录页
-     */
     @FXML
     private void handleLogout(ActionEvent event) {
         App.logout();
     }
 
     /**
-     * 更新按钮激活状态样式
+     * 切换侧边栏按钮的激活状态样式
      */
     private void setActiveButton(Button button) {
-        if (button == null) return;
-        if (activeNavButton != null) {
-            activeNavButton.getStyleClass().remove("nav-button-active");
-        }
-        activeNavButton = button;
-        activeNavButton.getStyleClass().add("nav-button-active");
+        sideBar.getChildren().forEach(node -> {
+            if (node instanceof Button) {
+                node.getStyleClass().remove("active");
+            }
+        });
+        button.getStyleClass().add("active");
     }
 }

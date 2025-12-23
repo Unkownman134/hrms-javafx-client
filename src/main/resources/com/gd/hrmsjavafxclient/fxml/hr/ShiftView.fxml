@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox spacing="20.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.gd.hrmsjavafxclient.controller.hr.ShiftController"
+      stylesheets="@../../style/hrms-styles.css" styleClass="root">
+    <padding>
+        <Insets top="25" right="25" bottom="25" left="25"/>
+    </padding>
+
+    <HBox alignment="CENTER_LEFT" spacing="15">
+        <children>
+            <VBox>
+                <Label text="班次规则管理" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: -fx-text-main;"/>
+                <Label text="配置标准上下班时间与迟到判定基准" style="-fx-font-size: 12px; -fx-text-fill: -fx-text-muted;"/>
+            </VBox>
+            <Region HBox.hgrow="ALWAYS" />
+            <Button text="刷新" onAction="#handleRefresh" styleClass="refresh-button" />
+            <Button text="新增规则" onAction="#handleNewRule" styleClass="action-button-primary" />
+        </children>
+    </HBox>
+
+    <TableView fx:id="shiftTable" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="nameCol" text="班次名称" prefWidth="200"/>
+            <TableColumn fx:id="startCol" text="上班时间" prefWidth="150"/>
+            <TableColumn fx:id="endCol" text="下班时间" prefWidth="150"/>
+            <TableColumn fx:id="lateCol" text="迟到容忍 (分钟)" prefWidth="150"/>
+            <TableColumn fx:id="actionCol" text="操作" prefWidth="200"/>
+        </columns>
+        <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+        </columnResizePolicy>
+    </TableView>
+</VBox>

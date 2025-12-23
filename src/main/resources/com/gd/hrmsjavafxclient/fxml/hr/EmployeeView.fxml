@@ -15,7 +15,7 @@
         <children>
             <VBox>
                 <Label text="员工档案管理" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: -fx-text-main;"/>
-                <Label text="数字化员工全生命周期档案 (HR版)" style="-fx-font-size: 12px; -fx-text-fill: -fx-text-muted;"/>
+                <Label text="数字化员工全生命周期档案 (已关联部门与职位)" style="-fx-font-size: 12px; -fx-text-fill: -fx-text-muted;"/>
             </VBox>
             <Region HBox.hgrow="ALWAYS" />
             <HBox spacing="10" alignment="CENTER">
@@ -26,19 +26,23 @@
     </HBox>
 
     <HBox style="-fx-background-color: #EBF5FB; -fx-padding: 10; -fx-background-radius: 5;">
-        <Label text="提示：所有员工数据均通过 API 实时同步，删除操作不可恢复。" style="-fx-text-fill: #2980B9; -fx-font-size: 13px;"/>
+        <Label text="提示：部门、职位和主管名称已自动从关联 ID 转换展示。" style="-fx-text-fill: #2980B9; -fx-font-size: 13px;"/>
     </HBox>
 
     <TableView fx:id="employeeTable" VBox.vgrow="ALWAYS" fixedCellSize="40">
         <columns>
-            <TableColumn fx:id="empIdCol" text="ID" prefWidth="50"/>
-            <TableColumn fx:id="empNameCol" text="姓名" prefWidth="80"/>
-            <TableColumn fx:id="genderCol" text="性别" prefWidth="50"/>
-            <TableColumn fx:id="phoneCol" text="联系电话" prefWidth="120"/>
+            <TableColumn fx:id="empNameCol" text="姓名" prefWidth="100"/>
+            <TableColumn fx:id="genderCol" text="性别" prefWidth="60"/>
+
+            <TableColumn fx:id="deptNameCol" text="所属部门" prefWidth="150"/>
+            <TableColumn fx:id="posNameCol" text="当前职位" prefWidth="120"/>
+            <TableColumn fx:id="managerNameCol" text="直接上级" prefWidth="100"/>
+
+            <TableColumn fx:id="phoneCol" text="联系电话" prefWidth="130"/>
             <TableColumn fx:id="emailCol" text="电子邮箱" prefWidth="180"/>
             <TableColumn fx:id="statusCol" text="状态" prefWidth="80"/>
             <TableColumn fx:id="joinDateCol" text="入职日期" prefWidth="120"/>
-            <TableColumn fx:id="actionCol" text="操作" prefWidth="120"/>
+            <TableColumn fx:id="actionCol" text="操作" prefWidth="150"/>
         </columns>
     </TableView>
 </VBox>
