@@ -42,6 +42,7 @@
                 <Button fx:id="employeeButton" text="员工管理" onAction="#showEmployeeView" styleClass="nav-button" maxWidth="Infinity"/>
                 <Button fx:id="departmentButton" text="部门查看" onAction="#showDepartmentView" styleClass="nav-button" maxWidth="Infinity"/>
                 <Button fx:id="positionButton" text="职位体系" onAction="#showPositionView" styleClass="nav-button" maxWidth="Infinity"/>
+                <Button fx:id="salaryButton" text="薪酬标准" onAction="#showSalaryView" styleClass="nav-button" maxWidth="Infinity"/>
 
                 <Region prefHeight="25"/>
                 <Label text="人力资源流程" style="-fx-text-fill: #5D6D7E; -fx-padding: 0 0 15 25; -fx-font-size: 11px; -fx-font-weight: bold;"/>

@@ -16,8 +16,15 @@ import javafx.scene.layout.VBox;
 import java.io.IOException;
 import java.net.URL;
 
+/**
+ * HR 角色主界面控制器
+ * 实现 MainController 接口以兼容 App.java 的登录流
+ */
 public class HRMainController implements MainController {
 
+    /**
+     * 子界面控制器需要实现的接口，用于接收父界面的上下文
+     */
     public interface HRSubController {
         void setHRContext(CurrentUserInfo userInfo, String authToken);
     }
@@ -25,46 +32,61 @@ public class HRMainController implements MainController {
     @FXML private Label userInfoLabel;
     @FXML private StackPane contentPane;
     @FXML private VBox sideBar;
+
     @FXML private Button dashboardButton;
     @FXML private Button employeeButton;
     @FXML private Button departmentButton;
     @FXML private Button positionButton;
     @FXML private Button recruitmentButton;
+    @FXML private Button salaryButton; // 🌟 薪资管理按钮
 
     private CurrentUserInfo currentUser;
     private String token;
     private Button activeNavButton;
 
+    // 视图路径定义
     private static final String HR_DASHBOARD_VIEW = "hr/HRDashboardView";
     private static final String HR_EMPLOYEE_VIEW = "hr/EmployeeView";
     private static final String HR_DEPARTMENT_VIEW = "hr/DepartmentView";
     private static final String HR_POSITION_VIEW = "hr/PositionView";
     private static final String HR_RECRUITMENT_VIEW = "hr/RecruitmentView";
+    private static final String HR_SALARY_VIEW = "hr/SalaryView"; // 🌟 新增薪资视图
 
+    /**
+     * 实现 MainController 接口的方法
+     * 由登录逻辑调用，初始化用户信息和 Token
+     */
     @Override
     public void setUserInfo(CurrentUserInfo userInfo, String authToken) {
         this.currentUser = userInfo;
         this.token = authToken;
-        if (userInfoLabel != null && userInfo != null) {
-            userInfoLabel.setText("欢迎, " + userInfo.getUsername() + " (HR)");
+
+        if (userInfo != null) {
+            userInfoLabel.setText(userInfo.getRoleName() + " (" + userInfo.getRoleName() + ")");
         }
+
         // 默认加载仪表盘
         loadView(HR_DASHBOARD_VIEW);
-        setActiveButton(dashboardButton);
+        if (dashboardButton != null) {
+            setActiveButton(dashboardButton);
+        }
     }
 
-    @FXML
-    private void handleLogout(ActionEvent event) {
-        App.logout();
-    }
-
+    /**
+     * 动态加载子视图并注入上下文
+     */
     private void loadView(String fxmlPath) {
         try {
             URL url = App.class.getResource("fxml/" + fxmlPath + ".fxml");
-            if (url == null) return;
+            if (url == null) {
+                System.err.println("找不到资源文件: " + fxmlPath);
+                return;
+            }
+
             FXMLLoader loader = new FXMLLoader(url);
             Parent view = loader.load();
 
+            // 获取子控制器并传递 Token 和用户信息
             Object controller = loader.getController();
             if (controller instanceof HRSubController) {
                 ((HRSubController) controller).setHRContext(currentUser, token);
@@ -72,19 +94,65 @@ public class HRMainController implements MainController {
 
             contentPane.getChildren().setAll(view);
         } catch (IOException e) {
+            new Alert(Alert.AlertType.ERROR, "界面加载失败: " + e.getMessage()).show();
             e.printStackTrace();
         }
     }
 
-    @FXML private void showDashboardView(ActionEvent event) { setActiveButton((Button) event.getSource()); loadView(HR_DASHBOARD_VIEW); }
-    @FXML private void showEmployeeView(ActionEvent event) { setActiveButton((Button) event.getSource()); loadView(HR_EMPLOYEE_VIEW); }
-    @FXML private void showDepartmentView(ActionEvent event) { setActiveButton((Button) event.getSource()); loadView(HR_DEPARTMENT_VIEW); }
-    @FXML private void showPositionView(ActionEvent event) { setActiveButton((Button) event.getSource()); loadView(HR_POSITION_VIEW); }
-    @FXML private void showRecruitmentView(ActionEvent event) { setActiveButton((Button) event.getSource()); loadView(HR_RECRUITMENT_VIEW); }
+    // --- 导航事件处理 ---
 
+    @FXML
+    private void showDashboardView(ActionEvent event) {
+        setActiveButton((Button) event.getSource());
+        loadView(HR_DASHBOARD_VIEW);
+    }
+
+    @FXML
+    private void showEmployeeView(ActionEvent event) {
+        setActiveButton((Button) event.getSource());
+        loadView(HR_EMPLOYEE_VIEW);
+    }
+
+    @FXML
+    private void showDepartmentView(ActionEvent event) {
+        setActiveButton((Button) event.getSource());
+        loadView(HR_DEPARTMENT_VIEW);
+    }
+
+    @FXML
+    private void showPositionView(ActionEvent event) {
+        setActiveButton((Button) event.getSource());
+        loadView(HR_POSITION_VIEW);
+    }
+
+    @FXML
+    private void showRecruitmentView(ActionEvent event) {
+        setActiveButton((Button) event.getSource());
+        loadView(HR_RECRUITMENT_VIEW);
+    }
+
+    @FXML
+    private void showSalaryView(ActionEvent event) {
+        setActiveButton((Button) event.getSource());
+        loadView(HR_SALARY_VIEW);
+    }
+
+    /**
+     * 处理登出逻辑，调用 App 的静态方法回退到登录页
+     */
+    @FXML
+    private void handleLogout(ActionEvent event) {
+        App.logout();
+    }
+
+    /**
+     * 更新按钮激活状态样式
+     */
     private void setActiveButton(Button button) {
         if (button == null) return;
-        if (activeNavButton != null) activeNavButton.getStyleClass().remove("nav-button-active");
+        if (activeNavButton != null) {
+            activeNavButton.getStyleClass().remove("nav-button-active");
+        }
         activeNavButton = button;
         activeNavButton.getStyleClass().add("nav-button-active");
     }
