@@ -60,10 +60,15 @@ public class AdminMainController implements MainController {
         loadView("/com/gd/hrmsjavafxclient/fxml/admin/SalaryStandardManagementView.fxml", "btnSalary");
     }
 
+    @FXML public void showApprovalConfigView() {
+        loadView("/com/gd/hrmsjavafxclient/fxml/admin/ApprovalConfigManagementView.fxml", "btnApprovalConfig");
+    }
+
     private void loadView(String path, String btnId) {
         try {
             URL fxmlLocation = getClass().getResource(path);
             if (fxmlLocation == null) {
+                System.err.println("找不到视图文件: " + path);
                 return;
             }
 
