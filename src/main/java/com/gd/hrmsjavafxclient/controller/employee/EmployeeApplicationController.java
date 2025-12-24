@@ -16,7 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * 业务申请控制器 - 已修正方法访问权限
+ * 业务申请控制器 - 已根据需求修正申请类型为：请假/报销/出差
  */
 public class EmployeeApplicationController implements EmployeeSubController {
 
@@ -39,7 +39,8 @@ public class EmployeeApplicationController implements EmployeeSubController {
 
     @Override
     public void initializeController() {
-        List<String> types = Arrays.asList("请假申请", "加班申请", "报销申请", "调岗申请", "离职申请");
+        // 🌟 核心修正：只保留“请假”、“报销”和“出差”
+        List<String> types = Arrays.asList("请假", "报销", "出差");
         applicationTypeComboBox.setItems(FXCollections.observableArrayList(types));
         relatedDateField.setValue(LocalDate.now());
 
