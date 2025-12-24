@@ -10,38 +10,24 @@
 
     <HBox alignment="CENTER_LEFT" spacing="15">
         <VBox>
-            <Label text="业务申请" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: -fx-text-main;"/>
-            <Label text="提交个人事务申请，由管理员统一审批" style="-fx-font-size: 12px; -fx-text-fill: -fx-text-muted;"/>
+            <Label text="我的申请中心" style="-fx-font-size: 22px; -fx-font-weight: bold;"/>
+            <Label text="在这里管理您的请假、报销和出差申请" style="-fx-font-size: 12px; -fx-text-fill: #7F8C8D;"/>
         </VBox>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="＋ 新增申请" onAction="#handleAddNewApplication"
+                style="-fx-background-color: #27AE60; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;"/>
+        <Button text="刷新列表" onAction="#loadApplicationData" styleClass="action-button-primary"/>
     </HBox>
 
-    <VBox spacing="25.0" styleClass="login-card" VBox.vgrow="ALWAYS">
-        <padding><Insets top="30" right="30" bottom="30" left="30"/></padding>
-        <GridPane hgap="20.0" vgap="20.0">
-            <columnConstraints>
-                <ColumnConstraints prefWidth="120"/><ColumnConstraints prefWidth="300"/>
-                <ColumnConstraints prefWidth="120"/><ColumnConstraints prefWidth="300"/>
-            </columnConstraints>
-            <children>
-                <Label text="申请人" style="-fx-font-weight: bold;" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                <TextField fx:id="applicantNameField" editable="false" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
-
-                <Label text="申请类型" style="-fx-font-weight: bold;" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                <ComboBox fx:id="applicationTypeComboBox" maxWidth="Infinity" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
-
-                <Label text="关联日期" style="-fx-font-weight: bold;" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                <DatePicker fx:id="relatedDateField" maxWidth="Infinity" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
-
-                <Label text="关联事项" style="-fx-font-weight: bold;" GridPane.rowIndex="2" GridPane.columnIndex="2"/>
-                <TextField fx:id="relatedDetailField" promptText="时长或金额" GridPane.rowIndex="2" GridPane.columnIndex="3"/>
-
-                <Label text="详细说明" style="-fx-font-weight: bold;" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-                <TextArea fx:id="descriptionTextArea" prefHeight="150" GridPane.rowIndex="3" GridPane.columnIndex="1" GridPane.columnSpan="3"/>
-            </children>
-        </GridPane>
-        <HBox spacing="15" alignment="CENTER_RIGHT">
-            <Button text="重 置" onAction="#clearForm" styleClass="action-button-secondary"/>
-            <Button fx:id="submitButton" text="提 交 申 请" onAction="#handleSubmitButtonAction" styleClass="action-button-primary" prefWidth="150"/>
-        </HBox>
-    </VBox>
+    <TableView fx:id="applicationTable" VBox.vgrow="ALWAYS" styleClass="table-view">
+        <columns>
+            <TableColumn fx:id="idCol" text="单号" prefWidth="60"/>
+            <TableColumn fx:id="typeCol" text="类型" prefWidth="80"/>
+            <TableColumn fx:id="startCol" text="开始日期" prefWidth="110"/>
+            <TableColumn fx:id="endCol" text="结束日期" prefWidth="110"/>
+            <TableColumn fx:id="reasonCol" text="申请事由" prefWidth="250"/>
+            <TableColumn fx:id="statusCol" text="当前状态" prefWidth="100"/>
+        </columns>
+        <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
+    </TableView>
 </VBox>

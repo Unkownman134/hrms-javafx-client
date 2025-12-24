@@ -7,25 +7,26 @@ import com.gd.hrmsjavafxclient.service.employee.ApplicationEmpService;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.GridPane;
 
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
-/**
- * 业务申请控制器 - 已根据需求修正申请类型为：请假/报销/出差
- */
 public class EmployeeApplicationController implements EmployeeSubController {
 
-    @FXML private TextField applicantNameField;
-    @FXML private ComboBox<String> applicationTypeComboBox;
-    @FXML private DatePicker relatedDateField;
-    @FXML private TextField relatedDetailField;
-    @FXML private TextArea descriptionTextArea;
-    @FXML private Button submitButton;
+    @FXML private TableView<ApprovalRequest> applicationTable;
+    @FXML private TableColumn<ApprovalRequest, Integer> idCol;
+    @FXML private TableColumn<ApprovalRequest, String> typeCol;
+    @FXML private TableColumn<ApprovalRequest, LocalDate> startCol;
+    @FXML private TableColumn<ApprovalRequest, LocalDate> endCol;
+    @FXML private TableColumn<ApprovalRequest, String> reasonCol;
+    @FXML private TableColumn<ApprovalRequest, String> statusCol;
 
     private final ApplicationEmpService applicationEmpService = new ApplicationEmpService();
     private CurrentUserInfo currentUser;
@@ -39,70 +40,121 @@ public class EmployeeApplicationController implements EmployeeSubController {
 
     @Override
     public void initializeController() {
-        // 🌟 核心修正：只保留“请假”、“报销”和“出差”
-        List<String> types = Arrays.asList("请假", "报销", "出差");
-        applicationTypeComboBox.setItems(FXCollections.observableArrayList(types));
-        relatedDateField.setValue(LocalDate.now());
+        setupTableColumns();
+        loadApplicationData();
+    }
 
-        if (currentUser != null) {
-            // 对应 Employee model 中的 empName 逻辑
-            applicantNameField.setText(currentUser.getEmployeeName());
-        }
+    private void setupTableColumns() {
+        // 🌟 这里的字符串必须对应 ApprovalRequest 类里的变量名（注意不是 JsonProperty 里的名，是变量名）
+        idCol.setCellValueFactory(new PropertyValueFactory<>("requestId"));
+        typeCol.setCellValueFactory(new PropertyValueFactory<>("requestType"));
+        startCol.setCellValueFactory(new PropertyValueFactory<>("startDate"));
+        endCol.setCellValueFactory(new PropertyValueFactory<>("endDate"));
+        reasonCol.setCellValueFactory(new PropertyValueFactory<>("reason"));
+        statusCol.setCellValueFactory(new PropertyValueFactory<>("status"));
+
+        statusCol.setCellFactory(column -> new TableCell<>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                    setStyle("");
+                } else {
+                    setText(item);
+                    if (item.contains("待审批")) {
+                        setStyle("-fx-text-fill: #E67E22; -fx-font-weight: bold;");
+                    } else if (item.contains("已通过")) {
+                        setStyle("-fx-text-fill: #27AE60; -fx-font-weight: bold;");
+                    } else if (item.contains("已拒绝")) {
+                        setStyle("-fx-text-fill: #C0392B; -fx-font-weight: bold;");
+                    }
+                }
+            }
+        });
     }
 
     @FXML
-    public void handleSubmitButtonAction(ActionEvent event) {
-        if (!validateInput()) return;
+    public void loadApplicationData() {
+        if (currentUser == null || authToken == null) return;
 
-        submitButton.setDisable(true);
-
-        ApprovalRequest request = new ApprovalRequest();
-        request.setApplicantId(currentUser.getEmpId());
-        request.setApplicationType(applicationTypeComboBox.getValue());
-        request.setRelatedDate(relatedDateField.getValue());
-        request.setRelatedDetail(relatedDetailField.getText().trim());
-        request.setDescription(descriptionTextArea.getText().trim());
-        request.setStatus("PENDING");
-
-        Task<Boolean> task = new Task<>() {
-            @Override protected Boolean call() throws Exception {
-                return applicationEmpService.submitApplication(request, authToken);
+        Task<List<ApprovalRequest>> task = new Task<>() {
+            @Override
+            protected List<ApprovalRequest> call() throws Exception {
+                // 调用接口 GET /api/approval-requests/my/{EmpID}
+                return applicationEmpService.getMyApplications(currentUser.getEmpId(), authToken);
             }
-            @Override protected void succeeded() {
-                if (getValue()) {
-                    showAlert("成功", "申请已提交！", Alert.AlertType.INFORMATION);
-                    clearForm();
-                } else {
-                    showAlert("错误", "提交失败，请重试。", Alert.AlertType.ERROR);
+
+            @Override
+            protected void succeeded() {
+                List<ApprovalRequest> data = getValue();
+                if (data != null) {
+                    applicationTable.setItems(FXCollections.observableArrayList(data));
+                    applicationTable.refresh();
                 }
-                submitButton.setDisable(false);
             }
-            @Override protected void failed() {
-                showAlert("错误", "系统异常", Alert.AlertType.ERROR);
-                submitButton.setDisable(false);
+
+            @Override
+            protected void failed() {
+                Throwable exception = getException();
+                exception.printStackTrace(); // 🌟 这一行能在 IDE 控制台看到具体的解析错误
+                showAlert("列表加载失败", "原因: " + exception.getMessage(), Alert.AlertType.ERROR);
             }
         };
         new Thread(task).start();
     }
 
     @FXML
-    public void clearForm() {
-        Platform.runLater(() -> {
-            applicationTypeComboBox.getSelectionModel().clearSelection();
-            relatedDateField.setValue(LocalDate.now());
-            relatedDetailField.clear();
-            descriptionTextArea.clear();
-        });
-    }
+    public void handleAddNewApplication() {
+        Dialog<ApprovalRequest> dialog = new Dialog<>();
+        dialog.setTitle("新增申请");
+        dialog.setHeaderText("填写申请信息");
 
-    private boolean validateInput() {
-        if (applicationTypeComboBox.getValue() == null ||
-                relatedDetailField.getText().trim().isEmpty() ||
-                descriptionTextArea.getText().trim().isEmpty()) {
-            showAlert("提示", "请完整填写申请信息内容！", Alert.AlertType.WARNING);
-            return false;
-        }
-        return true;
+        ButtonType submitButtonType = new ButtonType("提交", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(submitButtonType, ButtonType.CANCEL);
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10); grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        ComboBox<String> typeBox = new ComboBox<>(FXCollections.observableArrayList("请假", "报销", "出差"));
+        typeBox.setValue("请假");
+        DatePicker startPicker = new DatePicker(LocalDate.now());
+        DatePicker endPicker = new DatePicker(LocalDate.now());
+        TextField reasonField = new TextField();
+
+        grid.add(new Label("类型:"), 0, 0); grid.add(typeBox, 1, 0);
+        grid.add(new Label("开始日期:"), 0, 1); grid.add(startPicker, 1, 1);
+        grid.add(new Label("结束日期:"), 0, 2); grid.add(endPicker, 1, 2);
+        grid.add(new Label("原因:"), 0, 3); grid.add(reasonField, 1, 3);
+
+        dialog.getDialogPane().setContent(grid);
+
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == submitButtonType) {
+                ApprovalRequest req = new ApprovalRequest();
+                req.setEmpId(currentUser.getEmpId());
+                req.setRequestType(typeBox.getValue());
+                req.setStartDate(startPicker.getValue());
+                req.setEndDate(endPicker.getValue());
+                req.setReason(reasonField.getText().trim());
+                req.setStatus("待审批");
+                return req;
+            }
+            return null;
+        });
+
+        Optional<ApprovalRequest> result = dialog.showAndWait();
+        result.ifPresent(request -> {
+            Task<Boolean> submitTask = new Task<>() {
+                @Override protected Boolean call() throws Exception {
+                    return applicationEmpService.submitApplication(request, authToken);
+                }
+                @Override protected void succeeded() { loadApplicationData(); }
+                @Override protected void failed() { showAlert("错误", "提交失败", Alert.AlertType.ERROR); }
+            };
+            new Thread(submitTask).start();
+        });
     }
 
     private void showAlert(String title, String msg, Alert.AlertType type) {
