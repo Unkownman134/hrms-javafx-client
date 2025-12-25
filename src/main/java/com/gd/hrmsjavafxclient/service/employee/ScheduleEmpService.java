@@ -16,8 +16,7 @@ import java.util.Optional;
 public class ScheduleEmpService {
 
     /**
-     * 根据员工ID和日期范围获取排班记录
-     * API: /schedules?empId=xxx&startDate=yyyy-MM-dd&endDate=yyyy-MM-dd
+     * 获取排班记录
      */
     public List<Schedule> getMySchedules(int empId, LocalDate startDate, LocalDate endDate, String authToken) throws Exception {
         String path = String.format("/schedules?empId=%d&startDate=%s&endDate=%s",
@@ -28,18 +27,32 @@ public class ScheduleEmpService {
                 authToken,
                 new TypeReference<List<Schedule>>() {}
         );
-
         return response.orElse(Collections.emptyList());
     }
 
-    // 在 ScheduleEmpService.java 中添加此方法
+    /**
+     * 获取班次规则详情 (包含上班和下班时间)
+     */
     public JsonNode getShiftRuleFullNode(int ruleId, String authToken) throws Exception {
         String path = "/shift/rules/" + ruleId;
-        Optional<JsonNode> response = com.gd.hrmsjavafxclient.util.ServiceUtil.sendGet(
+        Optional<JsonNode> response = ServiceUtil.sendGet(
                 path,
                 authToken,
-                new com.fasterxml.jackson.core.type.TypeReference<JsonNode>() {}
+                new TypeReference<JsonNode>() {}
         );
         return response.orElse(null);
+    }
+
+    /**
+     * 获取员工个人的申请列表 (请假/出差)
+     */
+    public List<JsonNode> getMyApplications(int empId, String authToken) throws Exception {
+        String path = "/approval-requests/my/" + empId;
+        Optional<List<JsonNode>> response = ServiceUtil.sendGet(
+                path,
+                authToken,
+                new TypeReference<List<JsonNode>>() {}
+        );
+        return response.orElse(Collections.emptyList());
     }
 }
