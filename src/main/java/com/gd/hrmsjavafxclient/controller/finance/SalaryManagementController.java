@@ -1,20 +1,35 @@
 package com.gd.hrmsjavafxclient.controller.finance;
 
+import com.gd.hrmsjavafxclient.model.Employee;
 import com.gd.hrmsjavafxclient.model.SalaryRecord;
 import com.gd.hrmsjavafxclient.service.finance.FinanceService;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.CheckBoxListCell;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.StackPane;
+import javafx.util.StringConverter;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class SalaryManagementController {
 
-    @FXML private ComboBox<String> monthFilterCombo;
+    @FXML private StackPane employeeListContainer;
+    @FXML private TextField searchEmployeeField;
+    @FXML private CheckBox selectAllCheckBox;
+    @FXML private DatePicker salaryDatePicker;
+
     @FXML private TableView<SalaryRecord> salaryTable;
     @FXML private TableColumn<SalaryRecord, Integer> colId;
     @FXML private TableColumn<SalaryRecord, Integer> colEmpId;
@@ -24,86 +39,166 @@ public class SalaryManagementController {
     @FXML private TableColumn<SalaryRecord, BigDecimal> colNet;
     @FXML private TableColumn<SalaryRecord, LocalDate> colDate;
 
+    private ListView<Employee> employeeListView;
+    private final Map<Employee, BooleanProperty> selectionMap = new HashMap<>();
+
     private final FinanceService financeService = new FinanceService();
-
-    // 原始总数据
-    private final ObservableList<SalaryRecord> masterData = FXCollections.observableArrayList();
-    // 过滤后的视图数据
-    private FilteredList<SalaryRecord> filteredData;
-
     private String token;
+    private ObservableList<SalaryRecord> masterData = FXCollections.observableArrayList();
 
     @FXML
     public void initialize() {
-        // 1. 初始化表格列绑定
-        colId.setCellValueFactory(data -> data.getValue().recordIdProperty().asObject());
-        colEmpId.setCellValueFactory(data -> data.getValue().empIdProperty().asObject());
-        colMonth.setCellValueFactory(data -> data.getValue().salaryMonthProperty());
-        colGross.setCellValueFactory(data -> data.getValue().grossPayProperty());
-        colTax.setCellValueFactory(data -> data.getValue().taxDeductionProperty());
-        colNet.setCellValueFactory(data -> data.getValue().netPayProperty());
-        colDate.setCellValueFactory(data -> data.getValue().payDateProperty());
+        // 1. 初始化左侧员工列表
+        employeeListView = new ListView<>();
+        employeeListView.setCellFactory(CheckBoxListCell.forListView(selectionMap::get, new StringConverter<Employee>() {
+            @Override
+            public String toString(Employee object) {
+                return object == null ? "" : object.getEmpName() + " (ID: " + object.getEmpId() + ")";
+            }
+            @Override
+            public Employee fromString(String string) { return null; }
+        }));
+        employeeListContainer.getChildren().add(employeeListView);
 
-        // 2. 建立 FilteredList 并绑定到表格
-        filteredData = new FilteredList<>(masterData, p -> true);
-        salaryTable.setItems(filteredData);
-
-        // 3. 监听下拉框变化，触发筛选
-        monthFilterCombo.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
-            applyFilter(newVal);
+        // 🌟 核心修正：纯 Java 逻辑控制 DatePicker 只显示和处理“年月”
+        // 设置日期显示转换器
+        salaryDatePicker.setConverter(new StringConverter<LocalDate>() {
+            private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM");
+            @Override
+            public String toString(LocalDate date) {
+                return (date != null) ? formatter.format(date) : "";
+            }
+            @Override
+            public LocalDate fromString(String string) {
+                if (string != null && !string.isEmpty()) {
+                    // 解析 yyyy-MM 时，内部补齐为该月 1 号
+                    return LocalDate.parse(string + "-01", DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                }
+                return null;
+            }
         });
+
+        // 监听值变化：无论用户在弹窗点哪一天，都自动修正为该月 1 号，配合 Converter 达到只选月份的效果
+        salaryDatePicker.valueProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null && newVal.getDayOfMonth() != 1) {
+                salaryDatePicker.setValue(LocalDate.of(newVal.getYear(), newVal.getMonth(), 1));
+            }
+        });
+
+        // 2. 工资表格列绑定
+        colId.setCellValueFactory(new PropertyValueFactory<>("recordId"));
+        colEmpId.setCellValueFactory(new PropertyValueFactory<>("empId"));
+        colMonth.setCellValueFactory(new PropertyValueFactory<>("salaryMonth"));
+        colGross.setCellValueFactory(new PropertyValueFactory<>("grossPay"));
+        colTax.setCellValueFactory(new PropertyValueFactory<>("taxDeduction"));
+        colNet.setCellValueFactory(new PropertyValueFactory<>("netPay"));
+        colDate.setCellValueFactory(new PropertyValueFactory<>("payDate"));
+
+        salaryTable.setItems(masterData);
+
+        // 搜索过滤逻辑
+        searchEmployeeField.textProperty().addListener((obs, oldVal, newVal) -> updateFilteredEmployeeList(newVal));
     }
 
     public void initData(String token) {
         this.token = token;
-        loadData();
+        loadEmployees();
+        loadAllData();
     }
 
-    @FXML
-    private void loadData() {
+    private void loadEmployees() {
         try {
-            List<SalaryRecord> records = financeService.getAllSalaryRecords(token);
-            masterData.setAll(records);
-
-            // 4. 自动提取所有月份，用于填充下拉框
-            updateMonthComboOptions(records);
-
+            List<Employee> employees = financeService.getAllEmployees(token);
+            selectionMap.clear();
+            employees.forEach(e -> selectionMap.put(e, new SimpleBooleanProperty(false)));
+            employeeListView.setItems(FXCollections.observableArrayList(employees));
         } catch (Exception e) {
-            e.printStackTrace();
-            showError("加载失败", "无法从服务器获取工资记录。");
+            showError("错误", "无法加载员工列表: " + e.getMessage());
         }
     }
 
-    private void updateMonthComboOptions(List<SalaryRecord> records) {
-        // 提取去重后的月份列表，并排序（倒序，最新的在前面）
-        List<String> months = records.stream()
-                .map(SalaryRecord::getSalaryMonth)
-                .distinct()
-                .sorted((a, b) -> b.compareTo(a))
-                .collect(Collectors.toList());
-
-        monthFilterCombo.setItems(FXCollections.observableArrayList(months));
-    }
-
-    private void applyFilter(String selectedMonth) {
-        filteredData.setPredicate(record -> {
-            // 如果没选或者选了空，显示全部
-            if (selectedMonth == null || selectedMonth.isEmpty()) {
-                return true;
-            }
-            // 匹配年月 (假设格式一致)
-            return record.getSalaryMonth().equals(selectedMonth);
-        });
+    @FXML
+    public void handleSelectAll() {
+        boolean selected = selectAllCheckBox.isSelected();
+        selectionMap.values().forEach(prop -> prop.set(selected));
     }
 
     @FXML
-    private void handleReset() {
-        monthFilterCombo.getSelectionModel().clearSelection();
-        filteredData.setPredicate(p -> true);
+    public void loadPersonalHistory() {
+        Employee selected = employeeListView.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            showError("提示", "请先在列表中点击选择一位员工！");
+            return;
+        }
+        try {
+            List<SalaryRecord> history = financeService.getSalaryHistory(token, selected.getEmpId());
+            masterData.setAll(history);
+        } catch (Exception e) {
+            showError("查询失败", e.getMessage());
+        }
+    }
+
+    @FXML
+    public void loadAllData() {
+        try {
+            List<SalaryRecord> records = financeService.getAllSalaryRecords(token);
+            masterData.setAll(records);
+        } catch (Exception e) {
+            showError("加载失败", e.getMessage());
+        }
+    }
+
+    @FXML
+    public void handleBatchCalculate() {
+        List<Employee> selectedEmployees = selectionMap.entrySet().stream()
+                .filter(entry -> entry.getValue().get())
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
+
+        LocalDate date = salaryDatePicker.getValue();
+        if (selectedEmployees.isEmpty() || date == null) {
+            showError("提示", "请勾选员工并选择结算月份！");
+            return;
+        }
+
+        // 强制格式化为 yyyy-MM 传给后端
+        String monthStr = date.format(DateTimeFormatter.ofPattern("yyyy-MM"));
+
+        int success = 0;
+        for (Employee emp : selectedEmployees) {
+            try {
+                financeService.calculateSalary(token, emp.getEmpId(), monthStr);
+                success++;
+            } catch (Exception e) {
+                System.err.println("结算失败 ID " + emp.getEmpId() + ": " + e.getMessage());
+            }
+        }
+        showInfo("完成", "已成功结算 " + success + " 位员工的 " + monthStr + " 账期工资！");
+        loadAllData();
+    }
+
+    private void updateFilteredEmployeeList(String filter) {
+        List<Employee> all = new ArrayList<>(selectionMap.keySet());
+        if (filter == null || filter.isEmpty()) {
+            employeeListView.setItems(FXCollections.observableArrayList(all));
+        } else {
+            List<Employee> filtered = all.stream()
+                    .filter(e -> e.getEmpName().contains(filter) || String.valueOf(e.getEmpId()).contains(filter))
+                    .collect(Collectors.toList());
+            employeeListView.setItems(FXCollections.observableArrayList(filtered));
+        }
     }
 
     private void showError(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+
+    private void showInfo(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(content);

@@ -4,58 +4,57 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 
-<VBox spacing="25.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+<HBox spacing="10.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.gd.hrmsjavafxclient.controller.finance.SalaryManagementController"
-      stylesheets="@../../style/hrms-styles.css"
-      styleClass="root">
+      stylesheets="@../../style/hrms-styles.css" styleClass="root">
     <padding>
-        <Insets top="30" right="30" bottom="30" left="30"/>
+        <Insets top="15" right="15" bottom="15" left="15"/>
     </padding>
 
-    <VBox spacing="15" styleClass="login-card" maxWidth="Infinity">
-        <padding>
-            <Insets top="25" right="30" bottom="25" left="30"/>
-        </padding>
-        <children>
-            <Label text="💵 工资发放记录流水" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: -fx-text-main;"/>
-            <Separator />
-            <HBox alignment="CENTER_LEFT" spacing="15">
-                <children>
-                    <Label text="筛选账期:" style="-fx-text-fill: -fx-text-muted; -fx-font-weight: bold;"/>
-                    <ComboBox fx:id="monthFilterCombo" promptText="选择全部月份" prefWidth="200"
-                              style="-fx-background-color: white; -fx-border-color: #D5DBDB; -fx-border-radius: 4;"/>
+    <VBox spacing="10" prefWidth="260" styleClass="login-card">
+        <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
 
-                    <Button text="重置条件" onAction="#handleReset"
-                            style="-fx-background-color: #95A5A6; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 8 20;"/>
+        <HBox spacing="5" alignment="CENTER_LEFT">
+            <Label text="👥 员工列表" style="-fx-font-weight: bold;"/>
+            <Region HBox.hgrow="ALWAYS" />
+            <CheckBox fx:id="selectAllCheckBox" text="全选" onAction="#handleSelectAll"/>
+        </HBox>
 
-                    <Region HBox.hgrow="ALWAYS" />
+        <TextField fx:id="searchEmployeeField" promptText="🔍 搜索姓名或ID..."/>
 
-                    <Button text="🔄 刷新数据" onAction="#loadData"
-                            style="-fx-background-color: -fx-primary-color; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 8 20; -fx-font-weight: bold;"/>
-                </children>
-            </HBox>
-        </children>
+        <StackPane fx:id="employeeListContainer" VBox.vgrow="ALWAYS" />
+
+        <Separator />
+
+        <Label text="📅 结算月份" style="-fx-font-weight: bold;"/>
+        <DatePicker fx:id="salaryDatePicker" promptText="选择年月" maxWidth="Infinity"/>
+
+        <Button text="🚀 批量结算" onAction="#handleBatchCalculate"
+                maxWidth="Infinity" prefHeight="40"
+                style="-fx-background-color: #2ECC71; -fx-text-fill: white; -fx-font-weight: bold;"/>
     </VBox>
 
-    <VBox VBox.vgrow="ALWAYS" styleClass="login-card" maxWidth="Infinity">
-        <padding>
-            <Insets top="20" right="20" bottom="20" left="20"/>
-        </padding>
-        <children>
-            <TableView fx:id="salaryTable" VBox.vgrow="ALWAYS" styleClass="data-table">
-                <columns>
-                    <TableColumn fx:id="colId" text="流水号" prefWidth="100"/>
-                    <TableColumn fx:id="colEmpId" text="员工ID" prefWidth="100"/>
-                    <TableColumn fx:id="colMonth" text="工资月份" prefWidth="180"/>
-                    <TableColumn fx:id="colGross" text="应发总额 (￥)" prefWidth="150"/>
-                    <TableColumn fx:id="colTax" text="个人所得税 (￥)" prefWidth="150"/>
-                    <TableColumn fx:id="colNet" text="实发净额 (￥)" prefWidth="150"/>
-                    <TableColumn fx:id="colDate" text="结算日期" prefWidth="180"/>
-                </columns>
-                <placeholder>
-                    <Label text="暂无工资发放记录 Σ( ° △ °|||)" style="-fx-text-fill: -fx-text-muted;"/>
-                </placeholder>
-            </TableView>
-        </children>
+    <VBox spacing="10" HBox.hgrow="ALWAYS" styleClass="login-card">
+        <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Label text="📊 工资流水记录" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
+            <Region HBox.hgrow="ALWAYS" />
+            <Button text="👤 刷新个人历史" onAction="#loadPersonalHistory"
+                    style="-fx-background-color: #3498DB; -fx-text-fill: white;"/>
+            <Button text="🌍 查看全部" onAction="#loadAllData"
+                    style="-fx-background-color: #95A5A6; -fx-text-fill: white;"/>
+        </HBox>
+
+        <TableView fx:id="salaryTable" VBox.vgrow="ALWAYS">
+            <columns>
+                <TableColumn fx:id="colId" text="流水号" prefWidth="70"/>
+                <TableColumn fx:id="colEmpId" text="员工ID" prefWidth="70"/>
+                <TableColumn fx:id="colMonth" text="工资月份" prefWidth="100"/>
+                <TableColumn fx:id="colGross" text="应发总额" prefWidth="110"/>
+                <TableColumn fx:id="colTax" text="个税" prefWidth="90"/>
+                <TableColumn fx:id="colNet" text="实发工资" prefWidth="110"/>
+                <TableColumn fx:id="colDate" text="计算日期" prefWidth="140"/>
+            </columns>
+        </TableView>
     </VBox>
-</VBox>
+</HBox>

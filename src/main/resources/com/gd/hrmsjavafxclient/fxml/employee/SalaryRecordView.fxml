@@ -14,18 +14,18 @@
             <Label text="查阅历史工资单明细" style="-fx-font-size: 12px; -fx-text-fill: -fx-text-muted;"/>
         </VBox>
         <Region HBox.hgrow="ALWAYS"/>
-        <Label text="年度:"/>
-        <ComboBox fx:id="yearComboBox" prefWidth="100"/>
+
+        <Label text="选择年份:"/>
+        <DatePicker fx:id="yearDatePicker" prefWidth="150" promptText="点击选择年份"/>
         <Button fx:id="queryButton" text="查询" onAction="#handleQueryButtonAction" styleClass="action-button-primary"/>
     </HBox>
 
     <TableView fx:id="salaryRecordTable" VBox.vgrow="ALWAYS">
         <columns>
-            <TableColumn fx:id="monthCol" text="发放月份" prefWidth="120"/>
-            <TableColumn fx:id="payDateCol" text="发放日期" prefWidth="120"/>
-            <TableColumn fx:id="grossPayCol" text="应发薪资" prefWidth="120"/>
-            <TableColumn fx:id="netPayCol" text="实发净额" prefWidth="120"/>
-            <TableColumn fx:id="actionCol" text="明细" prefWidth="100"/>
+            <TableColumn fx:id="monthCol" text="发放月份" prefWidth="150"/>
+            <TableColumn fx:id="payDateCol" text="发放日期" prefWidth="150"/>
+            <TableColumn fx:id="grossPayCol" text="应发薪资" prefWidth="150"/>
+            <TableColumn fx:id="netPayCol" text="实发净额" prefWidth="150"/>
         </columns>
         <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
     </TableView>
