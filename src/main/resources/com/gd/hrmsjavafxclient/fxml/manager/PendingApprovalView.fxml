@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="20.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.gd.hrmsjavafxclient.controller.manager.PendingApprovalController"
+      stylesheets="@../../style/hrms-styles.css" styleClass="root">
+    <padding>
+        <Insets top="25" right="25" bottom="25" left="25"/>
+    </padding>
+
+    <HBox alignment="CENTER_LEFT">
+        <Label text="待办审批任务 📋" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: -fx-text-main;" HBox.hgrow="ALWAYS"/>
+        <Region HBox.hgrow="ALWAYS" />
+        <Button text="刷新数据 🔄" onAction="#loadData" styleClass="btn-secondary" prefWidth="100"/>
+    </HBox>
+
+    <TableView fx:id="approvalTable" VBox.vgrow="ALWAYS" styleClass="data-table">
+        <columns>
+            <TableColumn fx:id="idCol" text="ID" prefWidth="60.0"/>
+            <TableColumn fx:id="typeCol" text="类型" prefWidth="120.0"/>
+            <TableColumn fx:id="empCol" text="申请人ID" prefWidth="100.0"/>
+            <TableColumn fx:id="reasonCol" text="原因" prefWidth="350.0"/>
+            <TableColumn fx:id="statusCol" text="状态" prefWidth="100.0"/>
+        </columns>
+    </TableView>
+
+    <HBox spacing="15" alignment="CENTER_RIGHT">
+        <Button text="处理申请" onAction="#handleProcess" styleClass="btn-primary" prefWidth="120"/>
+    </HBox>
+</VBox>
