@@ -93,6 +93,12 @@ public class EmployeeMainController implements MainController {
     }
 
     @FXML
+    public void showScheduleView(ActionEvent event) {
+        updateNavStyle(event);
+        loadView("EmployeeScheduleView");
+    }
+
+    @FXML
     private void handleLogout() {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "确定要注销并退出系统吗？", ButtonType.YES, ButtonType.NO);
         alert.setTitle("确认退出");

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox spacing="20.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.gd.hrmsjavafxclient.controller.employee.EmployeeScheduleController"
+      stylesheets="@../../style/hrms-styles.css" styleClass="root">
+    <padding><Insets top="25" right="25" bottom="25" left="25"/></padding>
+
+    <HBox alignment="CENTER_LEFT" spacing="15">
+        <VBox>
+            <Label text="我的排班查询" style="-fx-font-size: 22px; -fx-font-weight: bold;"/>
+            <Label text="实时从系统获取您的班次规则详情" style="-fx-font-size: 12px; -fx-text-fill: #7F8C8D;"/>
+        </VBox>
+        <Region HBox.hgrow="ALWAYS"/>
+        <DatePicker fx:id="monthPicker" prefWidth="160" promptText="选择月份"/>
+        <Button fx:id="queryButton" text="查询排班" onAction="#handleQueryAction" styleClass="action-button-primary"/>
+    </HBox>
+
+    <TableView fx:id="scheduleTable" VBox.vgrow="ALWAYS" styleClass="table-view">
+        <columns>
+            <TableColumn fx:id="dateCol" text="日期" prefWidth="250"/>
+            <TableColumn fx:id="shiftCol" text="班次名称" prefWidth="250"/>
+        </columns>
+        <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
+    </TableView>
+</VBox>

@@ -34,6 +34,7 @@
                 <Label text="SELF SERVICE" style="-fx-text-fill: #5D6D7E; -fx-padding: 0 0 15 25; -fx-font-size: 11px; -fx-font-weight: bold;"/>
                 <Button text="我的申请" onAction="#showApplicationView" styleClass="nav-button" maxWidth="Infinity"/>
                 <Button text="考勤记录" onAction="#showAttendanceRecordView" styleClass="nav-button" maxWidth="Infinity"/>
+                <Button text="排班查询" onAction="#showScheduleView" styleClass="nav-button" maxWidth="Infinity"/>
                 <Button text="修改密码" onAction="#showChangePasswordView" styleClass="nav-button" maxWidth="Infinity"/>
 
                 <Region prefHeight="25"/>
