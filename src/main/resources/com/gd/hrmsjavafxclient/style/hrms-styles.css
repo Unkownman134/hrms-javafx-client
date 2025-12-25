@@ -194,3 +194,12 @@
 .password-wrapper .password-field {
     -fx-padding: 8 35 8 10;
 }
+
+.calendar-cell {
+    -fx-transition: all 0.2s;
+    -fx-cursor: hand;
+}
+.calendar-cell:hover {
+    -fx-background-color: #F7F9F9;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 2);
+}

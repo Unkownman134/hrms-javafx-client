@@ -5,15 +5,13 @@ import com.gd.hrmsjavafxclient.model.CurrentUserInfo;
 import com.gd.hrmsjavafxclient.model.Schedule;
 import com.gd.hrmsjavafxclient.service.employee.ScheduleEmpService;
 import javafx.application.Platform;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.util.StringConverter;
+import javafx.scene.layout.*;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -21,27 +19,23 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
- * 员工排班查看控制器 🌸
+ * 员工排班日历视图控制器 🌸
  */
 public class EmployeeScheduleController implements EmployeeSubController {
 
-    @FXML private DatePicker monthPicker;
-    @FXML private TableView<Schedule> scheduleTable;
-    @FXML private Button queryButton;
+    @FXML private Label monthLabel;
+    @FXML private GridPane calendarGrid;
 
-    @FXML private TableColumn<Schedule, LocalDate> dateCol;
-    @FXML private TableColumn<Schedule, String> shiftCol;
-
-    private final ObservableList<Schedule> data = FXCollections.observableArrayList();
     private CurrentUserInfo currentUser;
     private String authToken;
     private final ScheduleEmpService scheduleService = new ScheduleEmpService();
-    private final DateTimeFormatter monthFormatter = DateTimeFormatter.ofPattern("yyyy-MM");
 
-    // 缓存班次名
+    private YearMonth currentYearMonth = YearMonth.now();
     private final Map<Integer, String> ruleCache = new HashMap<>();
+    private final DateTimeFormatter displayFormatter = DateTimeFormatter.ofPattern("yyyy年MM月");
 
     @Override
     public void setUserInfo(CurrentUserInfo userInfo, String authToken) {
@@ -52,107 +46,131 @@ public class EmployeeScheduleController implements EmployeeSubController {
 
     @Override
     public void initializeController() {
-        Platform.runLater(this::initialize);
+        if (currentUser != null) {
+            Platform.runLater(this::renderCalendar);
+        }
     }
 
-    private void initialize() {
-        // 绑定日期列
-        dateCol.setCellValueFactory(new PropertyValueFactory<>("scheduleDate"));
+    private void renderCalendar() {
+        monthLabel.setText(currentYearMonth.format(displayFormatter));
+        calendarGrid.getChildren().clear();
 
-        // 绑定班次名称列，逻辑由 Service 提供
-        shiftCol.setCellValueFactory(cellData -> {
-            Schedule s = cellData.getValue();
-            Integer ruleId = s.getShiftRuleId();
-            if (ruleId == null) return new SimpleStringProperty("未排班");
+        LocalDate firstOfMonth = currentYearMonth.atDay(1);
+        int firstDayOfWeek = firstOfMonth.getDayOfWeek().getValue();
 
-            if (ruleCache.containsKey(ruleId)) {
-                return new SimpleStringProperty(ruleCache.get(ruleId));
-            } else {
-                fetchShiftNameAsync(ruleId);
-                return new SimpleStringProperty("加载中...");
-            }
-        });
-
-        scheduleTable.setItems(data);
-        setupMonthPicker();
-        loadScheduleData();
+        loadDataAndPopulate(firstOfMonth, firstDayOfWeek);
     }
 
-    /**
-     * 🌟 调用 Service 层获取名称
-     */
-    private void fetchShiftNameAsync(int ruleId) {
-        new Thread(() -> {
-            try {
-                // 通过 service 调用 API
-                String name = scheduleService.getShiftRuleName(ruleId, authToken);
-                ruleCache.put(ruleId, name);
-                Platform.runLater(() -> scheduleTable.refresh());
-            } catch (Exception e) {
-                System.err.println("获取班次名失败: " + e.getMessage());
-                ruleCache.put(ruleId, "未知(ID:" + ruleId + ")");
-            }
-        }).start();
-    }
-
-    private void setupMonthPicker() {
-        monthPicker.setValue(LocalDate.now());
-        monthPicker.setConverter(new StringConverter<LocalDate>() {
-            @Override
-            public String toString(LocalDate date) {
-                return (date != null) ? monthFormatter.format(date) : "";
-            }
-            @Override
-            public LocalDate fromString(String string) {
-                if (string != null && !string.isEmpty()) {
-                    return LocalDate.parse(string + "-01", DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-                }
-                return null;
-            }
-        });
-    }
-
-    @FXML
-    private void handleQueryAction(ActionEvent event) {
-        loadScheduleData();
-    }
-
-    private void loadScheduleData() {
-        if (currentUser == null) return;
-        LocalDate selectedDate = monthPicker.getValue();
-        if (selectedDate == null) return;
-
-        YearMonth ym = YearMonth.from(selectedDate);
-        LocalDate start = ym.atDay(1);
-        LocalDate end = ym.atEndOfMonth();
-
-        queryButton.setDisable(true);
-        queryButton.setText("加载中...");
-
+    private void loadDataAndPopulate(LocalDate start, int firstDayOffset) {
+        LocalDate end = currentYearMonth.atEndOfMonth();
         Task<List<Schedule>> task = new Task<>() {
             @Override
             protected List<Schedule> call() throws Exception {
-                // 调用 service
                 return scheduleService.getMySchedules(currentUser.getEmpId(), start, end, authToken);
             }
-
             @Override
             protected void succeeded() {
+                List<Schedule> schedules = getValue();
                 Platform.runLater(() -> {
-                    data.setAll(getValue());
-                    queryButton.setDisable(false);
-                    queryButton.setText("查询排班");
-                });
-            }
-
-            @Override
-            protected void failed() {
-                Platform.runLater(() -> {
-                    queryButton.setDisable(false);
-                    queryButton.setText("查询排班");
+                    Map<LocalDate, Schedule> scheduleMap = schedules.stream()
+                            .collect(Collectors.toMap(Schedule::getScheduleDate, s -> s, (s1, s2) -> s1));
+                    populateGrid(firstDayOffset, scheduleMap);
                 });
             }
         };
         new Thread(task).start();
+    }
+
+    private void populateGrid(int offset, Map<LocalDate, Schedule> dataMap) {
+        int row = 0;
+        int col = offset - 1;
+        int daysInMonth = currentYearMonth.lengthOfMonth();
+
+        for (int day = 1; day <= daysInMonth; day++) {
+            LocalDate date = currentYearMonth.atDay(day);
+            VBox cell = createDayCell(date, dataMap.get(date));
+            calendarGrid.add(cell, col, row);
+            col++;
+            if (col > 6) { col = 0; row++; }
+        }
+    }
+
+    private VBox createDayCell(LocalDate date, Schedule schedule) {
+        VBox cell = new VBox(2);
+        cell.setMinHeight(100);
+        cell.setPadding(new Insets(10));
+        cell.setAlignment(Pos.TOP_LEFT);
+
+        // 样式：简约无阴影边框
+        String baseStyle = "-fx-background-color: white; -fx-border-color: #D5DBDB; -fx-border-width: 0.5; -fx-border-radius: 2;";
+
+        // 今天的高亮样式
+        if (date.equals(LocalDate.now())) {
+            baseStyle = "-fx-background-color: #F4FBFF; -fx-border-color: #3498DB; -fx-border-width: 1.5; -fx-border-radius: 2;";
+        }
+        cell.setStyle(baseStyle);
+
+        // 日期数字
+        Label dateLbl = new Label(String.valueOf(date.getDayOfMonth()));
+        dateLbl.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #2C3E50;");
+        cell.getChildren().add(dateLbl);
+
+        if (schedule != null) {
+            // 班次名
+            Label shiftLbl = new Label();
+            shiftLbl.setMaxWidth(Double.MAX_VALUE);
+            shiftLbl.setStyle("-fx-font-size: 12px; -fx-text-fill: #27AE60; -fx-font-weight: bold; -fx-padding: 5 0 0 0;");
+
+            Integer ruleId = schedule.getShiftRuleId();
+            if (ruleCache.containsKey(ruleId)) {
+                shiftLbl.setText(ruleCache.get(ruleId));
+            } else {
+                shiftLbl.setText("加载中...");
+                fetchShiftNameAsync(ruleId, shiftLbl);
+            }
+
+            // 时间段
+            String timeText = (schedule.getClockInTime() != null ? schedule.getClockInTime().toString() : "00:00")
+                    + " - "
+                    + (schedule.getClockOutTime() != null ? schedule.getClockOutTime().toString() : "00:00");
+            Label timeLbl = new Label(timeText);
+            timeLbl.setStyle("-fx-font-size: 11px; -fx-text-fill: #7F8C8D;");
+
+            cell.getChildren().addAll(shiftLbl, timeLbl);
+        }
+
+        return cell;
+    }
+
+    private void fetchShiftNameAsync(int ruleId, Label targetLabel) {
+        new Thread(() -> {
+            try {
+                String name = scheduleService.getShiftRuleName(ruleId, authToken);
+                ruleCache.put(ruleId, name);
+                Platform.runLater(() -> targetLabel.setText(name));
+            } catch (Exception e) {
+                Platform.runLater(() -> targetLabel.setText("未知班次"));
+            }
+        }).start();
+    }
+
+    // --- 事件处理 ---
+
+    @FXML
+    private void handleToday(ActionEvent event) {
+        currentYearMonth = YearMonth.now();
+        renderCalendar();
+    }
+
+    @FXML
+    private void handlePrevMonth(ActionEvent event) {
+        currentYearMonth = currentYearMonth.minusMonths(1);
+        renderCalendar();
+    }
+
+    @FXML
+    private void handleNextMonth(ActionEvent event) {
+        currentYearMonth = currentYearMonth.plusMonths(1);
+        renderCalendar();
     }
 }
