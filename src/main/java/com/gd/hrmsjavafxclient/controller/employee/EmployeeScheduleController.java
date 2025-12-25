@@ -1,5 +1,6 @@
 package com.gd.hrmsjavafxclient.controller.employee;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.gd.hrmsjavafxclient.controller.employee.EmployeeMainController.EmployeeSubController;
 import com.gd.hrmsjavafxclient.model.CurrentUserInfo;
 import com.gd.hrmsjavafxclient.model.Schedule;
@@ -34,8 +35,29 @@ public class EmployeeScheduleController implements EmployeeSubController {
     private final ScheduleEmpService scheduleService = new ScheduleEmpService();
 
     private YearMonth currentYearMonth = YearMonth.now();
-    private final Map<Integer, String> ruleCache = new HashMap<>();
+
+    // 缓存班次规则详情：RuleID -> ShiftInfo(名称, 时间范围)
+    private final Map<Integer, ShiftInfo> ruleCache = new HashMap<>();
     private final DateTimeFormatter displayFormatter = DateTimeFormatter.ofPattern("yyyy年MM月");
+
+    /**
+     * 内部类：保存班次规则的关键信息
+     */
+    private static class ShiftInfo {
+        String name;
+        String timeRange;
+
+        ShiftInfo(String name, String start, String end) {
+            this.name = name;
+            // 格式化时间，去掉秒，比如 09:00:00 -> 09:00
+            this.timeRange = formatTime(start) + " - " + formatTime(end);
+        }
+
+        private String formatTime(String t) {
+            if (t == null || t.length() < 5) return "00:00";
+            return t.substring(0, 5);
+        }
+    }
 
     @Override
     public void setUserInfo(CurrentUserInfo userInfo, String authToken) {
@@ -103,38 +125,34 @@ public class EmployeeScheduleController implements EmployeeSubController {
 
         // 样式：简约无阴影边框
         String baseStyle = "-fx-background-color: white; -fx-border-color: #D5DBDB; -fx-border-width: 0.5; -fx-border-radius: 2;";
-
-        // 今天的高亮样式
         if (date.equals(LocalDate.now())) {
             baseStyle = "-fx-background-color: #F4FBFF; -fx-border-color: #3498DB; -fx-border-width: 1.5; -fx-border-radius: 2;";
         }
         cell.setStyle(baseStyle);
 
-        // 日期数字
+        // 1. 日期数字
         Label dateLbl = new Label(String.valueOf(date.getDayOfMonth()));
         dateLbl.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #2C3E50;");
         cell.getChildren().add(dateLbl);
 
         if (schedule != null) {
-            // 班次名
-            Label shiftLbl = new Label();
+            // 2. 班次名
+            Label shiftLbl = new Label("加载中...");
             shiftLbl.setMaxWidth(Double.MAX_VALUE);
             shiftLbl.setStyle("-fx-font-size: 12px; -fx-text-fill: #27AE60; -fx-font-weight: bold; -fx-padding: 5 0 0 0;");
 
+            // 3. 时间段
+            Label timeLbl = new Label("");
+            timeLbl.setStyle("-fx-font-size: 11px; -fx-text-fill: #7F8C8D;");
+
             Integer ruleId = schedule.getShiftRuleId();
             if (ruleCache.containsKey(ruleId)) {
-                shiftLbl.setText(ruleCache.get(ruleId));
+                ShiftInfo info = ruleCache.get(ruleId);
+                shiftLbl.setText(info.name);
+                timeLbl.setText(info.timeRange);
             } else {
-                shiftLbl.setText("加载中...");
-                fetchShiftNameAsync(ruleId, shiftLbl);
+                fetchShiftDetailAsync(ruleId, shiftLbl, timeLbl);
             }
-
-            // 时间段
-            String timeText = (schedule.getClockInTime() != null ? schedule.getClockInTime().toString() : "00:00")
-                    + " - "
-                    + (schedule.getClockOutTime() != null ? schedule.getClockOutTime().toString() : "00:00");
-            Label timeLbl = new Label(timeText);
-            timeLbl.setStyle("-fx-font-size: 11px; -fx-text-fill: #7F8C8D;");
 
             cell.getChildren().addAll(shiftLbl, timeLbl);
         }
@@ -142,19 +160,34 @@ public class EmployeeScheduleController implements EmployeeSubController {
         return cell;
     }
 
-    private void fetchShiftNameAsync(int ruleId, Label targetLabel) {
+    /**
+     * 核心逻辑：从 API 获取详细的 Rule 信息
+     */
+    private void fetchShiftDetailAsync(int ruleId, Label nameTarget, Label timeTarget) {
         new Thread(() -> {
             try {
-                String name = scheduleService.getShiftRuleName(ruleId, authToken);
-                ruleCache.put(ruleId, name);
-                Platform.runLater(() -> targetLabel.setText(name));
+                // 注意：这里需要后端返回包含 workStartTime 和 workEndTime 的 Json
+                // 我们直接使用 scheduleService 获取原始 JsonNode
+                JsonNode node = scheduleService.getShiftRuleFullNode(ruleId, authToken);
+
+                if (node != null) {
+                    String name = node.path("ruleName").asText("未知班次");
+                    String start = node.path("workStartTime").asText("00:00:00");
+                    String end = node.path("workEndTime").asText("00:00:00");
+
+                    ShiftInfo info = new ShiftInfo(name, start, end);
+                    ruleCache.put(ruleId, info);
+
+                    Platform.runLater(() -> {
+                        nameTarget.setText(info.name);
+                        timeTarget.setText(info.timeRange);
+                    });
+                }
             } catch (Exception e) {
-                Platform.runLater(() -> targetLabel.setText("未知班次"));
+                Platform.runLater(() -> nameTarget.setText("无法获取"));
             }
         }).start();
     }
-
-    // --- 事件处理 ---
 
     @FXML
     private void handleToday(ActionEvent event) {

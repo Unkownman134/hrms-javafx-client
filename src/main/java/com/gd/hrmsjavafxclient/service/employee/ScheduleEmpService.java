@@ -32,26 +32,14 @@ public class ScheduleEmpService {
         return response.orElse(Collections.emptyList());
     }
 
-    /**
-     * 🌟 新增：根据班次 ID 获取班次名称
-     * API: /shift/rules/{RuleID}
-     */
-    public String getShiftRuleName(int ruleId, String authToken) throws Exception {
+    // 在 ScheduleEmpService.java 中添加此方法
+    public JsonNode getShiftRuleFullNode(int ruleId, String authToken) throws Exception {
         String path = "/shift/rules/" + ruleId;
-        // 使用 JsonNode 通用解析，避免修改 Model
-        Optional<JsonNode> response = ServiceUtil.sendGet(
+        Optional<JsonNode> response = com.gd.hrmsjavafxclient.util.ServiceUtil.sendGet(
                 path,
                 authToken,
-                new TypeReference<JsonNode>() {}
+                new com.fasterxml.jackson.core.type.TypeReference<JsonNode>() {}
         );
-
-        if (response.isPresent()) {
-            JsonNode node = response.get();
-            // 根据 API.txt 文档，班次名称字段是 ruleName
-            if (node.has("ruleName")) {
-                return node.get("ruleName").asText();
-            }
-        }
-        return "未知班次(" + ruleId + ")";
+        return response.orElse(null);
     }
 }
