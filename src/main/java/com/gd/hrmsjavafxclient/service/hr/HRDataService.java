@@ -18,7 +18,6 @@ public class HRDataService {
     private static final String EMPLOYEE_ENDPOINT = "/employees";
     private static final String DEPARTMENT_ENDPOINT = "/departments";
     private static final String POSITION_ENDPOINT = "/positions";
-    private static final String CANDIDATE_ENDPOINT = "/candidates";
     private static final String SALARY_ENDPOINT = "/salary/standards";
     private static final String SHIFT_ENDPOINT = "/shift/rules";
 
@@ -134,28 +133,6 @@ public class HRDataService {
     public boolean deletePosition(int posId, String token) {
         try {
             ServiceUtil.sendRequest(POSITION_ENDPOINT + "/" + posId, token, null, "DELETE", new TypeReference<Void>() {});
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    // --- 候选人/招聘管理相关 (兼容 RecruitmentController) ---
-    public List<Candidate> getAllCandidates(String token) {
-        try {
-            return ServiceUtil.sendGet(CANDIDATE_ENDPOINT, token, new TypeReference<List<Candidate>>() {}).orElse(List.of());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return List.of();
-        }
-    }
-
-    public boolean updateCandidateResult(int candId, String result, String token) {
-        try {
-            Map<String, String> body = new HashMap<>();
-            body.put("result", result);
-            ServiceUtil.sendRequest(CANDIDATE_ENDPOINT + "/" + candId + "/result", token, body, "PUT", new TypeReference<Void>() {});
             return true;
         } catch (Exception e) {
             e.printStackTrace();
