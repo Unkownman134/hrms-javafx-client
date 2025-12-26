@@ -19,9 +19,9 @@
             </VBox>
             <Region HBox.hgrow="ALWAYS" />
             <HBox spacing="10" alignment="CENTER">
-                <Button text="➕ 新增候选人" onAction="#handleAddCandidate" styleClass="action-button-primary" />
-                <Button text="⚖️ 结果录入" onAction="#handleUpdateResult" styleClass="action-button-secondary" />
-                <Button text="🔄 刷新" onAction="#handleRefresh" styleClass="refresh-button" />
+                <Button text="新增候选人" onAction="#handleAddCandidate" styleClass="action-button-primary" />
+                <Button text="结果录入" onAction="#handleUpdateResult" styleClass="action-button-secondary" />
+                <Button text="刷新" onAction="#handleRefresh" styleClass="refresh-button" />
             </HBox>
         </children>
     </HBox>

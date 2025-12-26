@@ -35,11 +35,11 @@
             </padding>
             <children>
                 <Label text="MAIN NAVIGATION" style="-fx-text-fill: #5D6D7E; -fx-padding: 0 0 15 25; -fx-font-size: 11px; -fx-font-weight: bold;"/>
-                <Button fx:id="btnDashboard" text="📈 财务仪表盘" onAction="#showDashboardView" styleClass="nav-button" maxWidth="Infinity"/>
+                <Button fx:id="btnDashboard" text="财务仪表盘" onAction="#showDashboardView" styleClass="nav-button" maxWidth="Infinity"/>
 
                 <Region prefHeight="25"/>
                 <Label text="PAYROLL CENTER" style="-fx-text-fill: #5D6D7E; -fx-padding: 0 0 15 25; -fx-font-size: 11px; -fx-font-weight: bold;"/>
-                <Button fx:id="btnSalary" text="💵 工资条管理" onAction="#showSalaryManagementView" styleClass="nav-button" maxWidth="Infinity"/>
+                <Button fx:id="btnSalary" text="工资条管理" onAction="#showSalaryManagementView" styleClass="nav-button" maxWidth="Infinity"/>
 
                 <Region VBox.vgrow="ALWAYS" />
             </children>

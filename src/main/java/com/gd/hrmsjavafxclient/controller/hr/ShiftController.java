@@ -59,7 +59,6 @@ public class ShiftController implements HRSubController {
 
     @FXML
     private void handleNewRule(ActionEvent event) {
-        // 创建新对象，ruleId 默认 0，不设 null 避免 NPE
         ShiftRule newRule = new ShiftRule();
         showEditDialog(newRule);
     }
@@ -100,7 +99,6 @@ public class ShiftController implements HRSubController {
         Stage stage = new Stage();
         stage.initModality(Modality.APPLICATION_MODAL);
 
-        // ID 为 0 代表是新增
         boolean isAdding = (rule.getRuleId() == null || rule.getRuleId() == 0);
         stage.setTitle(isAdding ? "新增班次规则" : "修改班次规则");
 

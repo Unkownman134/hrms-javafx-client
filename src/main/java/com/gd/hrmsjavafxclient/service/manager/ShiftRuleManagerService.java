@@ -1,7 +1,7 @@
 package com.gd.hrmsjavafxclient.service.manager;
 
 import com.gd.hrmsjavafxclient.model.ShiftRule;
-import com.gd.hrmsjavafxclient.util.ServiceUtil; // ✅ 引入 ServiceUtil
+import com.gd.hrmsjavafxclient.util.ServiceUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
 
 import java.io.IOException;

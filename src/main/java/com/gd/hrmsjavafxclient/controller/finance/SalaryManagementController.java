@@ -48,7 +48,6 @@ public class SalaryManagementController {
 
     @FXML
     public void initialize() {
-        // 1. 初始化左侧员工列表
         employeeListView = new ListView<>();
         employeeListView.setCellFactory(CheckBoxListCell.forListView(selectionMap::get, new StringConverter<Employee>() {
             @Override
@@ -60,8 +59,6 @@ public class SalaryManagementController {
         }));
         employeeListContainer.getChildren().add(employeeListView);
 
-        // 🌟 核心修正：纯 Java 逻辑控制 DatePicker 只显示和处理“年月”
-        // 设置日期显示转换器
         salaryDatePicker.setConverter(new StringConverter<LocalDate>() {
             private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM");
             @Override
@@ -71,21 +68,18 @@ public class SalaryManagementController {
             @Override
             public LocalDate fromString(String string) {
                 if (string != null && !string.isEmpty()) {
-                    // 解析 yyyy-MM 时，内部补齐为该月 1 号
                     return LocalDate.parse(string + "-01", DateTimeFormatter.ofPattern("yyyy-MM-dd"));
                 }
                 return null;
             }
         });
 
-        // 监听值变化：无论用户在弹窗点哪一天，都自动修正为该月 1 号，配合 Converter 达到只选月份的效果
         salaryDatePicker.valueProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal != null && newVal.getDayOfMonth() != 1) {
                 salaryDatePicker.setValue(LocalDate.of(newVal.getYear(), newVal.getMonth(), 1));
             }
         });
 
-        // 2. 工资表格列绑定
         colId.setCellValueFactory(new PropertyValueFactory<>("recordId"));
         colEmpId.setCellValueFactory(new PropertyValueFactory<>("empId"));
         colMonth.setCellValueFactory(new PropertyValueFactory<>("salaryMonth"));
@@ -96,7 +90,6 @@ public class SalaryManagementController {
 
         salaryTable.setItems(masterData);
 
-        // 搜索过滤逻辑
         searchEmployeeField.textProperty().addListener((obs, oldVal, newVal) -> updateFilteredEmployeeList(newVal));
     }
 
@@ -161,7 +154,6 @@ public class SalaryManagementController {
             return;
         }
 
-        // 强制格式化为 yyyy-MM 传给后端
         String monthStr = date.format(DateTimeFormatter.ofPattern("yyyy-MM"));
 
         int success = 0;

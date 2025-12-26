@@ -45,7 +45,6 @@ public class EmployeeApplicationController implements EmployeeSubController {
     }
 
     private void setupTableColumns() {
-        // 🌟 这里的字符串必须对应 ApprovalRequest 类里的变量名（注意不是 JsonProperty 里的名，是变量名）
         idCol.setCellValueFactory(new PropertyValueFactory<>("requestId"));
         typeCol.setCellValueFactory(new PropertyValueFactory<>("requestType"));
         startCol.setCellValueFactory(new PropertyValueFactory<>("startDate"));
@@ -81,7 +80,6 @@ public class EmployeeApplicationController implements EmployeeSubController {
         Task<List<ApprovalRequest>> task = new Task<>() {
             @Override
             protected List<ApprovalRequest> call() throws Exception {
-                // 调用接口 GET /api/approval-requests/my/{EmpID}
                 return applicationEmpService.getMyApplications(currentUser.getEmpId(), authToken);
             }
 
@@ -97,7 +95,7 @@ public class EmployeeApplicationController implements EmployeeSubController {
             @Override
             protected void failed() {
                 Throwable exception = getException();
-                exception.printStackTrace(); // 🌟 这一行能在 IDE 控制台看到具体的解析错误
+                exception.printStackTrace();
                 showAlert("列表加载失败", "原因: " + exception.getMessage(), Alert.AlertType.ERROR);
             }
         };

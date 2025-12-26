@@ -14,7 +14,6 @@ public class Department {
 
     public Department() {}
 
-    // --- Getter 和 Setter ---
 
     public Integer getDeptId() {
         return deptId;
@@ -40,7 +39,6 @@ public class Department {
         this.deptDesc = deptDesc;
     }
 
-    // 重写 toString，方便在调试或组合框中使用
     @Override
     public String toString() {
         return deptName + " (ID:" + deptId + ")";

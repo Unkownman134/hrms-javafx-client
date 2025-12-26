@@ -1,7 +1,7 @@
 package com.gd.hrmsjavafxclient.service.manager;
 
 import com.gd.hrmsjavafxclient.model.Employee;
-import com.gd.hrmsjavafxclient.util.ServiceUtil; // ✅ 引入 ServiceUtil
+import com.gd.hrmsjavafxclient.util.ServiceUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
 
 import java.io.IOException;
@@ -15,7 +15,6 @@ import java.util.Optional;
  */
 public class EmployeeManagerService {
 
-    // 🌟 ServiceUtil.BASE_URL 已包含 /api，这里只需要子路径
     private static final String ENDPOINT = "/employees";
 
     /**
@@ -32,7 +31,6 @@ public class EmployeeManagerService {
                 new TypeReference<List<Employee>>() {}
         );
 
-        // 转换 Optional<List<Employee>> 为 List<Employee>，若为空则返回空列表
         return result.orElse(Collections.emptyList());
     }
 }

@@ -14,7 +14,6 @@ public class ApprovalConfig {
     private final IntegerProperty deptId = new SimpleIntegerProperty();
     private final IntegerProperty approverPositionId = new SimpleIntegerProperty();
 
-    // 用于显示的扩展字段（通常后端会关联查询返回名称，方便在表格显示）
     private final StringProperty deptName = new SimpleStringProperty();
     private final StringProperty positionName = new SimpleStringProperty();
 

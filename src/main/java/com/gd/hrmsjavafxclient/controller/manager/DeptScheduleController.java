@@ -26,17 +26,15 @@ import java.util.stream.Collectors;
 
 /**
  * 部门经理排班界面控制器
- * 🌟 升级版：支持自定义日期区间查询，不再受限于下拉框月度选择
+ * 升级版：支持自定义日期区间查询，不再受限于下拉框月度选择
  */
 public class DeptScheduleController implements ManagerSubController {
 
     @FXML private Label deptNameLabel;
 
-    // 🌟 查询条件改为 DatePicker
     @FXML private DatePicker queryStartDatePicker;
     @FXML private DatePicker queryEndDatePicker;
 
-    // 下方批量添加区域的控件
     @FXML private ComboBox<Employee> employeeComboBox;
     @FXML private ComboBox<ShiftRule> shiftRuleComboBox;
     @FXML private DatePicker startDatePicker;
@@ -74,12 +72,10 @@ public class DeptScheduleController implements ManagerSubController {
     }
 
     private void initUI() {
-        // 🌟 初始化查询日期：默认为当月第一天和最后一天
         LocalDate today = LocalDate.now();
         queryStartDatePicker.setValue(today.with(TemporalAdjusters.firstDayOfMonth()));
         queryEndDatePicker.setValue(today.with(TemporalAdjusters.lastDayOfMonth()));
 
-        // 表格绑定
         employeeNameCol.setCellValueFactory(d -> d.getValue().employeeNameProperty());
         dateCol.setCellValueFactory(d -> d.getValue().dateProperty());
         shiftNameCol.setCellValueFactory(d -> d.getValue().shiftNameProperty());
@@ -87,7 +83,6 @@ public class DeptScheduleController implements ManagerSubController {
 
         scheduleTable.setItems(scheduleData);
 
-        // 下拉框转换器
         employeeComboBox.setConverter(new StringConverter<Employee>() {
             @Override public String toString(Employee e) { return e == null ? "" : e.getEmpName(); }
             @Override public Employee fromString(String s) { return null; }
@@ -105,20 +100,18 @@ public class DeptScheduleController implements ManagerSubController {
         Task<Void> task = new Task<>() {
             @Override
             protected Void call() throws Exception {
-                // 加载员工
                 Optional<List<Employee>> allEmpsOpt = ServiceUtil.sendGet("/employees", authToken, new TypeReference<List<Employee>>() {});
                 List<Employee> filtered = allEmpsOpt.orElse(new ArrayList<>()).stream()
                         .filter(e -> e.getDeptId() != null && e.getDeptId().equals(currentUser.getDeptId()))
                         .collect(Collectors.toList());
 
-                // 加载规则
                 Optional<List<ShiftRule>> rulesOpt = ServiceUtil.sendGet("/shift/rules", authToken, new TypeReference<List<ShiftRule>>() {});
                 List<ShiftRule> rules = rulesOpt.orElse(new ArrayList<>());
 
                 Platform.runLater(() -> {
                     deptEmployees.setAll(filtered);
                     allShiftRules.setAll(rules);
-                    handleRefresh(); // 触发初始查询
+                    handleRefresh();
                 });
                 return null;
             }
@@ -130,12 +123,11 @@ public class DeptScheduleController implements ManagerSubController {
     private void handleRefresh() {
         if (isRefreshing) return;
 
-        // 🌟 获取 DatePicker 的值
         LocalDate start = queryStartDatePicker.getValue();
         LocalDate end = queryEndDatePicker.getValue();
 
         if (start == null || end == null) {
-            showAlert("提示", "请先选择完整的查询日期区间区间哦！", Alert.AlertType.WARNING);
+            showAlert("提示", "请先选择完整的查询日期区间区间！", Alert.AlertType.WARNING);
             return;
         }
 
@@ -165,7 +157,6 @@ public class DeptScheduleController implements ManagerSubController {
 
                 for (Employee emp : deptEmployees) {
                     if (isCancelled()) break;
-                    // 🌟 使用选择的日期区间发起请求
                     List<Schedule> empSchedules = scheduleService.getSchedulesByRange(
                             emp.getEmpId(), startDateStr, endDateStr, authToken
                     );
@@ -208,7 +199,7 @@ public class DeptScheduleController implements ManagerSubController {
         LocalDate end = endDatePicker.getValue();
 
         if (selectedEmp == null || rule == null || start == null || end == null) {
-            showAlert("还没填完呢", "要把所有选项都选好才能排班哦！", Alert.AlertType.WARNING);
+            showAlert("还没填完", "要把所有选项都选好才能排班！", Alert.AlertType.WARNING);
             return;
         }
 

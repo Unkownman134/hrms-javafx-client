@@ -17,19 +17,14 @@ import java.util.Optional;
  */
 public final class ServiceUtil {
 
-    // 假设 API 基础 URL
     private static final String BASE_URL = "http://localhost:8080/api";
 
-    // HTTP 客户端实例
     private static final HttpClient HTTP_CLIENT = HttpClient.newHttpClient();
 
-    // JSON 序列化/反序列化工具
     private static final ObjectMapper OBJECT_MAPPER;
 
-    // 静态初始化块，配置 ObjectMapper
     static {
         OBJECT_MAPPER = new ObjectMapper();
-        // 注册 JavaTimeModule 以正确处理 Java 8 时间类型
         OBJECT_MAPPER.registerModule(new JavaTimeModule());
     }
 
@@ -81,11 +76,9 @@ public final class ServiceUtil {
         String url = BASE_URL + endpoint;
         HttpRequest.Builder builder = HttpRequest.newBuilder().uri(URI.create(url));
 
-        // 设置 Header
         builder.header("Authorization", "Bearer " + authToken)
                 .header("Content-Type", "application/json");
 
-        // 处理请求体和方法
         String upperMethod = method.toUpperCase();
         switch (upperMethod) {
             case "POST":
@@ -109,13 +102,11 @@ public final class ServiceUtil {
         int statusCode = response.statusCode();
         String responseBody = response.body();
 
-        // 处理 2xx 成功范围
         if (statusCode >= 200 && statusCode < 300) {
             if (responseBody != null && !responseBody.isBlank() && responseTypeRef != null) {
                 try {
                     return Optional.of(OBJECT_MAPPER.readValue(responseBody, responseTypeRef));
                 } catch (Exception e) {
-                    // 如果解析失败但包含“成功”字样，视为操作成功但无对象返回
                     if (responseBody.contains("成功") || responseBody.contains("success")) {
                         System.out.println("[DEBUG] 收到非 JSON 成功响应: " + responseBody);
                         return Optional.empty();
@@ -125,7 +116,6 @@ public final class ServiceUtil {
             }
             return Optional.empty();
         } else {
-            // 非 2xx 状态码，统一抛出异常
             throw new RuntimeException(String.format("API 请求失败 [%s %s]，状态码: %d，响应: %s",
                     upperMethod, url, statusCode, responseBody));
         }

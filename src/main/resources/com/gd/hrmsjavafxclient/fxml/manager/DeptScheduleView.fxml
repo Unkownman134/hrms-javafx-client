@@ -14,7 +14,7 @@
     <HBox alignment="CENTER_LEFT" spacing="15">
         <children>
             <VBox>
-                <Label text="部门排班管理 📅" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: -fx-text-main;"/>
+                <Label text="部门排班管理" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: -fx-text-main;"/>
                 <Label fx:id="deptNameLabel" text="当前部门: 加载中..." style="-fx-font-size: 12px; -fx-text-fill: -fx-text-muted;"/>
             </VBox>
             <Region HBox.hgrow="ALWAYS" />

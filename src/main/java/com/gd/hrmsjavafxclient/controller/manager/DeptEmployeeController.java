@@ -24,19 +24,19 @@ import java.util.stream.Collectors;
 
 /**
  * 部门员工管理视图控制器
- * 🌟 补全了所有缺失字段：性别、状态、入职日期。
+ * 补全了所有缺失字段：性别、状态、入职日期。
  */
 public class DeptEmployeeController implements ManagerSubController {
 
     @FXML private TableView<Employee> employeeTable;
     @FXML private TableColumn<Employee, Integer> empIdCol;
     @FXML private TableColumn<Employee, String> nameCol;
-    @FXML private TableColumn<Employee, String> genderCol;      // 🆕 补全
+    @FXML private TableColumn<Employee, String> genderCol;
     @FXML private TableColumn<Employee, String> positionCol;
     @FXML private TableColumn<Employee, String> phoneCol;
     @FXML private TableColumn<Employee, String> emailCol;
-    @FXML private TableColumn<Employee, LocalDate> joinDateCol; // 🆕 补全
-    @FXML private TableColumn<Employee, String> statusCol;      // 🆕 补全
+    @FXML private TableColumn<Employee, LocalDate> joinDateCol;
+    @FXML private TableColumn<Employee, String> statusCol;
     @FXML private Label deptNameLabel;
     @FXML private TextField searchField;
 
@@ -50,16 +50,14 @@ public class DeptEmployeeController implements ManagerSubController {
 
     @FXML
     public void initialize() {
-        // 1. 基础字段绑定
         empIdCol.setCellValueFactory(new PropertyValueFactory<>("empId"));
         nameCol.setCellValueFactory(new PropertyValueFactory<>("empName"));
-        genderCol.setCellValueFactory(new PropertyValueFactory<>("gender")); //
+        genderCol.setCellValueFactory(new PropertyValueFactory<>("gender"));
         phoneCol.setCellValueFactory(new PropertyValueFactory<>("phone"));
         emailCol.setCellValueFactory(new PropertyValueFactory<>("email"));
-        joinDateCol.setCellValueFactory(new PropertyValueFactory<>("joinDate")); //
-        statusCol.setCellValueFactory(new PropertyValueFactory<>("status")); //
+        joinDateCol.setCellValueFactory(new PropertyValueFactory<>("joinDate"));
+        statusCol.setCellValueFactory(new PropertyValueFactory<>("status"));
 
-        // 2. 职位 ID 到 名称 的映射绑定
         positionCol.setCellValueFactory(cellData -> {
             Integer posId = cellData.getValue().getPosId();
             String posName = positionMap != null && posId != null
@@ -106,7 +104,6 @@ public class DeptEmployeeController implements ManagerSubController {
         Task<List<Employee>> loadTask = new Task<>() {
             @Override
             protected List<Employee> call() throws Exception {
-                // 加载职位映射
                 try {
                     List<Position> allPositions = positionManagerService.getAllPositions(authToken);
                     positionMap = allPositions.stream()
@@ -115,7 +112,6 @@ public class DeptEmployeeController implements ManagerSubController {
                     positionMap = Collections.emptyMap();
                 }
 
-                // 加载并过滤员工
                 List<Employee> allEmployees = employeeManagerService.getAllEmployees(authToken);
                 return allEmployees.stream()
                         .filter(e -> deptId.equals(e.getDeptId()))

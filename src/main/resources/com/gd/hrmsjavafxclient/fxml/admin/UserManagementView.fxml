@@ -17,8 +17,8 @@
                 <Label text="管理系统登录凭证与权限分配" style="-fx-font-size: 12px; -fx-text-fill: -fx-text-muted;"/>
             </VBox>
             <Region HBox.hgrow="ALWAYS" />
-            <Button text="🔄 刷新" onAction="#loadUserData" styleClass="refresh-button"/>
-            <Button text="➕ 新增用户" onAction="#handleNewUser" styleClass="action-button" />
+            <Button text="刷新" onAction="#loadUserData" styleClass="refresh-button"/>
+            <Button text="新增用户" onAction="#handleNewUser" styleClass="action-button" />
         </children>
     </HBox>
 

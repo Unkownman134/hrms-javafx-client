@@ -25,10 +25,6 @@
         </children>
     </HBox>
 
-    <HBox style="-fx-background-color: #EBF5FB; -fx-padding: 10; -fx-background-radius: 5;">
-        <Label text="提示：部门、职位和主管名称已自动从关联 ID 转换展示。" style="-fx-text-fill: #2980B9; -fx-font-size: 13px;"/>
-    </HBox>
-
     <TableView fx:id="employeeTable" VBox.vgrow="ALWAYS" fixedCellSize="40">
         <columns>
             <TableColumn fx:id="empNameCol" text="姓名" prefWidth="100"/>

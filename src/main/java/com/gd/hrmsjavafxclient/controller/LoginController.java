@@ -42,7 +42,7 @@ public class LoginController {
         String password = passwordField.getText();
 
         if (username.isEmpty() || password.isEmpty()) {
-            showError("用户名或密码不能为空喵！");
+            showError("用户名或密码不能为空！");
             return;
         }
 

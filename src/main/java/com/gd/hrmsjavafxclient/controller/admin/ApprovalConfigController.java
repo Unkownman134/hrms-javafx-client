@@ -40,11 +40,10 @@ public class ApprovalConfigController {
 
     @FXML
     public void initialize() {
-        // 绑定表格列到 ApprovalConfig 的属性
         idCol.setCellValueFactory(new PropertyValueFactory<>("configId"));
         typeCol.setCellValueFactory(new PropertyValueFactory<>("processType"));
-        deptCol.setCellValueFactory(new PropertyValueFactory<>("deptName")); // 对应模型中的 deptNameProperty
-        posCol.setCellValueFactory(new PropertyValueFactory<>("positionName")); // 对应模型中的 positionNameProperty
+        deptCol.setCellValueFactory(new PropertyValueFactory<>("deptName"));
+        posCol.setCellValueFactory(new PropertyValueFactory<>("positionName"));
 
         configTable.setItems(masterData);
         addActionButtons();
@@ -55,13 +54,10 @@ public class ApprovalConfigController {
     public void loadConfigData() {
         new Thread(() -> {
             try {
-                // 1. 从 API 获取配置列表
                 List<ApprovalConfig> list = service.getAllConfigs();
-                // 2. 获取辅助数据用于名称映射
                 List<Department> depts = deptService.getAllDepartments();
                 List<Position> poss = posService.getAllPositions();
 
-                // 3. 填充显示用的名称字段
                 for (ApprovalConfig config : list) {
                     depts.stream()
                             .filter(d -> d.getDeptId().equals(config.getDeptId()))
@@ -129,7 +125,6 @@ public class ApprovalConfigController {
         grid.setHgap(10);
         grid.setVgap(15);
 
-        // 流程类型
         grid.add(new Label("流程类型:"), 0, 0);
         ComboBox<String> typeCombo = new ComboBox<>();
         typeCombo.setItems(FXCollections.observableArrayList("请假", "报销", "出差"));
@@ -138,29 +133,24 @@ public class ApprovalConfigController {
         if (isEdit) typeCombo.setValue(existingConfig.getProcessType());
         grid.add(typeCombo, 1, 0);
 
-        // 对应部门
         grid.add(new Label("对应部门:"), 0, 1);
         ComboBox<Department> deptCombo = new ComboBox<>();
         deptCombo.setMaxWidth(Double.MAX_VALUE);
-        // ✨ 使用转换器替代 toString()
         deptCombo.setConverter(new StringConverter<>() {
             @Override public String toString(Department d) { return d == null ? "" : d.getDeptName(); }
             @Override public Department fromString(String s) { return null; }
         });
         grid.add(deptCombo, 1, 1);
 
-        // 审批职位
         grid.add(new Label("审批职位:"), 0, 2);
         ComboBox<Position> posCombo = new ComboBox<>();
         posCombo.setMaxWidth(Double.MAX_VALUE);
-        // ✨ 使用转换器替代 toString()
         posCombo.setConverter(new StringConverter<>() {
             @Override public String toString(Position p) { return p == null ? "" : p.getPosName(); }
             @Override public Position fromString(String s) { return null; }
         });
         grid.add(posCombo, 1, 2);
 
-        // 并行加载下拉框数据
         new Thread(() -> {
             try {
                 List<Department> depts = deptService.getAllDepartments();

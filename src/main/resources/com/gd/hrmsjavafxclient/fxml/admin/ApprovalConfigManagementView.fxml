@@ -17,8 +17,8 @@
                 <Label text="按部门配置不同业务的审批路径" style="-fx-font-size: 12px; -fx-text-fill: -fx-text-muted;"/>
             </VBox>
             <Region HBox.hgrow="ALWAYS" />
-            <Button text="🔄 刷新" onAction="#loadConfigData" styleClass="refresh-button"/>
-            <Button text="➕ 新增配置" onAction="#handleNewConfig" styleClass="action-button" />
+            <Button text="刷新" onAction="#loadConfigData" styleClass="refresh-button"/>
+            <Button text="新增配置" onAction="#handleNewConfig" styleClass="action-button" />
         </children>
     </HBox>
 

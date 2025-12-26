@@ -12,9 +12,9 @@
     </padding>
 
     <HBox alignment="CENTER_LEFT">
-        <Label text="待办审批任务 📋" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: -fx-text-main;" HBox.hgrow="ALWAYS"/>
+        <Label text="待办审批任务" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: -fx-text-main;" HBox.hgrow="ALWAYS"/>
         <Region HBox.hgrow="ALWAYS" />
-        <Button text="刷新数据 🔄" onAction="#loadData" styleClass="btn-secondary" prefWidth="100"/>
+        <Button text="刷新数据" onAction="#loadData" styleClass="btn-secondary" prefWidth="100"/>
     </HBox>
 
     <TableView fx:id="approvalTable" VBox.vgrow="ALWAYS" styleClass="data-table">

@@ -39,18 +39,16 @@ public class ScheduleManagerService {
      */
     public boolean addSchedule(Schedule schedule, String authToken) throws IOException, InterruptedException {
 
-        // 既然不改 Model，我们就手动挑出后端需要的 3 个字段组装成 Payload
         Map<String, Object> payload = new HashMap<>();
         payload.put("empId", schedule.getEmpId());
-        payload.put("scheduleDate", schedule.getScheduleDate().toString()); // 转成 "yyyy-MM-dd"
+        payload.put("scheduleDate", schedule.getScheduleDate().toString());
         payload.put("shiftRuleId", schedule.getShiftRuleId());
 
-        // ServiceUtil.sendRequest 签名顺序: (endpoint, authToken, body, method, responseTypeRef)
         Optional<Schedule> result = ServiceUtil.sendRequest(
-                ENDPOINT,               // 1. endpoint
-                authToken,              // 2. authToken
-                payload,                // 3. body (只包含 3 个字段的 Map)
-                "POST",                 // 4. method (必须是字符串 "POST")
+                ENDPOINT,
+                authToken,
+                payload,
+                "POST",
                 new TypeReference<Schedule>() {}
         );
 

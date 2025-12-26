@@ -42,7 +42,6 @@ public class EmployeeAttendanceRecordController implements EmployeeSubController
     private String authToken;
     private final AttendanceEmpService attendanceEmpService = new AttendanceEmpService();
 
-    // 🌟 定义年月格式化器
     private final DateTimeFormatter monthFormatter = DateTimeFormatter.ofPattern("yyyy-MM");
 
     @Override
@@ -58,7 +57,6 @@ public class EmployeeAttendanceRecordController implements EmployeeSubController
     }
 
     private void initialize() {
-        // 1. 绑定表格列
         dateCol.setCellValueFactory(new PropertyValueFactory<>("date"));
         clockInCol.setCellValueFactory(new PropertyValueFactory<>("clockInTime"));
         clockOutCol.setCellValueFactory(new PropertyValueFactory<>("clockOutTime"));
@@ -68,15 +66,13 @@ public class EmployeeAttendanceRecordController implements EmployeeSubController
         attendanceTable.setItems(data);
         attendanceTable.setPlaceholder(new Label("正在努力加载数据中..."));
 
-        // 2. 🌟 设置 DatePicker 仅显示年月
         setupMonthPicker();
 
-        // 3. 进入界面直接自动查一遍！
         loadAttendanceData();
     }
 
     /**
-     * 🌟 核心改动：自定义 DatePicker 的显示格式
+     * 核心改动：自定义 DatePicker 的显示格式
      */
     private void setupMonthPicker() {
         monthPicker.setValue(LocalDate.now());
@@ -93,14 +89,12 @@ public class EmployeeAttendanceRecordController implements EmployeeSubController
             @Override
             public LocalDate fromString(String string) {
                 if (string != null && !string.isEmpty()) {
-                    // 解析时默认补上 1 号，因为 LocalDate 必须有日
                     return LocalDate.parse(string + "-01", DateTimeFormatter.ofPattern("yyyy-MM-dd"));
                 }
                 return null;
             }
         });
 
-        // 提示用户只能选年月
         monthPicker.setPromptText("yyyy-MM");
     }
 
@@ -112,7 +106,7 @@ public class EmployeeAttendanceRecordController implements EmployeeSubController
     private void loadAttendanceData() {
         LocalDate selectedDate = monthPicker.getValue();
         if (selectedDate == null) {
-            showAlert("提示 💡", "请先选择查询月份！", Alert.AlertType.WARNING);
+            showAlert("提示", "请先选择查询月份！", Alert.AlertType.WARNING);
             return;
         }
 
@@ -152,7 +146,7 @@ public class EmployeeAttendanceRecordController implements EmployeeSubController
                 Platform.runLater(() -> {
                     queryButton.setText("查 询");
                     queryButton.setDisable(false);
-                    attendanceTable.setPlaceholder(new Label("加载失败 ❌"));
+                    attendanceTable.setPlaceholder(new Label("加载失败"));
                     showAlert("加载失败", "错误：" + e.getMessage(), Alert.AlertType.ERROR);
                 });
             }

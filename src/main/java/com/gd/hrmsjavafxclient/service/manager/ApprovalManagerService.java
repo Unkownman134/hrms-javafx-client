@@ -17,7 +17,6 @@ public class ApprovalManagerService {
      * 获取待办审批
      */
     public List<ApprovalRequest> getMyPendingApprovals(String authToken, Integer myEmpId) throws IOException, InterruptedException {
-        // 注意：这里路径依旧使用你之前确认的获取列表路径
         Optional<List<ApprovalRequest>> result = ServiceUtil.sendGet(
                 "/approval-requests",
                 authToken,
@@ -38,10 +37,8 @@ public class ApprovalManagerService {
     public void handleApprovalAction(Integer requestId, String action, String comments, Integer approverId, String authToken)
             throws IOException, InterruptedException {
 
-        // 修正后的路径！
         String endpoint = "/approvals/" + requestId + "/action";
 
-        // 请求体包含：approverId, action, comments
         Map<String, Object> body = Map.of(
                 "approverId", approverId,
                 "action", action,

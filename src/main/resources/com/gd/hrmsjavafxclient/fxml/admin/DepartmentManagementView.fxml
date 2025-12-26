@@ -17,8 +17,8 @@
                 <Label text="定义企业部门层级与结构" style="-fx-font-size: 12px; -fx-text-fill: -fx-text-muted;"/>
             </VBox>
             <Region HBox.hgrow="ALWAYS" />
-            <Button text="🔄 刷新" onAction="#loadDepartmentData" styleClass="refresh-button"/>
-            <Button text="➕ 新增部门" onAction="#handleNewDepartment" styleClass="action-button" />
+            <Button text="刷新" onAction="#loadDepartmentData" styleClass="refresh-button"/>
+            <Button text="新增部门" onAction="#handleNewDepartment" styleClass="action-button" />
         </children>
     </HBox>
 

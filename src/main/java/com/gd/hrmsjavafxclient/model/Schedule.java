@@ -10,7 +10,7 @@ import java.time.LocalTime;
 
 /**
  * 排班记录 Model (t_employee_schedule)
- * 已经根据最新的 API 接口进行了字段对齐 ✨
+ * 已经根据最新的 API 接口进行了字段对齐
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Schedule {
@@ -24,7 +24,6 @@ public class Schedule {
     private final StringProperty employeeName = new SimpleStringProperty();
     private final StringProperty shiftName = new SimpleStringProperty();
 
-    // 🌟 修正：显式指定 LocalTime 的格式，防止后端解析 "2:0:0" 这种格式失败
     private final ObjectProperty<LocalTime> clockInTime = new SimpleObjectProperty<>();
     private final ObjectProperty<LocalTime> clockOutTime = new SimpleObjectProperty<>();
 
@@ -61,8 +60,7 @@ public class Schedule {
     public String getStatus() { return status.get(); }
     public void setStatus(String s) { this.status.set(s); }
 
-    // 🌟 增加对时间的 Getter/Setter 和格式化支持
-    @JsonFormat(pattern = "H:m:s") // 兼容后端可能传来的非补零格式
+    @JsonFormat(pattern = "H:m:s")
     public LocalTime getClockInTime() { return clockInTime.get(); }
     public void setClockInTime(LocalTime time) { this.clockInTime.set(time); }
 
@@ -70,9 +68,6 @@ public class Schedule {
     public LocalTime getClockOutTime() { return clockOutTime.get(); }
     public void setClockOutTime(LocalTime time) { this.clockOutTime.set(time); }
 
-    // =========================================================
-    // 2. Property Accessors (用于 JavaFX TableView 绑定)
-    // =========================================================
 
     public IntegerProperty scheduleIdProperty() { return scheduleId; }
     public IntegerProperty empIdProperty() { return empId; }

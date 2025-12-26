@@ -43,7 +43,6 @@ public class ManagerMainController implements MainController {
         if (userInfo != null && userInfo.getEmployeeName() != null) {
             userInfoLabel.setText("欢迎回来，" + userInfo.getEmployeeName() + " (经理)");
         }
-        // 默认加载仪表盘
         loadView("ManagerDashboardView", null);
     }
 

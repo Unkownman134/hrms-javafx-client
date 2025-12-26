@@ -19,7 +19,7 @@ import java.util.List;
 
 /**
  * 班次规则视图控制器 (只读展示)
- * 🌟 确认：不包含备注/描述字段，仅展示核心排班参数 (oﾟvﾟ)ノ
+ * 确认：不包含备注/描述字段，仅展示核心排班参数
  */
 public class ShiftRuleController implements ManagerSubController {
 
@@ -36,7 +36,6 @@ public class ShiftRuleController implements ManagerSubController {
 
     @FXML
     public void initialize() {
-        // 绑定 Model 属性到表格列
         ruleIdCol.setCellValueFactory(new PropertyValueFactory<>("ruleId"));
         ruleNameCol.setCellValueFactory(new PropertyValueFactory<>("ruleName"));
         startTimeCol.setCellValueFactory(new PropertyValueFactory<>("workStartTime"));
@@ -64,7 +63,6 @@ public class ShiftRuleController implements ManagerSubController {
      * 从后端异步加载数据
      */
     private void loadShiftRules() {
-        // 防止没有 Token 就请求
         if (authToken == null || authToken.isEmpty()) {
             shiftRuleTable.setPlaceholder(new Label("未检测到登录状态，请重新登录。"));
             return;
@@ -73,7 +71,6 @@ public class ShiftRuleController implements ManagerSubController {
         Task<List<ShiftRule>> loadTask = new Task<>() {
             @Override
             protected List<ShiftRule> call() throws Exception {
-                // 调用服务获取数据
                 return shiftRuleService.getAllShiftRules(authToken);
             }
 
@@ -82,7 +79,7 @@ public class ShiftRuleController implements ManagerSubController {
                 Platform.runLater(() -> {
                     data.setAll(getValue());
                     if (data.isEmpty()) {
-                        shiftRuleTable.setPlaceholder(new Label("目前没有定义任何班次规则哦。"));
+                        shiftRuleTable.setPlaceholder(new Label("目前没有定义任何班次规则。"));
                     }
                 });
             }
@@ -90,8 +87,8 @@ public class ShiftRuleController implements ManagerSubController {
             @Override
             protected void failed() {
                 Platform.runLater(() -> {
-                    shiftRuleTable.setPlaceholder(new Label("加载班次规则失败 😭"));
-                    showAlert("错误 ❌", "无法连接至服务器，请检查网络设置。", Alert.AlertType.ERROR);
+                    shiftRuleTable.setPlaceholder(new Label("加载班次规则失败"));
+                    showAlert("错误", "无法连接至服务器，请检查网络设置。", Alert.AlertType.ERROR);
                     getException().printStackTrace();
                 });
             }

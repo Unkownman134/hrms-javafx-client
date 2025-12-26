@@ -15,7 +15,6 @@ public class Candidate {
 
     private final StringProperty name = new SimpleStringProperty();
 
-    // 🌟 映射数据库新增的 Gender 列
     private final StringProperty gender = new SimpleStringProperty();
 
     private final StringProperty phone = new SimpleStringProperty();
@@ -31,7 +30,6 @@ public class Candidate {
 
     public Candidate() {}
 
-    // --- Getter 和 Setter (包含新加的 Gender) ---
 
     public int getCandID() { return candID.get(); }
     public IntegerProperty candIDProperty() { return candID; }

@@ -21,7 +21,6 @@ public class HRDataService {
     private static final String SALARY_ENDPOINT = "/salary/standards";
     private static final String SHIFT_ENDPOINT = "/shift/rules";
 
-    // --- 员工管理相关 (兼容 EmployeeController) ---
     public List<Employee> getAllEmployees(String token) {
         try {
             return ServiceUtil.sendGet(EMPLOYEE_ENDPOINT, token, new TypeReference<List<Employee>>() {}).orElse(List.of());
@@ -60,7 +59,6 @@ public class HRDataService {
         }
     }
 
-    // --- 部门管理相关 (兼容 DepartmentController) ---
     public List<Department> getAllDepartments(String token) {
         try {
             return ServiceUtil.sendGet(DEPARTMENT_ENDPOINT, token, new TypeReference<List<Department>>() {}).orElse(List.of());
@@ -100,7 +98,6 @@ public class HRDataService {
         }
     }
 
-    // --- 职位体系相关 (兼容 PositionController) ---
     public List<Position> getAllPositions(String token) {
         try {
             return ServiceUtil.sendGet(POSITION_ENDPOINT, token, new TypeReference<List<Position>>() {}).orElse(List.of());
@@ -140,7 +137,6 @@ public class HRDataService {
         }
     }
 
-    // --- 薪资标准相关 ---
     public List<SalaryStandard> getAllSalaryStandards(String token) {
         try {
             return ServiceUtil.sendGet(SALARY_ENDPOINT, token, new TypeReference<List<SalaryStandard>>() {}).orElse(List.of());
@@ -150,7 +146,6 @@ public class HRDataService {
         }
     }
 
-    // --- 班次管理相关 (🌟 特殊处理 POST 逻辑) ---
     public List<ShiftRule> getAllShiftRules(String token) {
         try {
             return ServiceUtil.sendGet(SHIFT_ENDPOINT, token, new TypeReference<List<ShiftRule>>() {}).orElse(List.of());

@@ -17,8 +17,8 @@
                 <Label text="制定基础薪资与津贴福利标准" style="-fx-font-size: 12px; -fx-text-fill: -fx-text-muted;"/>
             </VBox>
             <Region HBox.hgrow="ALWAYS" />
-            <Button text="🔄 刷新" onAction="#loadStandardData" styleClass="refresh-button"/>
-            <Button text="➕ 制定新标准" onAction="#handleNewStandard" styleClass="action-button" />
+            <Button text="刷新" onAction="#loadStandardData" styleClass="refresh-button"/>
+            <Button text="制定新标准" onAction="#handleNewStandard" styleClass="action-button" />
         </children>
     </HBox>
 

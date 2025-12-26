@@ -44,7 +44,6 @@ public class HRMainController implements MainController {
     private CurrentUserInfo currentUser;
     private String authToken;
 
-    // 路径常量，请务必确认这些文件位于 resources/com/gd/hrmsjavafxclient/fxml/hr/ 目录下
     private static final String HR_DASHBOARD_VIEW = "/com/gd/hrmsjavafxclient/fxml/hr/HRDashboardView.fxml";
     private static final String HR_EMPLOYEE_VIEW = "/com/gd/hrmsjavafxclient/fxml/hr/EmployeeView.fxml";
     private static final String HR_DEPARTMENT_VIEW = "/com/gd/hrmsjavafxclient/fxml/hr/DepartmentView.fxml";
@@ -56,9 +55,7 @@ public class HRMainController implements MainController {
     public void setUserInfo(CurrentUserInfo userInfo, String authToken) {
         this.currentUser = userInfo;
         this.authToken = authToken;
-        // 设置顶栏用户信息
-        userInfoLabel.setText("👤 HR: " + userInfo.getEmployeeName() + " | " + userInfo.getDepartmentName());
-        // 默认加载仪表盘
+        userInfoLabel.setText("HR: " + userInfo.getEmployeeName() + " | " + userInfo.getDepartmentName());
         loadView(HR_DASHBOARD_VIEW);
         setActiveButton(dashboardButton);
     }
@@ -76,13 +73,11 @@ public class HRMainController implements MainController {
             FXMLLoader loader = new FXMLLoader(url);
             Parent view = loader.load();
 
-            // 如果子控制器需要用户信息，则进行传递
             Object controller = loader.getController();
             if (controller instanceof HRSubController) {
                 ((HRSubController) controller).setHRContext(currentUser, authToken);
             }
 
-            // 将新视图放入 StackPane
             contentPane.getChildren().setAll(view);
         } catch (IOException e) {
             e.printStackTrace();
@@ -94,7 +89,6 @@ public class HRMainController implements MainController {
         }
     }
 
-    // --- 按钮点击事件处理 ---
 
     @FXML
     private void showDashboardView(ActionEvent event) {

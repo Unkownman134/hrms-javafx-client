@@ -19,12 +19,10 @@ public class ChangePasswordService {
      * @throws Exception 抛出异常由 Controller 捕捉
      */
     public boolean updatePassword(User user, String authToken) throws Exception {
-        // 根据 API 文档，路径是 /users/{UserID}
         String path = "/users/" + user.getUserId();
 
         System.out.println("ChangePasswordService: 准备调用通用接口更新用户密码...");
 
-        // ✨ 修正后的参数顺序：path, authToken, user, "PUT", typeRef
         Optional<User> result = ServiceUtil.sendRequest(
                 path,
                 authToken,
@@ -33,7 +31,6 @@ public class ChangePasswordService {
                 new TypeReference<User>() {}
         );
 
-        // 如果 ServiceUtil 没有抛出 RuntimeException，说明状态码是 2xx，即为成功！
         return true;
     }
 }

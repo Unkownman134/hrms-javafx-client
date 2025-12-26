@@ -46,7 +46,7 @@
                 <Label text="SYSTEM &amp; APPROVAL" style="-fx-text-fill: #5D6D7E; -fx-padding: 0 0 15 25; -fx-font-size: 11px; -fx-font-weight: bold;"/>
                 <Button text="班次规则查看" onAction="#showShiftRuleView" styleClass="nav-button" maxWidth="Infinity"/>
 
-                <Button text="待我审批 🔔" onAction="#showPendingApprovalView" styleClass="nav-button" maxWidth="Infinity"/>
+                <Button text="待我审批" onAction="#showPendingApprovalView" styleClass="nav-button" maxWidth="Infinity"/>
 
                 <Region VBox.vgrow="ALWAYS"/>
                 <Label text="v1.0.2 Stable" style="-fx-text-fill: #5D6D7E; -fx-padding: 20; -fx-font-size: 10px;"/>

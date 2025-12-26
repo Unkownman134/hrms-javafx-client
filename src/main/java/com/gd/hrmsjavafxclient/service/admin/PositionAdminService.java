@@ -3,7 +3,7 @@ package com.gd.hrmsjavafxclient.service.admin;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gd.hrmsjavafxclient.model.Position;
-import com.gd.hrmsjavafxclient.model.SalaryStandard; // 🌟 记得引入薪资标准模型
+import com.gd.hrmsjavafxclient.model.SalaryStandard;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;

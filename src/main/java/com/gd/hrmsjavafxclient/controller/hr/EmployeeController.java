@@ -49,19 +49,16 @@ public class EmployeeController implements HRSubController {
     private final HRDataService hrDataService = new HRDataService();
     private String authToken;
 
-    // 缓存原始对象列表用于下拉框
     private List<Department> departmentList = new ArrayList<>();
     private List<Position> positionList = new ArrayList<>();
     private List<Employee> allEmployeesList = new ArrayList<>();
 
-    // 用于表格显示的快速查找 Map
     private Map<Integer, String> deptMap = new HashMap<>();
     private Map<Integer, String> posMap = new HashMap<>();
     private Map<Integer, String> empNameMap = new HashMap<>();
 
     @FXML
     public void initialize() {
-        // 绑定表格列
         empNameCol.setCellValueFactory(new PropertyValueFactory<>("empName"));
         genderCol.setCellValueFactory(new PropertyValueFactory<>("gender"));
         phoneCol.setCellValueFactory(new PropertyValueFactory<>("phone"));
@@ -131,15 +128,12 @@ public class EmployeeController implements HRSubController {
         Task<Void> task = new Task<>() {
             @Override
             protected Void call() throws Exception {
-                // 加载部门
                 departmentList = hrDataService.getAllDepartments(authToken);
                 deptMap = departmentList.stream().collect(Collectors.toMap(Department::getDeptId, Department::getDeptName, (v1,v2)->v1));
 
-                // 加载职位
                 positionList = hrDataService.getAllPositions(authToken);
                 posMap = positionList.stream().collect(Collectors.toMap(Position::getPosId, Position::getPosName, (v1,v2)->v1));
 
-                // 加载员工
                 allEmployeesList = hrDataService.getAllEmployees(authToken);
                 empNameMap = allEmployeesList.stream().collect(Collectors.toMap(Employee::getEmpId, Employee::getEmpName, (v1,v2)->v1));
 
@@ -155,20 +149,18 @@ public class EmployeeController implements HRSubController {
     private void showEditDialog(Employee emp) {
         Stage stage = new Stage();
         stage.initModality(Modality.APPLICATION_MODAL);
-        stage.setTitle(emp.getEmpId() == null ? "✨ 新增员工档案" : "📝 编辑员工档案");
+        stage.setTitle(emp.getEmpId() == null ? "新增员工档案" : "编辑员工档案");
 
         GridPane grid = new GridPane();
         grid.setHgap(15); grid.setVgap(15);
         grid.setPadding(new javafx.geometry.Insets(25));
 
-        // 基础信息
         TextField nameField = new TextField(emp.getEmpName());
         ComboBox<String> genderBox = new ComboBox<>(FXCollections.observableArrayList("男", "女"));
         genderBox.setValue(emp.getGender() != null ? emp.getGender() : "男");
         TextField phoneField = new TextField(emp.getPhone());
         TextField emailField = new TextField(emp.getEmail());
 
-        // 🌟 部门下拉框
         ComboBox<Department> deptComboBox = new ComboBox<>(FXCollections.observableArrayList(departmentList));
         deptComboBox.setPromptText("选择部门");
         deptComboBox.setConverter(new StringConverter<>() {
@@ -179,7 +171,6 @@ public class EmployeeController implements HRSubController {
             departmentList.stream().filter(d -> d.getDeptId().equals(emp.getDeptId())).findFirst().ifPresent(deptComboBox::setValue);
         }
 
-        // 🌟 职位下拉框
         ComboBox<Position> posComboBox = new ComboBox<>(FXCollections.observableArrayList(positionList));
         posComboBox.setPromptText("选择职位");
         posComboBox.setConverter(new StringConverter<>() {
@@ -190,7 +181,6 @@ public class EmployeeController implements HRSubController {
             positionList.stream().filter(p -> p.getPosId().equals(emp.getPosId())).findFirst().ifPresent(posComboBox::setValue);
         }
 
-        // 🌟 上级主管下拉框
         ComboBox<Employee> managerComboBox = new ComboBox<>(FXCollections.observableArrayList(allEmployeesList));
         managerComboBox.setPromptText("选择主管 (可选)");
         managerComboBox.setConverter(new StringConverter<>() {
@@ -201,8 +191,7 @@ public class EmployeeController implements HRSubController {
             allEmployeesList.stream().filter(e -> e.getEmpId().equals(emp.getManagerId())).findFirst().ifPresent(managerComboBox::setValue);
         }
 
-        // 状态
-        ComboBox<String> statusBox = new ComboBox<>(FXCollections.observableArrayList("在职", "离职", "试用期"));
+        ComboBox<String> statusBox = new ComboBox<>(FXCollections.observableArrayList("在职", "离职", "休假"));
         statusBox.setValue(emp.getStatus() != null ? emp.getStatus() : "在职");
 
         grid.add(new Label("姓名:"), 0, 0); grid.add(nameField, 1, 0);
@@ -223,7 +212,6 @@ public class EmployeeController implements HRSubController {
             emp.setPhone(phoneField.getText());
             emp.setEmail(emailField.getText());
             emp.setStatus(statusBox.getValue());
-            // 提取选中的 ID
             if (deptComboBox.getValue() != null) emp.setDeptId(deptComboBox.getValue().getDeptId());
             if (posComboBox.getValue() != null) emp.setPosId(posComboBox.getValue().getPosId());
             if (managerComboBox.getValue() != null) emp.setManagerId(managerComboBox.getValue().getEmpId());

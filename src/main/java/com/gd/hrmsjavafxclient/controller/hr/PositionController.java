@@ -33,23 +33,20 @@ public class PositionController implements HRSubController {
     @FXML private TableView<Position> positionTable;
     @FXML private TableColumn<Position, String> posNameCol;
     @FXML private TableColumn<Position, String> levelCol;
-    @FXML private TableColumn<Position, String> salaryStandardNameCol; // 🌟 显示名称而非 ID
+    @FXML private TableColumn<Position, String> salaryStandardNameCol;
     @FXML private TableColumn<Position, Void> actionCol;
 
     private final HRDataService hrDataService = new HRDataService();
     private String authToken;
 
-    // 数据缓存
     private List<SalaryStandard> salaryStandardList = new ArrayList<>();
     private Map<Integer, String> salaryMap = new HashMap<>();
 
     @FXML
     public void initialize() {
-        // 绑定基础列
         posNameCol.setCellValueFactory(new PropertyValueFactory<>("posName"));
         levelCol.setCellValueFactory(new PropertyValueFactory<>("posLevel"));
 
-        // 🌟 薪资等级 ID 转名称显示
         salaryStandardNameCol.setCellValueFactory(cellData -> {
             Integer stdId = cellData.getValue().getBaseSalaryLevel();
             return new SimpleStringProperty(salaryMap.getOrDefault(stdId, "未设置 (" + stdId + ")"));
@@ -69,12 +66,10 @@ public class PositionController implements HRSubController {
         Task<Void> task = new Task<>() {
             @Override
             protected Void call() throws Exception {
-                // 1. 先加载薪资标准映射
                 salaryStandardList = hrDataService.getAllSalaryStandards(authToken);
                 salaryMap = salaryStandardList.stream()
                         .collect(Collectors.toMap(SalaryStandard::getStdId, SalaryStandard::getStandardName, (v1, v2) -> v1));
 
-                // 2. 加载职位列表
                 List<Position> positions = hrDataService.getAllPositions(authToken);
 
                 Platform.runLater(() -> {
@@ -121,7 +116,7 @@ public class PositionController implements HRSubController {
     private void showEditDialog(Position p) {
         Stage stage = new Stage();
         stage.initModality(Modality.APPLICATION_MODAL);
-        stage.setTitle(p.getPosId() == null ? "✨ 新增职位" : "📝 编辑职位");
+        stage.setTitle(p.getPosId() == null ? "新增职位" : "编辑职位");
 
         GridPane grid = new GridPane();
         grid.setHgap(15); grid.setVgap(15);
@@ -130,7 +125,6 @@ public class PositionController implements HRSubController {
         TextField nameIn = new TextField(p.getPosName());
         TextField levelIn = new TextField(p.getPosLevel());
 
-        // 🌟 薪资标准下拉框
         ComboBox<SalaryStandard> salaryComboBox = new ComboBox<>(FXCollections.observableArrayList(salaryStandardList));
         salaryComboBox.setPromptText("请选择薪酬标准");
         salaryComboBox.setMinWidth(200);
@@ -139,7 +133,6 @@ public class PositionController implements HRSubController {
             @Override public SalaryStandard fromString(String s) { return null; }
         });
 
-        // 回显选中
         if (p.getBaseSalaryLevel() != null) {
             salaryStandardList.stream()
                     .filter(s -> s.getStdId().equals(p.getBaseSalaryLevel()))

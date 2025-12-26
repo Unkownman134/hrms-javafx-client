@@ -11,18 +11,17 @@ import java.time.LocalDate;
 public class Employee {
     private Integer empId;
     private String empName;
-    private String gender; // '男', '女'
+    private String gender;
     private String phone;
     private String email;
-    private LocalDate joinDate; // 🌟 注意：这里使用 LocalDate 对应后端数据库的 Date 类型
-    private String status; // '在职', '离职', '休假'
-    private Integer deptId; // 关联部门ID
-    private Integer posId; // 关联职位ID
-    private Integer managerId; // 关联上级经理ID
+    private LocalDate joinDate;
+    private String status;
+    private Integer deptId;
+    private Integer posId;
+    private Integer managerId;
 
     public Employee() {}
 
-    // --- Getter 和 Setter ---
 
     public Integer getEmpId() {
         return empId;

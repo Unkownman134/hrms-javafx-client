@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
  * 审批申请模型 - 严格对应数据库 t_approval_request
  * 修正：忽略后端返回但前端暂未定义的冗余字段
  */
-@JsonIgnoreProperties(ignoreUnknown = true) // 🌟 关键：加上这个，不认识的字段就不会报错啦！
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ApprovalRequest {
 
     @JsonProperty("requestId")
@@ -34,14 +34,12 @@ public class ApprovalRequest {
     private String status;
 
     @JsonProperty("submitTime")
-    // 之前你报错是因为 'T' 的解析问题，这里建议用这个格式
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime submitTime;
 
     @JsonProperty("empId")
     private Integer empId;
 
-    // 🌟 后端返回了这些，我们也定义一下，防止解析混乱
     @JsonProperty("configId")
     private Integer configId;
 
@@ -50,7 +48,6 @@ public class ApprovalRequest {
 
     public ApprovalRequest() {}
 
-    // --- Getters and Setters (禁止省略任何代码) ---
 
     public Integer getRequestId() { return requestId; }
     public void setRequestId(Integer requestId) { this.requestId = requestId; }

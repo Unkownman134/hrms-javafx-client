@@ -85,7 +85,7 @@ public class ChangePasswordController implements EmployeeSubController {
         }
 
         if (!newPwd.equals(confirmPwd)) {
-            showAlert("提醒", "两次输入的密码不一致呢，再检查一下吧~", Alert.AlertType.WARNING);
+            showAlert("提醒", "两次输入的密码不一致，再检查一下", Alert.AlertType.WARNING);
             return;
         }
 
@@ -101,7 +101,7 @@ public class ChangePasswordController implements EmployeeSubController {
                 boolean success = passwordService.updatePassword(updateData, authToken);
                 Platform.runLater(() -> {
                     if (success) {
-                        showAlert("成功 ✨", "密码修改成功啦！", Alert.AlertType.INFORMATION);
+                        showAlert("成功", "密码修改成功！", Alert.AlertType.INFORMATION);
                         handleReset();
                     }
                     submitButton.setDisable(false);

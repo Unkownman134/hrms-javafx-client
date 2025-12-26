@@ -27,7 +27,6 @@ public class ApprovalConfigService {
     }
 
     public void createConfig(ApprovalConfig config) throws Exception {
-        // ✨ 新增逻辑：不发送 ID
         Map<String, Object> payload = new HashMap<>();
         payload.put("processType", config.getProcessType());
         payload.put("deptId", config.getDeptId());
@@ -47,7 +46,6 @@ public class ApprovalConfigService {
     }
 
     public void updateConfig(Integer id, ApprovalConfig config) throws Exception {
-        // ✨ 更新逻辑：发送完整对象
         String body = objectMapper.writeValueAsString(config);
         HttpRequest req = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/" + id))

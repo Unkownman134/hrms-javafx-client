@@ -11,13 +11,12 @@ public class ShiftRule {
 
     private final IntegerProperty ruleId = new SimpleIntegerProperty();
     private final StringProperty ruleName = new SimpleStringProperty();
-    private final StringProperty workStartTime = new SimpleStringProperty(); // TIME 类型
-    private final StringProperty workEndTime = new SimpleStringProperty(); // TIME 类型
+    private final StringProperty workStartTime = new SimpleStringProperty();
+    private final StringProperty workEndTime = new SimpleStringProperty();
     private final IntegerProperty lateToleranceMin = new SimpleIntegerProperty();
 
     public ShiftRule() {}
 
-    // --- Getter/Setter (用于 Jackson) ---
 
     public Integer getRuleId() { return ruleId.get(); }
     public void setRuleId(Integer ruleId) { this.ruleId.set(ruleId); }
@@ -34,7 +33,6 @@ public class ShiftRule {
     public Integer getLateToleranceMin() { return lateToleranceMin.get(); }
     public void setLateToleranceMin(Integer lateToleranceMin) { this.lateToleranceMin.set(lateToleranceMin); }
 
-    // --- Property Getter (用于 JavaFX TableView) ---
 
     public IntegerProperty ruleIdProperty() { return ruleId; }
     public StringProperty ruleNameProperty() { return ruleName; }

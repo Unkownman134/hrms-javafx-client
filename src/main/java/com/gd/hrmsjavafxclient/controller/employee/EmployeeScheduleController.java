@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * 员工排班日历视图控制器 🌸
+ * 员工排班日历视图控制器
  * 增加了“已通过”状态的请假和出差渲染功能
  */
 public class EmployeeScheduleController implements EmployeeSubController {
@@ -40,7 +40,6 @@ public class EmployeeScheduleController implements EmployeeSubController {
     private final Map<Integer, ShiftInfo> ruleCache = new HashMap<>();
     private final DateTimeFormatter displayFormatter = DateTimeFormatter.ofPattern("yyyy年MM月");
 
-    // 缓存已通过的申请
     private List<JsonNode> approvedApps = new ArrayList<>();
 
     private static class ShiftInfo {
@@ -86,18 +85,15 @@ public class EmployeeScheduleController implements EmployeeSubController {
         Task<Map<LocalDate, Schedule>> task = new Task<>() {
             @Override
             protected Map<LocalDate, Schedule> call() throws Exception {
-                // 1. 获取申请列表，匹配状态为“已通过”的请假或出差
                 List<JsonNode> allApps = scheduleService.getMyApplications(currentUser.getEmpId(), authToken);
                 approvedApps = allApps.stream()
                         .filter(node -> {
                             String status = node.path("status").asText();
                             String type = node.path("requestType").asText();
-                            // 修正：匹配“已通过”状态
                             return "已通过".equals(status) && ("请假".equals(type) || "出差".equals(type));
                         })
                         .collect(Collectors.toList());
 
-                // 2. 获取排班表
                 List<Schedule> schedules = scheduleService.getMySchedules(currentUser.getEmpId(), start, end, authToken);
                 return schedules.stream().collect(Collectors.toMap(Schedule::getScheduleDate, s -> s, (s1, s2) -> s1));
             }
@@ -131,34 +127,28 @@ public class EmployeeScheduleController implements EmployeeSubController {
         cell.setPadding(new Insets(10));
         cell.setAlignment(Pos.TOP_LEFT);
 
-        // 1. 基础样式
         String baseStyle = "-fx-background-color: white; -fx-border-color: #D5DBDB; -fx-border-width: 0.5; -fx-border-radius: 5;";
         if (date.equals(LocalDate.now())) {
             baseStyle = "-fx-background-color: #F4FBFF; -fx-border-color: #3498DB; -fx-border-width: 1.5; -fx-border-radius: 5;";
         }
         cell.setStyle(baseStyle);
 
-        // 2. 日期数字
         Label dateLbl = new Label(String.valueOf(date.getDayOfMonth()));
         dateLbl.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #2C3E50;");
         cell.getChildren().add(dateLbl);
 
-        // 3. 检查并渲染“已通过”的申请（请假/出差）
         JsonNode activeApp = findAppForDate(date);
         if (activeApp != null) {
             String type = activeApp.path("requestType").asText();
             Label appLbl = new Label(type);
 
-            // 根据类型设置不同颜色
-            String color = "请假".equals(type) ? "#E74C3C" : "#E67E22"; // 请假红色，出差橙色
+            String color = "请假".equals(type) ? "#E74C3C" : "#E67E22";
             appLbl.setStyle("-fx-font-size: 11px; -fx-text-fill: white; -fx-background-color: " + color + "; -fx-padding: 2 5; -fx-background-radius: 3;");
             cell.getChildren().add(appLbl);
 
-            // 改变格子背景色表示这一天有特殊状态
             cell.setStyle(cell.getStyle() + "-fx-background-color: #FDEDEC;");
         }
 
-        // 4. 渲染排班
         if (schedule != null) {
             Label shiftLbl = new Label("加载中...");
             shiftLbl.setStyle("-fx-font-size: 11px; -fx-text-fill: #27AE60; -fx-font-weight: bold;");
@@ -176,7 +166,6 @@ public class EmployeeScheduleController implements EmployeeSubController {
             }
             cell.getChildren().addAll(shiftLbl, timeLbl);
         } else if (activeApp == null) {
-            // 既没排班也没申请才显示休息
             Label restLbl = new Label("休息");
             restLbl.setStyle("-fx-font-size: 11px; -fx-text-fill: #BDC3C7;");
             cell.getChildren().add(restLbl);
@@ -190,7 +179,6 @@ public class EmployeeScheduleController implements EmployeeSubController {
             try {
                 LocalDate start = LocalDate.parse(app.path("startDate").asText());
                 LocalDate end = LocalDate.parse(app.path("endDate").asText());
-                // 包含起止日期的判断
                 if (!date.isBefore(start) && !date.isAfter(end)) {
                     return app;
                 }

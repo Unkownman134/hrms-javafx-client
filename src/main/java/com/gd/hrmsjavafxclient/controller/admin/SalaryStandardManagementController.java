@@ -110,7 +110,6 @@ public class SalaryStandardManagementController {
 
         save.setOnAction(e -> {
             try {
-                // 1. 先进行格式转换校验，避免把错误带到后端
                 String name = nameIn.getText();
                 double base = Double.parseDouble(baseIn.getText().trim());
                 double meal = Double.parseDouble(mealIn.getText().trim());
@@ -132,7 +131,6 @@ public class SalaryStandardManagementController {
                         } else {
                             service.updateSalaryStandard(s.getStdId(), s);
                         }
-                        // 4. 成功后回到 UI 线程操作
                         Platform.runLater(() -> {
                             stage.close();
                             loadStandardData();

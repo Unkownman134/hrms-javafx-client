@@ -15,21 +15,21 @@
         <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
 
         <HBox spacing="5" alignment="CENTER_LEFT">
-            <Label text="👥 员工列表" style="-fx-font-weight: bold;"/>
+            <Label text="员工列表" style="-fx-font-weight: bold;"/>
             <Region HBox.hgrow="ALWAYS" />
             <CheckBox fx:id="selectAllCheckBox" text="全选" onAction="#handleSelectAll"/>
         </HBox>
 
-        <TextField fx:id="searchEmployeeField" promptText="🔍 搜索姓名或ID..."/>
+        <TextField fx:id="searchEmployeeField" promptText="搜索姓名或ID..."/>
 
         <StackPane fx:id="employeeListContainer" VBox.vgrow="ALWAYS" />
 
         <Separator />
 
-        <Label text="📅 结算月份" style="-fx-font-weight: bold;"/>
+        <Label text="结算月份" style="-fx-font-weight: bold;"/>
         <DatePicker fx:id="salaryDatePicker" promptText="选择年月" maxWidth="Infinity"/>
 
-        <Button text="🚀 批量结算" onAction="#handleBatchCalculate"
+        <Button text="批量结算" onAction="#handleBatchCalculate"
                 maxWidth="Infinity" prefHeight="40"
                 style="-fx-background-color: #2ECC71; -fx-text-fill: white; -fx-font-weight: bold;"/>
     </VBox>
@@ -37,11 +37,11 @@
     <VBox spacing="10" HBox.hgrow="ALWAYS" styleClass="login-card">
         <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
         <HBox spacing="10" alignment="CENTER_LEFT">
-            <Label text="📊 工资流水记录" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
+            <Label text="工资流水记录" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
             <Region HBox.hgrow="ALWAYS" />
-            <Button text="👤 刷新个人历史" onAction="#loadPersonalHistory"
+            <Button text="刷新个人历史" onAction="#loadPersonalHistory"
                     style="-fx-background-color: #3498DB; -fx-text-fill: white;"/>
-            <Button text="🌍 查看全部" onAction="#loadAllData"
+            <Button text="🌍查看全部" onAction="#loadAllData"
                     style="-fx-background-color: #95A5A6; -fx-text-fill: white;"/>
         </HBox>
 

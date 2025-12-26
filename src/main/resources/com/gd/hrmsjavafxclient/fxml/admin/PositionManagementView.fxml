@@ -17,8 +17,8 @@
                 <Label text="配置岗位信息与职级说明" style="-fx-font-size: 12px; -fx-text-fill: -fx-text-muted;"/>
             </VBox>
             <Region HBox.hgrow="ALWAYS" />
-            <Button text="🔄 刷新" onAction="#loadPositionData" styleClass="refresh-button"/>
-            <Button text="➕ 新增职位" onAction="#handleNewPosition" styleClass="action-button" />
+            <Button text="刷新" onAction="#loadPositionData" styleClass="refresh-button"/>
+            <Button text="新增职位" onAction="#handleNewPosition" styleClass="action-button" />
         </children>
     </HBox>
 

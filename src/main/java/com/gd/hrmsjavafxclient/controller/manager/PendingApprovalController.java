@@ -38,7 +38,6 @@ public class PendingApprovalController implements ManagerSubController {
     public void initialize() {
         idCol.setCellValueFactory(new PropertyValueFactory<>("requestId"));
         typeCol.setCellValueFactory(new PropertyValueFactory<>("requestType"));
-        // 修正：这里对应 ApprovalRequest 类中的字段名，报错提示是 empId
         empCol.setCellValueFactory(new PropertyValueFactory<>("empId"));
         reasonCol.setCellValueFactory(new PropertyValueFactory<>("reason"));
         statusCol.setCellValueFactory(new PropertyValueFactory<>("status"));
@@ -73,7 +72,6 @@ public class PendingApprovalController implements ManagerSubController {
             return;
         }
 
-        // 选择动作
         List<String> choices = Arrays.asList("同意", "拒绝");
         ChoiceDialog<String> actionDialog = new ChoiceDialog<>("同意", choices);
         actionDialog.setTitle("审批操作");
@@ -83,7 +81,6 @@ public class PendingApprovalController implements ManagerSubController {
         Optional<String> actionResult = actionDialog.showAndWait();
 
         actionResult.ifPresent(action -> {
-            // 输入备注
             TextInputDialog commentsDialog = new TextInputDialog();
             commentsDialog.setTitle("审批意见");
             commentsDialog.setHeaderText("动作：" + action);

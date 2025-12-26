@@ -10,28 +10,22 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SalaryStandard {
 
-    // 🌟 修正字段名：StandardID -> stdId
     private Integer stdId;
 
-    private String standardName;     // 薪酬标准名称 (如: P5-标准薪酬)
+    private String standardName;
 
-    // 🌟 修正字段名：baseSalary -> basicSalary
-    private Double basicSalary;      // 基本工资
+    private Double basicSalary;
 
-    // 🌟 修正字段名：allowance -> mealAllowance
-    private Double mealAllowance;    // 餐补/津贴
+    private Double mealAllowance;
 
-    // 🌟 修正字段名：bonus -> allowances
-    private Double allowances;       // 其他补贴总额
+    private Double allowances;
 
-    private Double totalAmount;      // 总金额 (客户端计算字段)
+    private Double totalAmount;
 
     public SalaryStandard() {
-        // 确保 TotalAmount 字段在创建时能够正确计算（即使其他为 null）
         this.totalAmount = 0.0;
     }
 
-    // --- Getter 和 Setter (方法名也需要与字段名对应) ---
 
     public Integer getStdId() {
         return stdId;
@@ -39,7 +33,6 @@ public class SalaryStandard {
 
     public void setStdId(Integer stdId) {
         this.stdId = stdId;
-        // 自动计算总额的逻辑，我们放在 setter 中，确保在反序列化后也有效
         calculateTotalAmount();
     }
 
@@ -79,16 +72,13 @@ public class SalaryStandard {
     }
 
     public Double getTotalAmount() {
-        // 确保总是在需要时重新计算或返回最新的值
         return totalAmount;
     }
 
     public void setTotalAmount(Double totalAmount) {
-        // 虽然这个字段主要由客户端计算，但为了完整性保留 setter
         this.totalAmount = totalAmount;
     }
 
-    // 辅助计算方法
     private void calculateTotalAmount() {
         double basic = this.basicSalary != null ? this.basicSalary : 0.0;
         double meal = this.mealAllowance != null ? this.mealAllowance : 0.0;

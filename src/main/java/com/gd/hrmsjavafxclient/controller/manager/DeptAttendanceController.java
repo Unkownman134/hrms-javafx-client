@@ -65,7 +65,7 @@ public class DeptAttendanceController implements ManagerSubController {
                 deptNameLabel.setText("当前部门: " + userInfo.getDepartmentName());
             }
             initTable();
-            initDatePicker(); // 初始化日期选择器
+            initDatePicker();
         });
     }
 
@@ -85,13 +85,11 @@ public class DeptAttendanceController implements ManagerSubController {
     }
 
     /**
-     * 配置 DatePicker 魔法，让它只显示年月 ✨
+     * 配置 DatePicker ，让它只显示年月
      */
     private void initDatePicker() {
-        // 默认选中今天（本月）
         monthDatePicker.setValue(LocalDate.now());
 
-        // 设置显示格式为 "yyyy年MM月"
         monthDatePicker.setConverter(new StringConverter<LocalDate>() {
             private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy年MM月");
 
@@ -103,12 +101,10 @@ public class DeptAttendanceController implements ManagerSubController {
             @Override
             public LocalDate fromString(String string) {
                 if (string == null || string.isEmpty()) return null;
-                // 注意：这里由于只输入年月，解析需要特殊处理，但通常用户通过日历选日子，toString 负责展示即可
                 return monthDatePicker.getValue();
             }
         });
 
-        // 禁止手动输入，只能点选，防止格式报错
         monthDatePicker.getEditor().setEditable(false);
     }
 
@@ -119,11 +115,10 @@ public class DeptAttendanceController implements ManagerSubController {
     private void handleQueryAttendance(ActionEvent event) {
         LocalDate selectedDate = monthDatePicker.getValue();
         if (selectedDate == null) {
-            showAlert("提示", "请选择要查询的月份哦！", Alert.AlertType.WARNING);
+            showAlert("提示", "请选择要查询的月份！", Alert.AlertType.WARNING);
             return;
         }
 
-        // 提取所选日期所在的月份
         YearMonth targetMonth = YearMonth.from(selectedDate);
 
         queryButton.setDisable(true);
@@ -134,7 +129,6 @@ public class DeptAttendanceController implements ManagerSubController {
         Task<List<AttendanceRecord>> loadTask = new Task<>() {
             @Override
             protected List<AttendanceRecord> call() throws Exception {
-                // 1. 获取部门下所有员工
                 List<Employee> allEmployees = employeeService.getAllEmployees(authToken);
                 List<Employee> deptEmps = allEmployees.stream()
                         .filter(e -> e.getDeptId() != null && e.getDeptId().equals(currentUser.getDeptId()))
@@ -145,12 +139,10 @@ public class DeptAttendanceController implements ManagerSubController {
 
                 List<AttendanceRecord> results = new ArrayList<>();
 
-                // 2. 遍历查询每个人的考勤（后端如果没提供部门接口，只能这样聚合）
                 for (Employee emp : deptEmps) {
                     if (isCancelled()) break;
                     List<AttendanceRecord> empRecords = attendanceService.getAttendanceRecordsByEmpId(emp.getEmpId(), authToken);
 
-                    // 🌟 核心过滤逻辑：只拿选中月份的数据
                     List<AttendanceRecord> filtered = empRecords.stream()
                             .filter(r -> r.getDate() != null && YearMonth.from(r.getDate()).equals(targetMonth))
                             .peek(r -> r.setEmployeeName(empNameMap.get(r.getEmpId())))
@@ -173,7 +165,7 @@ public class DeptAttendanceController implements ManagerSubController {
             @Override
             protected void failed() {
                 resetQueryButton();
-                attendanceTable.setPlaceholder(new Label("加载失败 ❌"));
+                attendanceTable.setPlaceholder(new Label("加载失败"));
                 showAlert("错误", "获取考勤数据时崩溃了：" + getException().getMessage(), Alert.AlertType.ERROR);
             }
 

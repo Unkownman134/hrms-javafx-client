@@ -15,7 +15,6 @@ import java.util.Optional;
  */
 public class PositionManagerService {
 
-    // 🌟 关键修正：根据 API 文档，职位查询的正确 ENDPOINT 是 /positions
     private static final String ENDPOINT = "/positions";
 
     /**
@@ -33,7 +32,6 @@ public class PositionManagerService {
                 new TypeReference<List<Position>>() {}
         );
 
-        // 转换 Optional<List<Position>> 为 List<Position>，若为空则返回空列表
         return result.orElse(Collections.emptyList());
     }
 }

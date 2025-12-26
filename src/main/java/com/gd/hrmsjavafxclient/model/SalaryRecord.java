@@ -15,7 +15,6 @@ public class SalaryRecord {
 
     public SalaryRecord() {}
 
-    // Getters and Setters
     public int getRecordId() { return recordId.get(); }
     public void setRecordId(int recordId) { this.recordId.set(recordId); }
 
@@ -37,7 +36,6 @@ public class SalaryRecord {
     public int getEmpId() { return empId.get(); }
     public void setEmpId(int empId) { this.empId.set(empId); }
 
-    // Property methods for TableView
     public IntegerProperty recordIdProperty() { return recordId; }
     public StringProperty salaryMonthProperty() { return salaryMonth; }
     public ObjectProperty<BigDecimal> grossPayProperty() { return grossPay; }

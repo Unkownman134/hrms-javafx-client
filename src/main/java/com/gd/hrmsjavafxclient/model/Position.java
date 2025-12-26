@@ -10,12 +10,11 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class Position {
     private Integer posId;
     private String posName;
-    private String posLevel; // 职位等级，如 'P5', 'T6'
-    private Integer baseSalaryLevel; // 关联薪酬标准ID
+    private String posLevel;
+    private Integer baseSalaryLevel;
 
     public Position() {}
 
-    // --- Getter 和 Setter ---
 
     public Integer getPosId() {
         return posId;

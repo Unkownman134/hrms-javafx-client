@@ -99,21 +99,18 @@ public class EmployeeManagementController {
         grid.setHgap(10); grid.setVgap(15);
         grid.setStyle("-fx-padding: 25;");
 
-        // 基础输入
         TextField nameIn = new TextField(emp.getEmpName());
         ComboBox<String> genderIn = new ComboBox<>(FXCollections.observableArrayList("男", "女"));
         genderIn.setValue(emp.getGender() == null ? "男" : emp.getGender());
         TextField phoneIn = new TextField(emp.getPhone());
         TextField emailIn = new TextField(emp.getEmail());
 
-        // 🌟 核心：下拉列表控件
         ComboBox<Map<String, Object>> deptCombo = new ComboBox<>();
         ComboBox<Map<String, Object>> posCombo = new ComboBox<>();
         ComboBox<Employee> managerCombo = new ComboBox<>();
         ComboBox<String> statusIn = new ComboBox<>(FXCollections.observableArrayList("在职", "离职", "休假"));
         statusIn.setValue(emp.getStatus() == null ? "在职" : emp.getStatus());
 
-        // 设置 ComboBox 的显示逻辑 (展示名称，后台存ID)
         setupMapConverter(deptCombo, "deptName");
         setupMapConverter(posCombo, "posName");
         managerCombo.setConverter(new StringConverter<>() {
@@ -121,7 +118,6 @@ public class EmployeeManagementController {
             @Override public Employee fromString(String s) { return null; }
         });
 
-        // 异步加载下拉数据
         new Thread(() -> {
             try {
                 var depts = empService.getAllDepartments();
@@ -133,7 +129,6 @@ public class EmployeeManagementController {
                     posCombo.setItems(FXCollections.observableArrayList(positions));
                     managerCombo.setItems(FXCollections.observableArrayList(managers));
 
-                    // 默认回显选中
                     if (emp.getDeptId() != null)
                         depts.stream().filter(m -> emp.getDeptId().equals(m.get("deptId"))).findFirst().ifPresent(deptCombo::setValue);
                     if (emp.getPosId() != null)
@@ -165,7 +160,6 @@ public class EmployeeManagementController {
                 emp.setEmail(emailIn.getText());
                 emp.setStatus(statusIn.getValue());
 
-                // 从下拉框获取 ID
                 if (deptCombo.getValue() != null) emp.setDeptId((Integer) deptCombo.getValue().get("deptId"));
                 if (posCombo.getValue() != null) emp.setPosId((Integer) posCombo.getValue().get("posId"));
                 if (managerCombo.getValue() != null) emp.setManagerId(managerCombo.getValue().getEmpId());

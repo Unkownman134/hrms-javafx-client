@@ -2,7 +2,7 @@ package com.gd.hrmsjavafxclient.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gd.hrmsjavafxclient.model.LoginRequest;
-import com.gd.hrmsjavafxclient.model.User; // 假设 User 模型存在
+import com.gd.hrmsjavafxclient.model.User;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -12,12 +12,10 @@ import java.time.Duration;
 
 public class AuthService {
 
-    // ⚠️ 确保 BASE_URL 正确指向你的 Spring Boot 后端
     private static final String BASE_URL = "http://localhost:8080/api";
 
-    // 使用短连接超时，避免登录界面卡死
     private final HttpClient httpClient = HttpClient.newBuilder()
-            .connectTimeout(Duration.ofSeconds(5)) // 使用 Duration.ofSeconds(5) 配置超时
+            .connectTimeout(Duration.ofSeconds(5))
             .build();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -40,12 +38,9 @@ public class AuthService {
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
         if (response.statusCode() == 200) {
-            // 后端现在返回的是 JWT Token 字符串
             String token = response.body();
-            // 🚨 关键修正：去除前后可能的空格和引号，确保是纯净的 JWT 字符串
             if (token != null) {
                 token = token.trim();
-                // 检查是否是被双引号包裹的JSON字符串（例如: "eyJ..."）
                 if (token.startsWith("\"") && token.endsWith("\"") && token.length() > 1) {
                     token = token.substring(1, token.length() - 1);
                 }
@@ -57,7 +52,6 @@ public class AuthService {
             return null;
         } else {
             System.err.println("登录失败，状态码: " + response.statusCode() + ", 响应: " + response.body());
-            // 抛出运行时异常，让 Controller 层处理网络或其他错误
             throw new RuntimeException("登录 API 响应异常，状态码: " + response.statusCode());
         }
     }
@@ -70,7 +64,6 @@ public class AuthService {
     public User getUserDetails(String authToken) throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/auth/user-details"))
-                // 确保 Token 格式是 Bearer
                 .header("Authorization", "Bearer " + authToken)
                 .GET()
                 .build();
@@ -78,11 +71,9 @@ public class AuthService {
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
         if (response.statusCode() == 200) {
-            // 假设后端返回的是完整的 User JSON 对象
             return objectMapper.readValue(response.body(), User.class);
         } else {
             System.err.println("验证用户登录失败，状态码: " + response.statusCode());
-            // Token 过期或无效会导致 401/403，返回 null 强制重新登录
             return null;
         }
     }

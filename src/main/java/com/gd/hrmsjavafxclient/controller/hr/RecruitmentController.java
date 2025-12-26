@@ -38,7 +38,6 @@ public class RecruitmentController implements HRSubController {
     private RecruitmentService recruitmentService = new RecruitmentService();
     private ObservableList<Candidate> candidateData = FXCollections.observableArrayList();
 
-    // 缓存基础数据用于下拉框
     private List<Position> allPositions = new ArrayList<>();
     private List<Department> allDepts = new ArrayList<>();
     private List<Employee> allManagers = new ArrayList<>();
@@ -73,22 +72,18 @@ public class RecruitmentController implements HRSubController {
     private void loadInitialData() {
         new Thread(() -> {
             try {
-                // 1. 加载职位
                 allPositions = recruitmentService.getAllPositions(authToken);
 
-                // 2. 加载部门 (对应 /api/departments)
                 allDepts = ServiceUtil.sendGet("/departments", authToken, new TypeReference<List<Department>>() {})
                         .orElse(new ArrayList<>());
 
-                // 3. 加载员工列表作为上级经理 (对应 /api/employees)
                 allManagers = ServiceUtil.sendGet("/employees", authToken, new TypeReference<List<Employee>>() {})
                         .orElse(new ArrayList<>());
 
-                // 4. 加载候选人
                 loadCandidateData();
             } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
-                showAlert("错误 ❌", "基础数据加载失败，请检查网络连接。");
+                showAlert("错误", "基础数据加载失败，请检查网络连接。");
             }
         }).start();
     }
@@ -120,7 +115,7 @@ public class RecruitmentController implements HRSubController {
     private void handleUpdateResult(ActionEvent event) {
         Candidate selected = candidateTable.getSelectionModel().getSelectedItem();
         if (selected == null) {
-            showAlert("提示 ⚠️", "请先在列表中选中一名候选人哦！");
+            showAlert("提示", "请先在列表中选中一名候选人！");
             return;
         }
 
@@ -139,7 +134,7 @@ public class RecruitmentController implements HRSubController {
                     boolean success = recruitmentService.updateCandidateResult(selected.getCandID(), res, authToken);
                     Platform.runLater(() -> {
                         if (success) loadInitialData();
-                        else showAlert("失败 ❌", "更新失败，请检查后端服务。");
+                        else showAlert("失败", "更新失败，请检查后端服务。");
                     });
                 }).start();
             }
@@ -147,11 +142,11 @@ public class RecruitmentController implements HRSubController {
     }
 
     /**
-     * 🌸 录用入职大表单
+     * 录用入职大表单
      */
     private void showHireForm(Candidate candidate) {
         Dialog<ButtonType> dialog = new Dialog<>();
-        dialog.setTitle("🎉 录用入职确认");
+        dialog.setTitle("录用入职确认");
         dialog.setHeaderText("正在为 " + candidate.getName() + " 办理入职手续");
 
         ButtonType hireButtonType = new ButtonType("确认入职并创建账号", ButtonBar.ButtonData.OK_DONE);
@@ -161,7 +156,6 @@ public class RecruitmentController implements HRSubController {
         grid.setHgap(10); grid.setVgap(10);
         grid.setPadding(new Insets(20, 20, 10, 10));
 
-        // --- 员工字段 ---
         TextField nameField = new TextField(candidate.getName());
         TextField phoneField = new TextField(candidate.getPhone());
         TextField emailField = new TextField(candidate.getEmail());
@@ -178,7 +172,6 @@ public class RecruitmentController implements HRSubController {
             public String toString(Position p) { return p == null ? "" : p.getPosName(); }
             public Position fromString(String s) { return null; }
         });
-        // 预设选中当初投递的职位
         allPositions.stream().filter(p -> p.getPosId().equals(candidate.getApplyPositionId())).findFirst().ifPresent(posBox::setValue);
 
         ComboBox<Employee> managerBox = new ComboBox<>(FXCollections.observableArrayList(allManagers));
@@ -187,22 +180,20 @@ public class RecruitmentController implements HRSubController {
             public Employee fromString(String s) { return null; }
         });
 
-        // --- 账号字段 ---
         TextField usernameField = new TextField();
         usernameField.setPromptText("建议使用手机号或拼音");
         PasswordField passwordField = new PasswordField();
-        passwordField.setText("123456"); // 默认初始密码
-        ComboBox<Integer> roleBox = new ComboBox<>(FXCollections.observableArrayList(1, 2, 3));
-        roleBox.setValue(3); // 默认设为 3 (普通员工)
+        passwordField.setText("123456");
+        ComboBox<Integer> roleBox = new ComboBox<>(FXCollections.observableArrayList(1, 2, 3, 4, 5));
+        roleBox.setValue(5);
 
-        // 界面布局
         grid.add(new Label("姓名:"), 0, 0); grid.add(nameField, 1, 0);
         grid.add(new Label("电话:"), 0, 1); grid.add(phoneField, 1, 1);
         grid.add(new Label("邮箱:"), 0, 2); grid.add(emailField, 1, 2);
         grid.add(new Label("入职日期:"), 0, 3); grid.add(joinDatePicker, 1, 3);
         grid.add(new Label("分配部门:"), 0, 4); grid.add(deptBox, 1, 4);
         grid.add(new Label("分配职位:"), 0, 5); grid.add(posBox, 1, 5);
-        grid.add(new Label("汇报经理:"), 0, 6); grid.add(managerBox, 1, 6);
+        grid.add(new Label("经理:"), 0, 6); grid.add(managerBox, 1, 6);
 
         grid.add(new Separator(), 0, 7, 2, 1);
 
@@ -214,7 +205,6 @@ public class RecruitmentController implements HRSubController {
 
         Optional<ButtonType> result = dialog.showAndWait();
         if (result.isPresent() && result.get() == hireButtonType) {
-            // 组装符合 /api/employees 要求的对象
             Employee emp = new Employee();
             emp.setEmpName(nameField.getText());
             emp.setGender(candidate.getGender());
@@ -228,7 +218,6 @@ public class RecruitmentController implements HRSubController {
 
             String uname = usernameField.getText();
             String pwd = passwordField.getText();
-            // 注意：如果需要传角色ID，可能需要修改 RecruitmentService.hireCandidate 的参数
 
             new Thread(() -> {
                 boolean success = recruitmentService.hireCandidate(
@@ -236,10 +225,10 @@ public class RecruitmentController implements HRSubController {
 
                 Platform.runLater(() -> {
                     if (success) {
-                        showAlert("成功 🎊", candidate.getName() + " 的入职手续已办结！");
+                        showAlert("成功", candidate.getName() + " 的入职手续已办结！");
                         loadInitialData();
                     } else {
-                        showAlert("失败 ❌", "办理入职时发生错误，请查看控制台日志。");
+                        showAlert("失败", "办理入职时发生错误，请查看控制台日志。");
                     }
                 });
             }).start();
@@ -260,7 +249,7 @@ public class RecruitmentController implements HRSubController {
 
     private void showAddCandidateDialog(List<Position> positions) {
         Dialog<Candidate> dialog = new Dialog<>();
-        dialog.setTitle("➕ 新增候选人");
+        dialog.setTitle("新增候选人");
         dialog.setHeaderText("录入候选人基础面试信息");
 
         ButtonType saveButtonType = new ButtonType("保存", ButtonBar.ButtonData.OK_DONE);

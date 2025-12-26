@@ -17,8 +17,8 @@
                 <Label text="数字化员工全生命周期档案" style="-fx-font-size: 12px; -fx-text-fill: -fx-text-muted;"/>
             </VBox>
             <Region HBox.hgrow="ALWAYS" />
-            <Button text="🔄 刷新" onAction="#loadEmployeeData" styleClass="refresh-button"/>
-            <Button text="➕ 入职新员工" onAction="#handleNewEmployee" styleClass="action-button"/>
+            <Button text="刷新" onAction="#loadEmployeeData" styleClass="refresh-button"/>
+            <Button text="入职新员工" onAction="#handleNewEmployee" styleClass="action-button"/>
         </children>
     </HBox>
 

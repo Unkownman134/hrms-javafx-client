@@ -29,20 +29,18 @@ public class FinanceService {
     }
 
     /**
-     * 🚀 核心修正：使用 Map 确保 JSON 结构完全符合后端要求
+     * 核心修正：使用 Map 确保 JSON 结构完全符合后端要求
      * 后端期待: { "empId": Integer, "month": "yyyy-MM" }
      */
     public SalaryRecord calculateSalary(String token, Integer empId, String month) throws Exception {
-        // 1. 手动构造请求 Map，绕过复杂的 DTO
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("empId", empId);
-        requestBody.put("month", month); // 这里的 month 必须是 "2023-10" 字符串格式
+        requestBody.put("month", month);
 
-        // 2. 发送 POST 请求
         Optional<SalaryRecord> result = ServiceUtil.sendRequest(
                 "/salary/calculate",
                 token,
-                requestBody, // 直接把 Map 传进去，Jackson 会把它转成 {"empId":2, "month":"2023-10"}
+                requestBody,
                 "POST",
                 new TypeReference<SalaryRecord>() {}
         );

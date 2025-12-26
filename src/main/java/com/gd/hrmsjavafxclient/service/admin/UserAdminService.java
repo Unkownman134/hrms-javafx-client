@@ -3,7 +3,7 @@ package com.gd.hrmsjavafxclient.service.admin;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gd.hrmsjavafxclient.model.User;
-import com.gd.hrmsjavafxclient.model.Employee; // 🌟 记得引入 Employee 模型
+import com.gd.hrmsjavafxclient.model.Employee;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;

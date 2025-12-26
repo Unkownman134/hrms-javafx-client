@@ -11,7 +11,7 @@ import java.time.format.DateTimeFormatter;
 
 /**
  * 员工仪表板视图控制器
- * 🌟 遵循 EmployeeSubController 接口。
+ * 遵循 EmployeeSubController 接口。
  */
 public class EmployeeDashboardController implements EmployeeSubController {
 
@@ -35,7 +35,6 @@ public class EmployeeDashboardController implements EmployeeSubController {
             Platform.runLater(() -> {
                 welcomeLabel.setText(String.format("欢迎回来，%s！", currentUser.getEmployeeName()));
                 roleLabel.setText(currentUser.getRoleName() + " (" + currentUser.getPositionName() + ")");
-                // 使用修正后的 CurrentUserInfo 中的 EmpID
                 empIdLabel.setText("员工编号 (EmpID): " + currentUser.getEmpId());
                 updateTime();
             });
@@ -47,7 +46,6 @@ public class EmployeeDashboardController implements EmployeeSubController {
      */
     private void updateTime() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy年MM月dd日 HH:mm:ss");
-        // 这里可以启动一个定时任务来更新时间，但为简化，只显示加载时的时间
         dateTimeLabel.setText("当前时间 (北京时间): " + LocalDateTime.now().format(formatter));
     }
 }

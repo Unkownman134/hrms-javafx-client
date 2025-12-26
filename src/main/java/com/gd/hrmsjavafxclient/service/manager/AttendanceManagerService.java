@@ -1,7 +1,7 @@
 package com.gd.hrmsjavafxclient.service.manager;
 
 import com.gd.hrmsjavafxclient.model.AttendanceRecord;
-import com.gd.hrmsjavafxclient.util.ServiceUtil; // ✅ 引入 ServiceUtil
+import com.gd.hrmsjavafxclient.util.ServiceUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
 
 import java.io.IOException;
@@ -15,7 +15,6 @@ import java.util.Optional;
  */
 public class AttendanceManagerService {
 
-    // 假设 API endpoint 为 /api/attendance
     private static final String BASE_ENDPOINT = "/attendance";
 
     /**
@@ -32,18 +31,14 @@ public class AttendanceManagerService {
             throw new IllegalArgumentException("员工ID不能为空！");
         }
 
-        // 构造带路径变量的 Endpoint: /attendance/{empId}
         String endpoint = String.format("%s/%d", BASE_ENDPOINT, empId);
 
-        // 使用 ServiceUtil 发送 GET 请求
         Optional<List<AttendanceRecord>> result = ServiceUtil.sendGet(
                 endpoint,
                 authToken,
-                // TypeReference 用于反序列化泛型 List
                 new TypeReference<List<AttendanceRecord>>() {}
         );
 
-        // 如果 Optional 包含值，则返回列表，否则返回空列表
         return result.orElse(Collections.emptyList());
     }
 }

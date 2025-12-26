@@ -21,7 +21,7 @@ public class ManagerDashboardController implements ManagerSubController {
     }
 
     /**
-     * 🌟 实现统一接口：接收并设置上下文
+     * 实现统一接口：接收并设置上下文
      */
     @Override
     public void setManagerContext(CurrentUserInfo userInfo, String authToken) {
