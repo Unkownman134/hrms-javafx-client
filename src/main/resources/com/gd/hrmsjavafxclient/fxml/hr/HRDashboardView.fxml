@@ -8,54 +8,18 @@
       fx:controller="com.gd.hrmsjavafxclient.controller.hr.HRDashboardController"
       stylesheets="@../../style/hrms-styles.css" styleClass="root">
     <padding>
-        <Insets top="20" right="20" bottom="20" left="20"/>
+        <Insets top="40" right="40" bottom="40" left="40"/>
     </padding>
 
-    <VBox alignment="CENTER_LEFT" spacing="10.0" styleClass="login-card" maxWidth="Infinity">
-        <padding>
-            <Insets top="30" right="40" bottom="30" left="40"/>
-        </padding>
+    <VBox alignment="CENTER" spacing="20.0" styleClass="login-card" maxWidth="Infinity" VBox.vgrow="ALWAYS">
         <children>
-            <Label fx:id="dashboardTitle" text="HR 工作控制台" styleClass="welcome-label" style="-fx-font-size: 26px;"/>
-            <HBox spacing="15" alignment="CENTER_LEFT">
-                <Label fx:id="welcomeLabel" style="-fx-text-fill: -fx-text-main; -fx-font-size: 14px;"/>
-                <Separator orientation="VERTICAL" prefHeight="15"/>
-                <Label fx:id="roleLabel" style="-fx-text-fill: -fx-primary-color; -fx-font-weight: bold;"/>
-                <Region HBox.hgrow="ALWAYS" />
-                <Label fx:id="dateTimeLabel" style="-fx-text-fill: -fx-text-muted;"/>
-            </HBox>
-        </children>
-    </VBox>
+            <Label fx:id="dashboardTitle" text="HR 工作控制台" styleClass="welcome-label" style="-fx-font-size: 32px; -fx-font-weight: bold;"/>
+            <Label fx:id="welcomeLabel" style="-fx-text-fill: -fx-text-main; -fx-font-size: 18px;" text="欢迎回来使用人事管理系统！"/>
 
-    <TilePane prefColumns="3" hgap="25" vgap="25" alignment="TOP_CENTER">
-        <VBox styleClass="indicator-card" alignment="CENTER" prefHeight="120" prefWidth="250">
-            <Label text="本月待审批申请" styleClass="indicator-label"/>
-            <Label text="--" styleClass="indicator-value-high" />
-        </VBox>
+            <Label fx:id="roleLabel" style="-fx-text-fill: -fx-text-main; -fx-font-size: 16px;" />
+            <Label fx:id="empIdLabel" style="-fx-text-fill: -fx-text-main; -fx-font-size: 16px;" />
 
-        <VBox styleClass="indicator-card" alignment="CENTER" prefHeight="120" prefWidth="250">
-            <Label text="待入职员工数" styleClass="indicator-label"/>
-            <Label text="--" styleClass="indicator-value-medium" />
-        </VBox>
-
-        <VBox styleClass="indicator-card" alignment="CENTER" prefHeight="120" prefWidth="250">
-            <Label text="在职员工总数" styleClass="indicator-label"/>
-            <Label text="--" styleClass="indicator-value-low" />
-        </VBox>
-    </TilePane>
-
-    <VBox spacing="20" VBox.vgrow="ALWAYS" styleClass="login-card" maxWidth="Infinity">
-        <padding>
-            <Insets top="25" right="30" bottom="25" left="30"/>
-        </padding>
-        <children>
-            <Label text="📢 人事通知与公告" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: -fx-text-main;"/>
-            <Separator />
-            <VBox spacing="15">
-                <Label text="• 2025年度绩效考核工作即将开始，请做好准备。" style="-fx-text-fill: -fx-text-main;"/>
-                <Label text="• 关于补充完善员工社保信息的紧急通知。" style="-fx-text-fill: -fx-text-main;"/>
-                <Label text="• 下周二将举办新员工入职培训（1号会议室）。" style="-fx-text-fill: -fx-text-main;"/>
-            </VBox>
+            <Label fx:id="dateTimeLabel" style="-fx-text-fill: -fx-text-muted;"/>
         </children>
     </VBox>
 </VBox>

@@ -1,10 +1,13 @@
 package com.gd.hrmsjavafxclient.controller.finance;
 
+import com.gd.hrmsjavafxclient.App;
 import com.gd.hrmsjavafxclient.controller.MainController;
 import com.gd.hrmsjavafxclient.model.CurrentUserInfo;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import java.io.IOException;
@@ -57,6 +60,13 @@ public class FinanceMainController implements MainController {
 
     @FXML
     public void handleLogout() {
-        System.exit(0);
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "确定要注销并退出系统吗？", ButtonType.YES, ButtonType.NO);
+        alert.setTitle("确认退出");
+        alert.setHeaderText(null);
+        alert.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.YES) {
+                App.logout();
+            }
+        });
     }
 }

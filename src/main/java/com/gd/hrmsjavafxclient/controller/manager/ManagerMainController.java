@@ -8,7 +8,9 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 
@@ -80,7 +82,14 @@ public class ManagerMainController implements MainController {
 
     @FXML
     private void handleLogout(ActionEvent event) {
-        App.logout();
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "确定要注销并退出系统吗？", ButtonType.YES, ButtonType.NO);
+        alert.setTitle("确认退出");
+        alert.setHeaderText(null);
+        alert.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.YES) {
+                App.logout();
+            }
+        });
     }
 
     private void loadView(String fxmlFileName, Button triggerButton) {

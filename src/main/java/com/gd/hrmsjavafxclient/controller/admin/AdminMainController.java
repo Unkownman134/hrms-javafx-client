@@ -108,8 +108,8 @@ public class AdminMainController implements MainController {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "确定要注销并退出系统吗？", ButtonType.YES, ButtonType.NO);
         alert.setTitle("确认退出");
         alert.setHeaderText(null);
-        alert.showAndWait().ifPresent(type -> {
-            if (type == ButtonType.YES) {
+        alert.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.YES) {
                 App.logout();
             }
         });
