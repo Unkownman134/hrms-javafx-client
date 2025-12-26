@@ -68,7 +68,7 @@ public class PendingApprovalController implements ManagerSubController {
     private void handleProcess() {
         ApprovalRequest selected = approvalTable.getSelectionModel().getSelectedItem();
         if (selected == null) {
-            showAlert("提示", "请先选择一行申请哦！");
+            showAlert("提示", "请先选择一行申请！");
             return;
         }
 

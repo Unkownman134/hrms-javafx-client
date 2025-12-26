@@ -78,7 +78,7 @@ public class ChangePasswordController implements EmployeeSubController {
         String confirmPwd = confirmPasswordField.getText();
 
         if (newPwd.isBlank() || confirmPwd.isBlank()) {
-            showAlert("提醒", "密码不能为空哦！", Alert.AlertType.WARNING);
+            showAlert("提醒", "密码不能为空！", Alert.AlertType.WARNING);
             return;
         }
 
