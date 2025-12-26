@@ -17,10 +17,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
-/**
- * 工资条视图控制器 (对应 SalaryRecordView.fxml)
- * 修改点：使用 DatePicker 筛选年份，移除明细按钮逻辑。
- */
+
 public class EmployeeSalaryRecordController implements EmployeeSubController {
 
     @FXML private DatePicker yearDatePicker;

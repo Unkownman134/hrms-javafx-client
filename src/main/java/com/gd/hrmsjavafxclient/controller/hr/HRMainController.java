@@ -17,15 +17,10 @@ import javafx.scene.layout.VBox;
 import java.io.IOException;
 import java.net.URL;
 
-/**
- * HR 主界面控制器
- * 负责切换不同的子功能视图
- */
+
 public class HRMainController implements MainController {
 
-    /**
-     * 定义子控制器接口，用于传递登录上下文
-     */
+
     public interface HRSubController {
         void setHRContext(CurrentUserInfo userInfo, String authToken);
     }
@@ -60,9 +55,7 @@ public class HRMainController implements MainController {
         setActiveButton(dashboardButton);
     }
 
-    /**
-     * 核心加载方法：动态切换中间 contentPane 的内容
-     */
+
     private void loadView(String fxmlPath) {
         try {
             URL url = getClass().getResource(fxmlPath);
@@ -138,9 +131,7 @@ public class HRMainController implements MainController {
         });
     }
 
-    /**
-     * 切换侧边栏按钮的激活状态样式
-     */
+
     private void setActiveButton(Button button) {
         sideBar.getChildren().forEach(node -> {
             if (node instanceof Button) {

@@ -1,9 +1,6 @@
 package com.gd.hrmsjavafxclient.model;
 
-/**
- * 登录用户的聚合信息 Model
- * 🌟 核心修正：增加 empId, deptId, departmentName，用于员工和部门经理服务 API 调用。
- */
+
 public class CurrentUserInfo {
 
     private final Integer userId;

@@ -6,19 +6,10 @@ import com.gd.hrmsjavafxclient.util.ServiceUtil;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * 员工考勤记录查询服务 (R5)
- * 修正：适配 ServiceUtil.sendGet() 方法签名和返回值处理。
- */
+
 public class AttendanceEmpService {
 
-    /**
-     * 获取员工的考勤记录列表。
-     * @param empId 员工 ID
-     * @param yearMonth 忽略此参数 (后端 API 未实现)
-     * @param authToken 认证 Token
-     * @return 考勤记录列表，失败返回空列表
-     */
+
     public List<AttendanceRecord> getAttendanceRecords(int empId, String yearMonth, String authToken) {
         String path = String.format("/attendance/%d", empId);
 

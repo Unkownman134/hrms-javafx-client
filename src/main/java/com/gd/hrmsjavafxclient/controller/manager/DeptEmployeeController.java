@@ -22,10 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- * 部门员工管理视图控制器
- * 补全了所有缺失字段：性别、状态、入职日期。
- */
+
 public class DeptEmployeeController implements ManagerSubController {
 
     @FXML private TableView<Employee> employeeTable;
@@ -76,9 +73,7 @@ public class DeptEmployeeController implements ManagerSubController {
         loadData();
     }
 
-    /**
-     * 搜索功能实现
-     */
+
     @FXML
     private void handleSearch() {
         String searchText = searchField.getText();

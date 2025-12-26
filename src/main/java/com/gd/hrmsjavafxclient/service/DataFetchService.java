@@ -25,11 +25,6 @@ public class DataFetchService {
         objectMapper.registerModule(new JavaTimeModule());
     }
 
-    /**
-     * 新增：通过 Token 获取用户基础信息（如 UserId, RoleId, EmpId）。
-     * @param authToken 认证Token (JWT 字符串)
-     * @return User 对象
-     */
     public User getUserByToken(String authToken) throws Exception {
 
         HttpRequest request = HttpRequest.newBuilder()
@@ -48,10 +43,7 @@ public class DataFetchService {
         }
     }
 
-    /**
-     * 查询员工档案信息（需要认证 Token）
-     * 修正：增加 authToken 参数
-     */
+
     public Employee getEmployeeById(Integer empId, String authToken) throws Exception {
 
         HttpRequest request = HttpRequest.newBuilder()
@@ -70,10 +62,7 @@ public class DataFetchService {
         }
     }
 
-    /**
-     * 查询职位信息（需要认证 Token）
-     * 修正：增加 authToken 参数
-     */
+
     public Position getPositionById(Integer posId, String authToken) throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/positions/" + posId))
@@ -91,10 +80,7 @@ public class DataFetchService {
         }
     }
 
-    /**
-     * 查询部门信息（需要认证 Token）
-     * 新增：查询部门信息的方法
-     */
+
     public Department getDepartmentById(Integer deptId, String authToken) throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/departments/" + deptId))

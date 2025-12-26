@@ -24,10 +24,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-/**
- * 部门经理排班界面控制器
- * 升级版：支持自定义日期区间查询，不再受限于下拉框月度选择
- */
+
 public class DeptScheduleController implements ManagerSubController {
 
     @FXML private Label deptNameLabel;

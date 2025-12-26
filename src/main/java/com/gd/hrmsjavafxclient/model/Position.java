@@ -2,10 +2,7 @@ package com.gd.hrmsjavafxclient.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-/**
- * R9: 职位信息 Model
- * 对应后端 T_Position 表结构：PosID, PosName, PosLevel, BaseSalaryLevel
- */
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Position {
     private Integer posId;

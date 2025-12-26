@@ -11,9 +11,7 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * 招聘管理专用服务类 🚀 - 修复文本响应解析版
- */
+
 public class RecruitmentService {
 
     private static final String CANDIDATE_ENDPOINT = "/candidates";
@@ -63,10 +61,7 @@ public class RecruitmentService {
         }
     }
 
-    /**
-     * 核心逻辑：录用并入职 🌟
-     * 修正：兼容后端返回的纯文本 ID 响应
-     */
+
     public boolean hireCandidate(int candId, Employee emp, String username, String password, String token) {
         try {
             Optional<Employee> result = ServiceUtil.sendRequest(EMPLOYEE_ENDPOINT, token, emp, "POST", new TypeReference<Employee>() {});
@@ -100,9 +95,7 @@ public class RecruitmentService {
         }
     }
 
-    /**
-     * 辅助方法：入职过程中通过手机号反查员工 ID (应对后端返回文本而非对象的情况)
-     */
+
     private Integer findEmpIdByPhone(String phone, String token) {
         try {
             List<Employee> emps = ServiceUtil.sendGet(EMPLOYEE_ENDPOINT, token, new TypeReference<List<Employee>>() {})

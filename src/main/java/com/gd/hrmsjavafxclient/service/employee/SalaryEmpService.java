@@ -6,19 +6,10 @@ import com.gd.hrmsjavafxclient.util.ServiceUtil;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * 员工工资条查询服务 (R6)
- * 修正：适配 ServiceUtil.sendGet() 方法签名和返回值处理。
- */
+
 public class SalaryEmpService {
 
-    /**
-     * 获取员工的工资条记录列表。
-     * @param empId 员工 ID
-     * @param year 查询年份
-     * @param authToken 认证 Token
-     * @return 工资条记录列表，失败返回空列表
-     */
+
     public List<SalaryRecord> getSalaryRecords(int empId, int year, String authToken) {
         String path = String.format("/salary/history/%d?year=%d", empId, year);
 

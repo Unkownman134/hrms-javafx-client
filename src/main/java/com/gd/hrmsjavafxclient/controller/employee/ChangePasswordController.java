@@ -8,9 +8,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
-/**
- * 修改密码控制器 - 悬停显示小眼睛版
- */
+
 public class ChangePasswordController implements EmployeeSubController {
 
     @FXML private PasswordField newPasswordField;

@@ -10,10 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-/**
- * HR 模块数据服务类 - 终极整合版
- * 负责与后端 API 进行数据交互，支持 HR 模块所有子功能 (oﾟvﾟ)ノ
- */
+
 public class HRDataService {
     private static final String EMPLOYEE_ENDPOINT = "/employees";
     private static final String DEPARTMENT_ENDPOINT = "/departments";
@@ -155,10 +152,7 @@ public class HRDataService {
         }
     }
 
-    /**
-     * 关键修正：新增班次规则
-     * 只有这里使用 Map 过滤掉 ruleId，确保后端校验通过
-     */
+
     public boolean addShiftRule(ShiftRule rule, String token) {
         try {
             Map<String, Object> payload = new HashMap<>();

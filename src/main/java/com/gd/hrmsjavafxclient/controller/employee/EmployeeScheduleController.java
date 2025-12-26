@@ -23,10 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- * 员工排班日历视图控制器
- * 增加了“已通过”状态的请假和出差渲染功能
- */
+
 public class EmployeeScheduleController implements EmployeeSubController {
 
     @FXML private Label monthLabel;

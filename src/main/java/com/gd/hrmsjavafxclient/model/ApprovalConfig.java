@@ -5,9 +5,7 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
-/**
- * 审批流程配置实体类
- */
+
 public class ApprovalConfig {
     private final IntegerProperty configId = new SimpleIntegerProperty();
     private final StringProperty processType = new SimpleStringProperty();

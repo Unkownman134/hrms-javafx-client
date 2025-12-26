@@ -16,14 +16,10 @@ import javafx.scene.layout.StackPane;
 
 import java.io.IOException;
 
-/**
- * 部门经理主界面的 Controller。
- */
+
 public class ManagerMainController implements MainController {
 
-    /**
-     * 子视图控制器接口：用于统一传递上下文
-     */
+
     public interface ManagerSubController {
         void setManagerContext(CurrentUserInfo userInfo, String authToken);
     }
@@ -71,9 +67,7 @@ public class ManagerMainController implements MainController {
         loadView("ShiftRuleView", (Button) event.getSource());
     }
 
-    /**
-     * 跳转到“待我审批”界面
-     */
+
     @FXML
     private void showPendingApprovalView(ActionEvent event) {
         loadView("PendingApprovalView", (Button) event.getSource());

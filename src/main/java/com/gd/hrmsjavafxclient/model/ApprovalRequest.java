@@ -6,10 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-/**
- * 审批申请模型 - 严格对应数据库 t_approval_request
- * 修正：忽略后端返回但前端暂未定义的冗余字段
- */
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ApprovalRequest {
 

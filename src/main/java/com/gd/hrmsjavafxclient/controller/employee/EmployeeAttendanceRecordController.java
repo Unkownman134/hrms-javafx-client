@@ -22,9 +22,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * 考勤记录视图控制器 - 优化版 (强制显示年月格式)
- */
+
 public class EmployeeAttendanceRecordController implements EmployeeSubController {
 
     @FXML private DatePicker monthPicker;
@@ -71,9 +69,6 @@ public class EmployeeAttendanceRecordController implements EmployeeSubController
         loadAttendanceData();
     }
 
-    /**
-     * 核心改动：自定义 DatePicker 的显示格式
-     */
     private void setupMonthPicker() {
         monthPicker.setValue(LocalDate.now());
 

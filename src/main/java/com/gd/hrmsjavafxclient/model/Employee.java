@@ -3,10 +3,7 @@ package com.gd.hrmsjavafxclient.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.LocalDate;
 
-/**
- * R10: 员工档案 Model
- * 对应后端 T_Employee 表结构：EmpID, EmpName, Gender, Phone, Email, JoinDate, Status, DeptID, PosID, ManagerID
- */
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Employee {
     private Integer empId;

@@ -17,10 +17,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import java.io.IOException;
 import java.util.List;
 
-/**
- * 班次规则视图控制器 (只读展示)
- * 确认：不包含备注/描述字段，仅展示核心排班参数
- */
+
 public class ShiftRuleController implements ManagerSubController {
 
     @FXML private TableView<ShiftRule> shiftRuleTable;
@@ -51,17 +48,13 @@ public class ShiftRuleController implements ManagerSubController {
         loadShiftRules();
     }
 
-    /**
-     * 响应 FXML 中的重载按钮点击事件
-     */
+
     @FXML
     public void handleRefresh(ActionEvent event) {
         loadShiftRules();
     }
 
-    /**
-     * 从后端异步加载数据
-     */
+
     private void loadShiftRules() {
         if (authToken == null || authToken.isEmpty()) {
             shiftRuleTable.setPlaceholder(new Label("未检测到登录状态，请重新登录。"));

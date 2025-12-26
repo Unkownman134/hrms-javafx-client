@@ -10,9 +10,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.List;
 
-/**
- * 客户端 R8: 薪酬标准管理服务 (CRUD)
- */
+
 public class SalaryStandardAdminService {
 
     private static final String BASE_URL = "http://localhost:8080/api/salary/standards";

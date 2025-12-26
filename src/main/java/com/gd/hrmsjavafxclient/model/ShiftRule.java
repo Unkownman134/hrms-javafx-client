@@ -3,9 +3,7 @@ package com.gd.hrmsjavafxclient.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javafx.beans.property.*;
 
-/**
- * 标准班次规则定义 Model (t_shift_rule)
- */
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ShiftRule {
 

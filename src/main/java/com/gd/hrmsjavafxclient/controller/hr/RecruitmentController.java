@@ -20,9 +20,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
 
-/**
- * 招聘管理子视图控制器 - 全字段入职手续 & ServiceUtil 兼容版 ✨
- */
+
 public class RecruitmentController implements HRSubController {
 
     @FXML private TableView<Candidate> candidateTable;
@@ -66,9 +64,7 @@ public class RecruitmentController implements HRSubController {
         candidateTable.setItems(candidateData);
     }
 
-    /**
-     * 加载初始数据，兼容 ServiceUtil 的异常处理
-     */
+
     private void loadInitialData() {
         new Thread(() -> {
             try {
@@ -141,9 +137,7 @@ public class RecruitmentController implements HRSubController {
         });
     }
 
-    /**
-     * 录用入职大表单
-     */
+
     private void showHireForm(Candidate candidate) {
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("录用入职确认");

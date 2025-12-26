@@ -20,10 +20,7 @@ import javafx.stage.Stage;
 
 import java.util.List;
 
-/**
- * 班次规则管理控制器
- * 负责配置上下班时间逻辑 (oﾟvﾟ)ノ
- */
+
 public class ShiftController implements HRSubController {
 
     @FXML private TableView<ShiftRule> shiftTable;

@@ -11,10 +11,6 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Optional;
 
-/**
- * 客户端通用服务工具类 (HttpClient, ObjectMapper 配置, 通用请求方法)
- * 封装了与后端 API 进行通信的底层逻辑。
- */
 public final class ServiceUtil {
 
     private static final String BASE_URL = "http://localhost:8080/api";
@@ -28,15 +24,9 @@ public final class ServiceUtil {
         OBJECT_MAPPER.registerModule(new JavaTimeModule());
     }
 
-    /**
-     * 禁用构造函数
-     */
     private ServiceUtil() {}
 
-    /**
-     * 发送 GET 请求并解析响应体。
-     * 期望状态码：200 OK
-     */
+
     public static <T> Optional<T> sendGet(String endpoint, String authToken, TypeReference<T> responseTypeRef)
             throws IOException, InterruptedException {
 
@@ -66,10 +56,7 @@ public final class ServiceUtil {
         }
     }
 
-    /**
-     * 发送 POST/PUT/DELETE 请求。
-     * 修正：增加了结尾的异常抛出，修复了语法错误。
-     */
+
     public static <T, R> Optional<R> sendRequest(String endpoint, String authToken, T body, String method, TypeReference<R> responseTypeRef)
             throws IOException, InterruptedException {
 

@@ -26,13 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- * 部门考勤记录视图控制器
- * 🌟 最终进化版：
- * 1. 使用 DatePicker 并通过 StringConverter 锁定“年-月”显示格式。
- * 2. 彻底移除导出功能，界面清爽 100%。
- * 3. 逻辑依然保持严谨的客户端聚合查询。
- */
+
 public class DeptAttendanceController implements ManagerSubController {
 
     @FXML private Label deptNameLabel;
@@ -69,9 +63,7 @@ public class DeptAttendanceController implements ManagerSubController {
         });
     }
 
-    /**
-     * 初始化表格列绑定
-     */
+
     private void initTable() {
         empIdCol.setCellValueFactory(new PropertyValueFactory<>("empId"));
         nameCol.setCellValueFactory(new PropertyValueFactory<>("employeeName"));
@@ -84,9 +76,7 @@ public class DeptAttendanceController implements ManagerSubController {
         attendanceTable.setItems(attendanceData);
     }
 
-    /**
-     * 配置 DatePicker ，让它只显示年月
-     */
+
     private void initDatePicker() {
         monthDatePicker.setValue(LocalDate.now());
 
@@ -108,9 +98,7 @@ public class DeptAttendanceController implements ManagerSubController {
         monthDatePicker.getEditor().setEditable(false);
     }
 
-    /**
-     * 查询按钮逻辑
-     */
+
     @FXML
     private void handleQueryAttendance(ActionEvent event) {
         LocalDate selectedDate = monthDatePicker.getValue();

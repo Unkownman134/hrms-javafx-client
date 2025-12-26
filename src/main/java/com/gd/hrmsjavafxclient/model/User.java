@@ -2,10 +2,7 @@ package com.gd.hrmsjavafxclient.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-/**
- * 客户端的用户 Model
- * 对应后端 /api/users 接口返回的数据结构
- */
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class User {
     private Integer userId;

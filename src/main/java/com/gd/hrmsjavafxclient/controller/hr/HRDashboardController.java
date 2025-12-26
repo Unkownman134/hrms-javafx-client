@@ -8,10 +8,7 @@ import javafx.scene.control.Label;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-/**
- * 人事管理员 (RoleID=2) 仪表盘子视图控制器
- * 修正：实现 HRMainController.HRSubController 接口
- */
+
 public class HRDashboardController implements HRMainController.HRSubController {
 
     @FXML private Label dashboardTitle;
@@ -24,10 +21,7 @@ public class HRDashboardController implements HRMainController.HRSubController {
     public void initialize() {
     }
 
-    /**
-     * 实现 HRSubController 接口，用于接收父控制器的用户信息和 Token。
-     * 修正：修改方法签名和名称
-     */
+
     @Override
     public void setHRContext(CurrentUserInfo userInfo, String authToken) {
         dashboardTitle.setText("人事管理员工作台");

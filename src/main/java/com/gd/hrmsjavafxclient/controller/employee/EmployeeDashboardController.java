@@ -9,10 +9,7 @@ import javafx.scene.control.Label;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-/**
- * 员工仪表板视图控制器
- * 遵循 EmployeeSubController 接口。
- */
+
 public class EmployeeDashboardController implements EmployeeSubController {
 
     @FXML private Label welcomeLabel;
@@ -41,9 +38,6 @@ public class EmployeeDashboardController implements EmployeeSubController {
         }
     }
 
-    /**
-     * 假设我们定期更新时间
-     */
     private void updateTime() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy年MM月dd日 HH:mm:ss");
         dateTimeLabel.setText("当前时间 (北京时间): " + LocalDateTime.now().format(formatter));

@@ -2,11 +2,7 @@ package com.gd.hrmsjavafxclient.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-/**
- * R8: 薪酬标准 Model
- * 对应后端 T_SalaryStandard 表结构：StdID, StandardName, BasicSalary, MealAllowance, Allowances, TotalAmount
- * 注意：字段名称已修正为与后端实体一致。
- */
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SalaryStandard {
 

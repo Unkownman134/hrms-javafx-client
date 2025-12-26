@@ -7,11 +7,7 @@ import javafx.beans.property.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-/**
- * 考勤记录 Model (t_attendance_record)
- * 使用 Property 类支持 JavaFX TableView 绑定。
- * 最终修正：确保所有字段、Getter、Setter 和 Property 访问器都正确且一致。
- */
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AttendanceRecord {
 

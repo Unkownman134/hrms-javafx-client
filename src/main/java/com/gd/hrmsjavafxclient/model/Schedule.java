@@ -8,10 +8,7 @@ import javafx.beans.property.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-/**
- * 排班记录 Model (t_employee_schedule)
- * 已经根据最新的 API 接口进行了字段对齐
- */
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Schedule {
 

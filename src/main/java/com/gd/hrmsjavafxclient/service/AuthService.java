@@ -19,12 +19,7 @@ public class AuthService {
             .build();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    /**
-     * 登录认证，返回 JWT Token 字符串。
-     * @param username 用户名
-     * @param password 密码
-     * @return 认证成功的 JWT Token 字符串，失败返回 null。
-     */
+
     public String login(String username, String password) throws Exception {
         LoginRequest loginRequest = new LoginRequest(username, password);
         String requestBody = objectMapper.writeValueAsString(loginRequest);
@@ -56,11 +51,7 @@ public class AuthService {
         }
     }
 
-    /**
-     * 通过 Token 获取用户基础信息（如 UserId, RoleId, EmpId）。
-     * @param authToken 认证Token (JWT 字符串)
-     * @return User 对象
-     */
+
     public User getUserDetails(String authToken) throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/auth/user-details"))

@@ -6,9 +6,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 
-/**
- * 部门经理仪表板视图控制器
- */
+
 public class ManagerDashboardController implements ManagerSubController {
 
     @FXML private Label welcomeLabel;
@@ -20,9 +18,7 @@ public class ManagerDashboardController implements ManagerSubController {
     public void initialize() {
     }
 
-    /**
-     * 实现统一接口：接收并设置上下文
-     */
+
     @Override
     public void setManagerContext(CurrentUserInfo userInfo, String authToken) {
         this.currentUser = userInfo;
@@ -30,7 +26,6 @@ public class ManagerDashboardController implements ManagerSubController {
         loadContextAndData();
     }
 
-    /** 业务逻辑初始化 */
     private void loadContextAndData() {
         if (currentUser != null) {
             Platform.runLater(() -> {

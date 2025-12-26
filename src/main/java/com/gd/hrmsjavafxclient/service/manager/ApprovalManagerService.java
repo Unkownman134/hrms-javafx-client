@@ -13,9 +13,7 @@ import java.util.stream.Collectors;
 
 public class ApprovalManagerService {
 
-    /**
-     * 获取待办审批
-     */
+
     public List<ApprovalRequest> getMyPendingApprovals(String authToken, Integer myEmpId) throws IOException, InterruptedException {
         Optional<List<ApprovalRequest>> result = ServiceUtil.sendGet(
                 "/approval-requests",
@@ -30,10 +28,7 @@ public class ApprovalManagerService {
         ).orElse(Collections.emptyList());
     }
 
-    /**
-     * 执行审批动作
-     * 修正：路径改为 /approvals/{id}/action
-     */
+
     public void handleApprovalAction(Integer requestId, String action, String comments, Integer approverId, String authToken)
             throws IOException, InterruptedException {
 
