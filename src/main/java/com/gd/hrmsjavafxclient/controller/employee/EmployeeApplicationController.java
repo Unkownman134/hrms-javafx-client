@@ -103,6 +103,54 @@ public class EmployeeApplicationController implements EmployeeSubController {
     }
 
     @FXML
+    private void handleWithdrawApplication() {
+        ApprovalRequest selected = applicationTable.getSelectionModel().getSelectedItem();
+
+        if (selected == null) {
+            showAlert("提示", "请先从列表中选择要撤销的申请单！", Alert.AlertType.WARNING);
+            return;
+        }
+
+        // 业务规则：只有待审批可以撤销
+        if (!"待审批".equals(selected.getStatus())) {
+            showAlert("操作无效", "只有'待审批'状态的申请单才可以撤销。", Alert.AlertType.WARNING);
+            return;
+        }
+
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("确认撤销");
+        confirm.setHeaderText(null);
+        confirm.setContentText("确定要撤销申请单 #" + selected.getRequestId() + " 吗？");
+
+        confirm.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                Task<Boolean> withdrawTask = new Task<>() {
+                    @Override
+                    protected Boolean call() throws Exception {
+                        return applicationEmpService.withdrawApplication(
+                                selected.getRequestId(),
+                                currentUser.getEmpId(),
+                                authToken
+                        );
+                    }
+
+                    @Override
+                    protected void succeeded() {
+                        showAlert("成功", "申请已成功撤销！", Alert.AlertType.INFORMATION);
+                        loadApplicationData();
+                    }
+
+                    @Override
+                    protected void failed() {
+                        showAlert("错误", "撤销失败: " + getException().getMessage(), Alert.AlertType.ERROR);
+                    }
+                };
+                new Thread(withdrawTask).start();
+            }
+        });
+    }
+
+    @FXML
     public void handleAddNewApplication() {
         Dialog<ApprovalRequest> dialog = new Dialog<>();
         dialog.setTitle("新增申请");

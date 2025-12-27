@@ -24,4 +24,13 @@ public class ApplicationEmpService {
         );
         return response.orElse(Collections.emptyList());
     }
+
+    public boolean withdrawApplication(int requestId, int empId, String authToken) throws Exception {
+        String path = "/approval-requests/" + requestId + "/withdraw";
+        ApprovalRequest body = new ApprovalRequest();
+        body.setEmpId(empId);
+
+        ServiceUtil.sendRequest(path, authToken, body, "PUT", new TypeReference<String>() {});
+        return true;
+    }
 }
